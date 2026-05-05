@@ -186,6 +186,31 @@ public actor LibraryRootStore {
         }
     }
 
+    /// Resolves the current on-disk location for a document when a stored URL is missing or stale.
+    public func resolveDocumentFile(
+        for documentID: UUID,
+        preferredURL: URL?,
+        documentType: String?,
+        in libraryURL: URL
+    ) -> URL? {
+        if let preferredURL, fileManager.fileExists(atPath: preferredURL.path) {
+            return preferredURL
+        }
+
+        let normalizedType = documentType?.lowercased()
+        switch normalizedType {
+        case "epub":
+            return findEpubFile(for: documentID, in: libraryURL)
+                ?? findDocumentFile(for: documentID, in: libraryURL)
+        case "pdf":
+            return findDocumentFile(for: documentID, in: libraryURL)
+                ?? findEpubFile(for: documentID, in: libraryURL)
+        default:
+            return findDocumentFile(for: documentID, in: libraryURL)
+                ?? findEpubFile(for: documentID, in: libraryURL)
+        }
+    }
+
     /// Renames a document file from generic "document.pdf" to a meaningful filename
     /// Returns the new URL if successful, or nil if the rename failed
     public func renameDocumentFile(documentID: UUID, to newName: String, in libraryURL: URL) -> URL? {

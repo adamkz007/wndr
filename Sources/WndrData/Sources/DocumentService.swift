@@ -279,6 +279,55 @@ public final class DocumentService: ObservableObject {
         return nil
     }
 
+    /// Repairs stale or missing file URLs by resolving each document back to the current library layout.
+    @discardableResult
+    public func repairStoredDocumentURLs(libraryURL: URL, libraryStore: LibraryRootStore) async -> Int {
+        let context = persistenceController.newBackgroundContext()
+        let fetchRequest = Document.fetchRequest()
+
+        do {
+            let documents = try context.fetch(fetchRequest)
+            var repairedCount = 0
+
+            for document in documents {
+                guard let documentID = document.id else { continue }
+
+                let currentURL = document.fileURL
+                if let currentURL, FileManager.default.fileExists(atPath: currentURL.path) {
+                    continue
+                }
+
+                guard let resolvedURL = await libraryStore.resolveDocumentFile(
+                    for: documentID,
+                    preferredURL: currentURL,
+                    documentType: document.documentType,
+                    in: libraryURL
+                ) else {
+                    continue
+                }
+
+                if document.fileURL != resolvedURL {
+                    document.fileURL = resolvedURL
+                    document.updatedAt = Date()
+                    repairedCount += 1
+                    logger.info("Repaired file URL for document \(documentID.uuidString)")
+                }
+            }
+
+            if repairedCount > 0 {
+                try context.save()
+                await MainActor.run {
+                    fetchAllDocuments()
+                }
+            }
+
+            return repairedCount
+        } catch {
+            logger.error("Failed to repair stored document URLs: \(error.localizedDescription)")
+            return 0
+        }
+    }
+
     /// Calculates total storage consumed by the library directory (PDFs, Notes, Attachments, etc.)
     public func calculateTotalStorage(libraryURL: URL) -> Int64 {
         let fileManager = FileManager.default

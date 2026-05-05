@@ -1,0 +1,4 @@
+framework module LookNotes {
+  header "LookNotes-Swift.h"
+  requires objc
+}

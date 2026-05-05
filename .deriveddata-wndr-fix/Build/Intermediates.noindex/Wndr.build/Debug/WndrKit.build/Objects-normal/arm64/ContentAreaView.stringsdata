@@ -1,0 +1,352 @@
+{
+  "source": "/Users/adamkz/projects/look/Sources/WndrKit/Sources/ContentAreaView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Delete Document?",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 305
+        }
+      },
+      {
+        "comment": "",
+        "key": "Document name",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 170
+        }
+      },
+      {
+        "comment": "",
+        "key": "/",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 191
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld page%@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 196
+        }
+      },
+      {
+        "comment": "",
+        "key": "/",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 197
+        }
+      },
+      {
+        "comment": "",
+        "key": "/",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "+%lld",
+        "location": {
+          "startingColumn": 38,
+          "startingLine": 218
+        }
+      },
+      {
+        "comment": "",
+        "key": "Rename",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 247
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tags",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 254
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add to Collection",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 274
+        }
+      },
+      {
+        "comment": "",
+        "key": "No tags available",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 269
+        }
+      },
+      {
+        "comment": "",
+        "key": "None",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 275
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 302
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 306
+        }
+      },
+      {
+        "comment": "",
+        "key": "Delete",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 307
+        }
+      },
+      {
+        "comment": "",
+        "key": "Are you sure you want to delete \"%@\"? This action cannot be undone.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 311
+        }
+      },
+      {
+        "comment": "",
+        "key": "—",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 428
+        }
+      },
+      {
+        "comment": "",
+        "key": "PDF Viewer",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 460
+        }
+      },
+      {
+        "comment": "",
+        "key": "Document ID: %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 462
+        }
+      },
+      {
+        "comment": "",
+        "key": "PDF rendering will be implemented in Phase 2",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 465
+        }
+      },
+      {
+        "comment": "",
+        "key": "Markdown Editor",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 477
+        }
+      },
+      {
+        "comment": "",
+        "key": "Note ID: %@",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 479
+        }
+      },
+      {
+        "comment": "",
+        "key": "Loading note...",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 482
+        }
+      },
+      {
+        "comment": "",
+        "key": "Document Info",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 585
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 588
+        }
+      },
+      {
+        "comment": "",
+        "key": "Title",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 600
+        }
+      },
+      {
+        "comment": "",
+        "key": "Document title",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 603
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subtitle",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 608
+        }
+      },
+      {
+        "comment": "",
+        "key": "Subtitle (optional)",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 611
+        }
+      },
+      {
+        "comment": "",
+        "key": "Authors",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 616
+        }
+      },
+      {
+        "comment": "",
+        "key": "Comma-separated authors",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 619
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tags",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 648
+        }
+      },
+      {
+        "comment": "",
+        "key": "Sort: %@",
+        "location": {
+          "startingColumn": 19,
+          "startingLine": 814
+        }
+      },
+      {
+        "comment": "",
+        "key": "File Name",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 826
+        }
+      },
+      {
+        "comment": "",
+        "key": "Document Content",
+        "location": {
+          "startingColumn": 27,
+          "startingLine": 828
+        }
+      },
+      {
+        "comment": "",
+        "key": "Search In",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 831
+        }
+      },
+      {
+        "comment": "",
+        "key": "Advanced",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 834
+        }
+      },
+      {
+        "comment": "",
+        "key": "Searching documents…",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 907
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Results",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 917
+        }
+      },
+      {
+        "comment": "",
+        "key": "Try a different search term",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 920
+        }
+      },
+      {
+        "comment": "",
+        "key": "Searching more documents…",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 931
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Results",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 1052
+        }
+      },
+      {
+        "comment": "",
+        "key": "Try a different search term",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 1055
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -970,6 +970,12 @@ private struct LibrarySetupView: View {
 
     var body: some View {
         VStack(spacing: 20) {
+            Image(nsImage: NSApp.applicationIconImage)
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: 96, height: 96)
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+
             Text("Welcome to Wndr")
                 .font(.largeTitle)
                 .bold()

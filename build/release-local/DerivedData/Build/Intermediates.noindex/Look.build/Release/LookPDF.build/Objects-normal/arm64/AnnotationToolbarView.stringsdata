@@ -1,0 +1,16 @@
+{
+  "source": "/Users/adamkz/look/Sources/LookPDF/Sources/AnnotationToolbarView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Clear All",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 43
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,23 @@
+{
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Attachment+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.swiftdeps"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Attachment+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.swiftdeps"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Tag+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.swiftdeps"
+  }
+}

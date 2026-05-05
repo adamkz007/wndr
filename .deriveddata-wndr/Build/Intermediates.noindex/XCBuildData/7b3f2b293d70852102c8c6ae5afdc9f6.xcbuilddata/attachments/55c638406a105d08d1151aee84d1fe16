@@ -1,0 +1,109 @@
+{
+  "" : {
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit-primary.dia",
+    "emit-module-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit-primary-emit-module.dia",
+    "pch" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit-primary.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/ContentAreaEnvironment.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaEnvironment~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/ContentAreaView.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaView~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/ContentAreaViewModel.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/ContentAreaViewModel~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/FeatureFlags.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/FeatureFlags~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/InspectorPanelView.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelView~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/InspectorPanelViewModel.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/InspectorPanelViewModel~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/LibrarySidebarView.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarView~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/LibrarySidebarViewModel.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/LibrarySidebarViewModel~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/PlatformCompat.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/PlatformCompat~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrKit/Sources/WndrKit.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrKit.build/Objects-normal/arm64/WndrKit~partial.swiftmodule"
+  }
+}

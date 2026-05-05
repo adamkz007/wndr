@@ -1,0 +1,30 @@
+{
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/LibraryRootStore.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/LibraryRootStore.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/LibraryRootStore.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/LibraryRootStore.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/LibraryRootStore.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/LibraryRootStore.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/PersistenceController.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/PersistenceController.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/PersistenceController.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/PersistenceController.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/PersistenceController.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/PersistenceController.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/WndrData.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrData.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrData.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrData.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrData.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrData.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/WndrLogger.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrLogger.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrLogger.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrLogger.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrLogger.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/WndrLogger.swiftdeps"
+  }
+}

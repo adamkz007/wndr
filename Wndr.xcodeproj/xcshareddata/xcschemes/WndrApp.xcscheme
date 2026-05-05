@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "A10E2100284F300000000045"
-            BuildableName = "WndrApp.app"
+            BuildableName = "Wndr.app"
             BlueprintName = "WndrApp"
             ReferencedContainer = "container:Wndr.xcodeproj">
          </BuildableReference>

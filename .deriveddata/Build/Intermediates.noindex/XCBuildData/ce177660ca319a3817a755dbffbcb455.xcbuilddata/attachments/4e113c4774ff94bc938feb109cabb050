@@ -1,0 +1,4 @@
+framework module LookAutomation {
+  header "LookAutomation-Swift.h"
+  requires objc
+}

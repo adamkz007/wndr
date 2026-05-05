@@ -1,0 +1,17 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/adamkz/look/build/release-signed/DerivedData/Build/Products/Release/LookAutomation.framework/Versions/A/LookAutomation'
+relocations:
+  - { offset: 0x75D9A, size: 0x8, addend: 0x0, symName: _LookAutomationVersionString, symObjAddr: 0x0, symBinAddr: 0xC60, symSize: 0x0 }
+  - { offset: 0x75DD1, size: 0x8, addend: 0x0, symName: _LookAutomationVersionNumber, symObjAddr: 0x30, symBinAddr: 0xC90, symSize: 0x0 }
+  - { offset: 0x75E0F, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation0B11CoordinatorCACycfC', symObjAddr: 0x0, symBinAddr: 0xA80, symSize: 0x10 }
+  - { offset: 0x75EA2, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation0B11CoordinatorCMa', symObjAddr: 0x34, symBinAddr: 0xAAC, symSize: 0x20 }
+  - { offset: 0x75EBE, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation0B11CoordinatorCACycfC', symObjAddr: 0x0, symBinAddr: 0xA80, symSize: 0x10 }
+  - { offset: 0x75ED2, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation0B11CoordinatorCACycfc', symObjAddr: 0x10, symBinAddr: 0xA90, symSize: 0x8 }
+  - { offset: 0x75EFE, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation0B11CoordinatorC16registerDefaultsyyF', symObjAddr: 0x18, symBinAddr: 0xA98, symSize: 0x4 }
+  - { offset: 0x75F2D, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation0B11CoordinatorCfD', symObjAddr: 0x24, symBinAddr: 0xA9C, symSize: 0x10 }
+  - { offset: 0x75FD8, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation15ShortcutActionsO10createNote5title4bodyySS_SStFZ', symObjAddr: 0x0, symBinAddr: 0xACC, symSize: 0xD8 }
+  - { offset: 0x760EF, size: 0x8, addend: 0x0, symName: ___swift_instantiateConcreteTypeFromMangledNameV2, symObjAddr: 0xD8, symBinAddr: 0xBA4, symSize: 0x44 }
+  - { offset: 0x76103, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation15ShortcutActionsOMa', symObjAddr: 0x11C, symBinAddr: 0xBE8, symSize: 0x10 }
+  - { offset: 0x76147, size: 0x8, addend: 0x0, symName: '_$s14LookAutomation15ShortcutActionsO10createNote5title4bodyySS_SStFZ', symObjAddr: 0x0, symBinAddr: 0xACC, symSize: 0xD8 }
+...

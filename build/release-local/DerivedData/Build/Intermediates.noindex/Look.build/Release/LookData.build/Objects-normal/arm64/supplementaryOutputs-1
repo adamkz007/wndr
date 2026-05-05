@@ -1,0 +1,12 @@
+{
+  "/Users/adamkz/look/Sources/LookData/Sources/LookData.swift" : {
+    "abi-baseline-json" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.abi.json",
+    "const-values" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.d",
+    "diagnostics" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.dia",
+    "objc-header" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-Swift.h",
+    "swiftdoc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.swiftdoc",
+    "swiftmodule" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.swiftmodule",
+    "swiftsourceinfo" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.swiftsourceinfo"
+  }
+}

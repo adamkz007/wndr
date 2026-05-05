@@ -1,0 +1,23 @@
+{
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/EPUBParser.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/EPUBParser.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/EPUBParser.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/EPUBParser.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/EPUBParser.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/EPUBParser.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/ImportService.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ImportService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ImportService.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ImportService.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ImportService.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ImportService.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrData/Sources/ThumbnailService.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ThumbnailService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ThumbnailService.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ThumbnailService.dia",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ThumbnailService.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/ThumbnailService.swiftdeps"
+  }
+}

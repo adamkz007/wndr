@@ -1,0 +1,12 @@
+{
+  "/Users/adamkz/look/Sources/LookPDF/Sources/LookPDF.swift" : {
+    "abi-baseline-json" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF.abi.json",
+    "const-values" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF-primary.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF-primary.d",
+    "diagnostics" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF-primary.dia",
+    "objc-header" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF-Swift.h",
+    "swiftdoc" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF.swiftdoc",
+    "swiftmodule" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF.swiftmodule",
+    "swiftsourceinfo" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookPDF.build/Objects-normal/arm64/LookPDF.swiftsourceinfo"
+  }
+}

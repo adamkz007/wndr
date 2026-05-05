@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		34EE606AE3C5534387DF2437 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
+		8C576897DC976C3C2ECAB9D8 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
 		A10E2400284F300000000068 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
 		A10E2401284F300000000069 /* WndrData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1104284F30000000002E /* WndrData.framework */; };
 		A10E2402284F30000000006A /* WndrPDF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1106284F30000000002F /* WndrPDF.framework */; };
@@ -51,8 +53,6 @@
 		C10E5001284F300000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C10E4001284F300000000001 /* Assets.xcassets */; };
 		D10E5001284F300000000001 /* EPUBParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10E4001284F300000000001 /* EPUBParser.swift */; };
 		E10E5001284F300000000001 /* PlatformCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E4001284F300000000001 /* PlatformCompat.swift */; };
-		34EE606AE3C5534387DF2437 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
-		8C576897DC976C3C2ECAB9D8 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
 		F469CF602F37102800802D33 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
 		F469CF612F37102800802D33 /* WndrData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1104284F30000000002E /* WndrData.framework */; };
 		F469CF622F37102800802D33 /* WndrPDF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1106284F30000000002F /* WndrPDF.framework */; };

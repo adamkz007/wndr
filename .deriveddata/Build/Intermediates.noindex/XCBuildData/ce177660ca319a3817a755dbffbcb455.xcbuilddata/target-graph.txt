@@ -1,0 +1,14 @@
+Target dependency graph (6 targets)
+Target 'LookApp' in project 'Look'
+➜ Explicit dependency on target 'LookKit' in project 'Look'
+➜ Explicit dependency on target 'LookData' in project 'Look'
+➜ Explicit dependency on target 'LookPDF' in project 'Look'
+➜ Explicit dependency on target 'LookNotes' in project 'Look'
+➜ Explicit dependency on target 'LookAutomation' in project 'Look'
+Target 'LookAutomation' in project 'Look' (no dependencies)
+Target 'LookNotes' in project 'Look'
+➜ Explicit dependency on target 'LookKit' in project 'Look'
+Target 'LookPDF' in project 'Look'
+➜ Explicit dependency on target 'LookKit' in project 'Look'
+Target 'LookData' in project 'Look' (no dependencies)
+Target 'LookKit' in project 'Look' (no dependencies)

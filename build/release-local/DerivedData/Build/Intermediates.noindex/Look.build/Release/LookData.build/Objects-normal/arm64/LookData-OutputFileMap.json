@@ -1,0 +1,141 @@
+{
+  "" : {
+    "const-values" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.d",
+    "diagnostics" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.dia",
+    "emit-module-dependencies" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary-emit-module.dia",
+    "pch" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData-primary.swiftdeps"
+  },
+  "/Users/adamkz/look/Shared/Support/Telemetry.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Telemetry.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Telemetry.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Telemetry.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/AnnotationService.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/AnnotationService.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/AnnotationService.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/AnnotationService.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/CollectionService.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/CollectionService.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/CollectionService.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/CollectionService.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/DocumentService.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentService.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentService.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentService.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/EPUBParser.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/EPUBParser.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/EPUBParser.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/EPUBParser.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/ImportService.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/ImportService.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/ImportService.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/ImportService.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LibraryRootStore.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/LibraryRootStore.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LibraryRootStore.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LibraryRootStore.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LookData.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookData.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LookLogger.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/LookLogger.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookLogger.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookLogger.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/PersistenceController.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/PersistenceController.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/PersistenceController.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/PersistenceController.o"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/ThumbnailService.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/ThumbnailService.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/ThumbnailService.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/ThumbnailService.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Annotation+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Annotation+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Annotation+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Annotation+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Annotation+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Annotation+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Annotation+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Annotation+CoreDataProperties.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Attachment+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Attachment+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Attachment+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Attachment+CoreDataProperties.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Document+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Document+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Document+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Document+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Document+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Document+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Document+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Document+CoreDataProperties.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/DocumentCollection+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/DocumentCollection+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Link+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Link+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Link+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Link+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Link+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Link+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Link+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Link+CoreDataProperties.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/LookModel+CoreDataModel.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/LookModel+CoreDataModel.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookModel+CoreDataModel.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/LookModel+CoreDataModel.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Note+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Note+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Note+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Note+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Note+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Note+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Note+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Note+CoreDataProperties.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Tag+CoreDataClass.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Tag+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Tag+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Tag+CoreDataClass.o"
+  },
+  "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Tag+CoreDataProperties.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/build/release-local/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookData.build/Objects-normal/arm64/Tag+CoreDataProperties.o"
+  }
+}

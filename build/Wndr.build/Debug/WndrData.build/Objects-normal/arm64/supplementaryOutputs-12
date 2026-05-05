@@ -1,0 +1,23 @@
+{
+  "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/DerivedSources/CoreDataGenerated/WndrModel/DocumentCollection+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.dia",
+    "object" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataClass.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/DerivedSources/CoreDataGenerated/WndrModel/DocumentCollection+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.dia",
+    "object" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/DocumentCollection+CoreDataProperties.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/DerivedSources/CoreDataGenerated/WndrModel/Tag+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/Tag+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/Tag+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/Tag+CoreDataClass.dia",
+    "object" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/Tag+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/build/Wndr.build/Debug/WndrData.build/Objects-normal/arm64/Tag+CoreDataClass.swiftdeps"
+  }
+}

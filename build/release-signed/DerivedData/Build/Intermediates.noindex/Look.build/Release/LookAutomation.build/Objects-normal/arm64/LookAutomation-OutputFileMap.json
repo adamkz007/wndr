@@ -1,0 +1,21 @@
+{
+  "" : {
+    "const-values" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary.d",
+    "diagnostics" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary.dia",
+    "emit-module-dependencies" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary-emit-module.dia",
+    "pch" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation-primary.swiftdeps"
+  },
+  "/Users/adamkz/look/Sources/LookAutomation/Sources/LookAutomation.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation.bc",
+    "object" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/LookAutomation.o"
+  },
+  "/Users/adamkz/look/Sources/LookAutomation/Sources/ShortcutActions.swift" : {
+    "index-unit-output-path" : "/Look.build/Release/LookAutomation.build/Objects-normal/arm64/ShortcutActions.o",
+    "llvm-bc" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/ShortcutActions.bc",
+    "object" : "/Users/adamkz/look/build/release-signed/DerivedData/Build/Intermediates.noindex/Look.build/Release/LookAutomation.build/Objects-normal/arm64/ShortcutActions.o"
+  }
+}

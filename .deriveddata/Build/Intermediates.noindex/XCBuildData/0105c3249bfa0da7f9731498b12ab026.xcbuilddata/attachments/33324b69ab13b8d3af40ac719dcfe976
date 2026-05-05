@@ -1,0 +1,269 @@
+{
+  "" : {
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData-primary.dia",
+    "emit-module-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData-primary-emit-module.dia",
+    "pch" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData-primary.swiftdeps"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Annotation+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Annotation+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Annotation+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Attachment+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Attachment+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Attachment+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Document+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Document+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Document+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/DocumentCollection+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/DocumentCollection+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentCollection+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Link+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Link+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Link+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/LookModel+CoreDataModel.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookModel+CoreDataModel~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Note+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Note+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Note+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Tag+CoreDataClass.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataClass~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/DerivedSources/CoreDataGenerated/LookModel/Tag+CoreDataProperties.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Tag+CoreDataProperties~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Shared/Support/Telemetry.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/Telemetry~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/AnnotationService.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/AnnotationService~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/CollectionService.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/CollectionService~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/DocumentService.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/DocumentService~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/EPUBParser.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/EPUBParser~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/ImportService.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ImportService~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LibraryRootStore.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LibraryRootStore~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LookData.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookData~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LookLogger.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/LookLogger~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/PersistenceController.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/PersistenceController~partial.swiftmodule"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/ThumbnailService.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.dia",
+    "index-unit-output-path" : "/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.o",
+    "llvm-bc" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.bc",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/x86_64/ThumbnailService~partial.swiftmodule"
+  }
+}

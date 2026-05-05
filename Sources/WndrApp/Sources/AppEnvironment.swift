@@ -61,6 +61,10 @@ final class AppEnvironment: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] url in
                 self?.libraryURL = url
+                guard let self, let url else { return }
+                Task {
+                    await self.repairStoredDocumentURLsIfNeeded(for: url)
+                }
             }
             .store(in: &cancellables)
     }
@@ -126,6 +130,21 @@ final class AppEnvironment: ObservableObject {
     // MARK: - One-Time Tag Color Assignment
 
     private static let tagColorAssignmentKey = "wndr.tags.colors.assigned.v1"
+
+    private func repairStoredDocumentURLsIfNeeded(for libraryURL: URL) async {
+        let repairedCount = await documentService.repairStoredDocumentURLs(
+            libraryURL: libraryURL,
+            libraryStore: libraryRootStore
+        )
+        guard repairedCount > 0 else { return }
+
+        telemetry.record(
+            event: TelemetryEvent(
+                name: "document_urls_repaired",
+                metadata: ["count": String(repairedCount)]
+            )
+        )
+    }
 
     /// Resets the tag color assignment flag, allowing colors to be reassigned.
     public func resetTagColorAssignmentFlag() {

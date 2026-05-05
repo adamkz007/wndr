@@ -1,0 +1,30 @@
+{
+  "/Users/adamkz/look/Sources/LookData/Sources/LibraryRootStore.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LibraryRootStore.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LibraryRootStore.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LibraryRootStore.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LibraryRootStore.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LibraryRootStore.swiftdeps"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LookData.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookData.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookData.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookData.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookData.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookData.swiftdeps"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/LookLogger.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookLogger.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookLogger.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookLogger.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookLogger.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/LookLogger.swiftdeps"
+  },
+  "/Users/adamkz/look/Sources/LookData/Sources/PersistenceController.swift" : {
+    "const-values" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/PersistenceController.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/PersistenceController.d",
+    "diagnostics" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/PersistenceController.dia",
+    "object" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/PersistenceController.o",
+    "swift-dependencies" : "/Users/adamkz/look/.deriveddata/Build/Intermediates.noindex/Look.build/Debug/LookData.build/Objects-normal/arm64/PersistenceController.swiftdeps"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "" : {
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF-primary.dia",
+    "emit-module-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF-primary-emit-module.dia",
+    "pch" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF-primary.swiftdeps"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrPDF/Sources/AnnotationToolbarView.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/AnnotationToolbarView~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrPDF/Sources/PDFAnnotationBridge.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFAnnotationBridge~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrPDF/Sources/PDFViewerView.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerView~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrPDF/Sources/PDFViewerViewModel.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/PDFViewerViewModel~partial.swiftmodule"
+  },
+  "/Users/adamkz/projects/look/Sources/WndrPDF/Sources/WndrPDF.swift" : {
+    "const-values" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.swiftconstvalues",
+    "dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.d",
+    "diagnostics" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.dia",
+    "index-unit-output-path" : "/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.o",
+    "llvm-bc" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.bc",
+    "object" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.o",
+    "swift-dependencies" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF.swiftdeps",
+    "swiftmodule" : "/Users/adamkz/projects/look/.deriveddata-wndr-fix/Build/Intermediates.noindex/Wndr.build/Debug/WndrPDF.build/Objects-normal/arm64/WndrPDF~partial.swiftmodule"
+  }
+}

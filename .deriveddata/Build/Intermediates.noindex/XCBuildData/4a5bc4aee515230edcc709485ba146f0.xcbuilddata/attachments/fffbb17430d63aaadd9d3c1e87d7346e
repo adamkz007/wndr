@@ -1,0 +1,4 @@
+framework module LookPDF {
+  header "LookPDF-Swift.h"
+  requires objc
+}

@@ -1,0 +1,14 @@
+Target dependency graph (6 targets)
+Target 'WndrApp' in project 'Wndr'
+➜ Explicit dependency on target 'WndrKit' in project 'Wndr'
+➜ Explicit dependency on target 'WndrData' in project 'Wndr'
+➜ Explicit dependency on target 'WndrPDF' in project 'Wndr'
+➜ Explicit dependency on target 'WndrNotes' in project 'Wndr'
+➜ Explicit dependency on target 'WndrAutomation' in project 'Wndr'
+Target 'WndrAutomation' in project 'Wndr' (no dependencies)
+Target 'WndrNotes' in project 'Wndr'
+➜ Explicit dependency on target 'WndrKit' in project 'Wndr'
+Target 'WndrPDF' in project 'Wndr'
+➜ Explicit dependency on target 'WndrKit' in project 'Wndr'
+Target 'WndrData' in project 'Wndr' (no dependencies)
+Target 'WndrKit' in project 'Wndr' (no dependencies)
