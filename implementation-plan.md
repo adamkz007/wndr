@@ -1,4 +1,4 @@
-# Look App - Implementation Plan
+# Wndr App - Implementation Plan
 
 **Last Updated:** February 8, 2026
 **Status:** MVP Feature Set Complete + Bonus Features (EPUB, iPadOS)
@@ -52,7 +52,7 @@
 | | • 6-color highlighting system shared with PDF |
 | | • Cover image thumbnails with fallback book icon |
 | **iPadOS Full Platform Port** | Complete feature parity with macOS version |
-| | • Dedicated LookApp_iPad target with separate entry point |
+| | • Dedicated WndrApp_iPad target with separate entry point |
 | | • UIDocumentPickerViewController for import |
 | | • Auto-creates library in Documents folder |
 | | • Touch-optimized gestures and larger tap targets |
@@ -268,49 +268,49 @@
 | File | Module | Purpose |
 |------|--------|---------|
 | **macOS Entry Point** | | |
-| `LookApp.swift` | LookApp | macOS entry point, window management |
-| `AppEnvironment.swift` | LookApp | Service container, dependency injection |
-| `ContentWrapper.swift` | LookApp | Handler wiring for PDF/Note/EPUB views |
-| `LibraryRootCoordinator.swift` | LookApp | Library location selection flow |
+| `WndrApp.swift` | WndrApp | macOS entry point, window management |
+| `AppEnvironment.swift` | WndrApp | Service container, dependency injection |
+| `ContentWrapper.swift` | WndrApp | Handler wiring for PDF/Note/EPUB views |
+| `LibraryRootCoordinator.swift` | WndrApp | Library location selection flow |
 | **iPadOS Entry Point** | | |
-| `LookApp_iPad.swift` | LookApp_iPad | iPadOS entry point, scene management |
-| `AppEnvironment_iPad.swift` | LookApp_iPad | iPad service container |
-| `ContentWrapper_iPad.swift` | LookApp_iPad | iPad sheet-based import |
-| `LibraryRootCoordinator_iPad.swift` | LookApp_iPad | Auto-creates library in Documents |
-| `iPadKeyboardShortcuts.swift` | LookApp_iPad | External keyboard support |
+| `WndrApp_iPad.swift` | WndrApp_iPad | iPadOS entry point, scene management |
+| `AppEnvironment_iPad.swift` | WndrApp_iPad | iPad service container |
+| `ContentWrapper_iPad.swift` | WndrApp_iPad | iPad sheet-based import |
+| `LibraryRootCoordinator_iPad.swift` | WndrApp_iPad | Auto-creates library in Documents |
+| `iPadKeyboardShortcuts.swift` | WndrApp_iPad | External keyboard support |
 | **Shared UI Components** | | |
-| `LookKit.swift` | LookKit | LookPrimaryView, ContentListView, DetailAreaView |
-| `ContentAreaView.swift` | LookKit | DocumentListView, NoteListView, models |
-| `LibrarySidebarView.swift` | LookKit | Sidebar with Library/Collections/Tags |
-| `DocumentRow.swift` | LookKit | Document list item with tags/collection |
-| `NoteRow.swift` | LookKit | Note list item with pinning |
-| `ContentSearchBar.swift` | LookKit | Dual-mode search bar |
-| `SearchResultsListView.swift` | LookKit | Search results display |
-| `DocumentInfoPopover.swift` | LookKit | Metadata editor popover |
-| `InspectorPanelView.swift` | LookKit | Right sidebar inspector |
-| `PlatformCompat.swift` | LookKit | Cross-platform type aliases |
+| `WndrKit.swift` | WndrKit | LookPrimaryView, ContentListView, DetailAreaView |
+| `ContentAreaView.swift` | WndrKit | DocumentListView, NoteListView, models |
+| `LibrarySidebarView.swift` | WndrKit | Sidebar with Library/Collections/Tags |
+| `DocumentRow.swift` | WndrKit | Document list item with tags/collection |
+| `NoteRow.swift` | WndrKit | Note list item with pinning |
+| `ContentSearchBar.swift` | WndrKit | Dual-mode search bar |
+| `SearchResultsListView.swift` | WndrKit | Search results display |
+| `DocumentInfoPopover.swift` | WndrKit | Metadata editor popover |
+| `InspectorPanelView.swift` | WndrKit | Right sidebar inspector |
+| `PlatformCompat.swift` | WndrKit | Cross-platform type aliases |
 | **PDF Components** | | |
-| `PDFViewerView.swift` | LookPDF | PDF rendering, toolbar, annotations |
-| `PDFViewerViewModel.swift` | LookPDF | PDF state management |
-| `AnnotationToolbarView.swift` | LookPDF | Color picker, tool enums |
-| `PDFViewRepresentable.swift` | LookPDF | Platform-specific PDFView wrapper |
-| `PDFAnnotationBridge.swift` | LookPDF | Coordinate normalization |
-| `PDFThumbnailListView.swift` | LookPDF | Thumbnail sidebar |
+| `PDFViewerView.swift` | WndrPDF | PDF rendering, toolbar, annotations |
+| `PDFViewerViewModel.swift` | WndrPDF | PDF state management |
+| `AnnotationToolbarView.swift` | WndrPDF | Color picker, tool enums |
+| `PDFViewRepresentable.swift` | WndrPDF | Platform-specific PDFView wrapper |
+| `PDFAnnotationBridge.swift` | WndrPDF | Coordinate normalization |
+| `PDFThumbnailListView.swift` | WndrPDF | Thumbnail sidebar |
 | **EPUB Components** | | |
-| `EPUBParser.swift` | LookPDF | ZIP extraction, metadata, TOC parsing |
-| `EPUBReaderView.swift` | LookPDF | WKWebView-based chapter reader |
-| `EPUBReaderViewModel.swift` | LookPDF | EPUB state, settings, navigation |
+| `EPUBParser.swift` | WndrPDF | ZIP extraction, metadata, TOC parsing |
+| `EPUBReaderView.swift` | WndrPDF | WKWebView-based chapter reader |
+| `EPUBReaderViewModel.swift` | WndrPDF | EPUB state, settings, navigation |
 | **Markdown Components** | | |
-| `MarkdownEditorView.swift` | LookNotes | Note editing UI with toolbar |
-| `NoteEditorViewModel.swift` | LookNotes | Note state, auto-save |
-| `NewNoteSheet.swift` | LookNotes | Template selection dialog |
-| `NoteTemplateRegistry.swift` | LookNotes | Template management |
+| `MarkdownEditorView.swift` | WndrNotes | Note editing UI with toolbar |
+| `NoteEditorViewModel.swift` | WndrNotes | Note state, auto-save |
+| `NewNoteSheet.swift` | WndrNotes | Template selection dialog |
+| `NoteTemplateRegistry.swift` | WndrNotes | Template management |
 | **Data Services** | | |
-| `ImportService.swift` | LookData | PDF/EPUB import pipeline |
-| `DocumentService.swift` | LookData | Document/Note CRUD, search |
-| `AnnotationService.swift` | LookData | Annotation persistence |
-| `CollectionService.swift` | LookData | Collections/tags management |
-| `ThumbnailService.swift` | LookData | Thumbnail generation and caching |
-| `LibraryRootStore.swift` | LookData | Security-scoped bookmarks |
-| `PersistenceController.swift` | LookData | Core Data stack |
-| `LookLogger.swift` | LookData | OSLog wrapper with categories |
+| `ImportService.swift` | WndrData | PDF/EPUB import pipeline |
+| `DocumentService.swift` | WndrData | Document/Note CRUD, search |
+| `AnnotationService.swift` | WndrData | Annotation persistence |
+| `CollectionService.swift` | WndrData | Collections/tags management |
+| `ThumbnailService.swift` | WndrData | Thumbnail generation and caching |
+| `LibraryRootStore.swift` | WndrData | Security-scoped bookmarks |
+| `PersistenceController.swift` | WndrData | Core Data stack |
+| `WndrLogger.swift` | WndrData | OSLog wrapper with categories |

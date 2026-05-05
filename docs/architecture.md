@@ -7,17 +7,17 @@
 
 | Component | Description | Status |
 |-----------|-------------|--------|
-| **LookApp** | SwiftUI-based shell with window management, commands, AppKit integration | ✅ Implemented |
-| **LookKit** | Shared UI components, view models, environment values | ✅ Implemented |
-| **LookPDF** | PDFKit wrappers, annotation rendering, viewer controls | ✅ Implemented |
-| **LookNotes** | Markdown editor with live preview, auto-save | ✅ Implemented |
-| **LookData** | Core Data persistence, services, file coordination | ✅ Implemented |
-| **LookAutomation** | Shortcuts, AppleScript handlers, Quick Capture | 🚧 Not Started |
+| **WndrApp** | SwiftUI-based shell with window management, commands, AppKit integration | ✅ Implemented |
+| **WndrKit** | Shared UI components, view models, environment values | ✅ Implemented |
+| **WndrPDF** | PDFKit wrappers, annotation rendering, viewer controls | ✅ Implemented |
+| **WndrNotes** | Markdown editor with live preview, auto-save | ✅ Implemented |
+| **WndrData** | Core Data persistence, services, file coordination | ✅ Implemented |
+| **WndrAutomation** | Shortcuts, AppleScript handlers, Quick Capture | 🚧 Not Started |
 
 ## Data Flow
 
 ```text
-File Import → LookData ImportService → Library Storage (PDFs/<uuid>/)
+File Import → WndrData ImportService → Library Storage (PDFs/<uuid>/)
            → Core Data entities created (Document, metadata)
            → UI refreshes via Combine publishers
 
@@ -52,7 +52,7 @@ Library Root/
 ├── Notes/<note-uuid>.md
 ├── Attachments/<attachment-uuid>/<filename>
 ├── Index/
-│   ├── Look.sqlite (Core Data)
+│   ├── Wndr.sqlite (Core Data)
 │   └── Thumbnails/<doc-uuid>.png (80x100px)
 └── Cache/
     └── Previews/
@@ -85,7 +85,7 @@ Library Root/
 - Combine - Reactive data binding
 - Core Data - Persistence
 - UniformTypeIdentifiers - Content typing
-- OSLog - Structured logging (`LookLogger`)
+- OSLog - Structured logging (`WndrLogger`)
 
 **Planned:**
 - Vision/VisionKit - OCR
@@ -161,25 +161,25 @@ Custom environment keys for dependency injection:
 ## Module Dependencies
 
 ```
-LookApp
-├── LookKit (UI components, view models)
-├── LookData (persistence, services)
-├── LookPDF (PDF viewer, annotations)
-└── LookNotes (Markdown editor)
+WndrApp
+├── WndrKit (UI components, view models)
+├── WndrData (persistence, services)
+├── WndrPDF (PDF viewer, annotations)
+└── WndrNotes (Markdown editor)
 
-LookKit
-└── LookData (models only)
+WndrKit
+└── WndrData (models only)
 
-LookPDF
-└── LookData (AnnotationService)
+WndrPDF
+└── WndrData (AnnotationService)
 
-LookNotes
-└── LookData (DocumentService)
+WndrNotes
+└── WndrData (DocumentService)
 ```
 
 ## Extensibility
 
 - Protocol-based service interfaces allow future swapping
-- `FeatureFlags` in LookKit for experimental capabilities
+- `FeatureFlags` in WndrKit for experimental capabilities
 - Clear module boundaries for potential iPad expansion
 - Environment-based dependency injection for testability

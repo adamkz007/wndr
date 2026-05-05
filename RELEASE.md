@@ -1,6 +1,6 @@
-# Release Process for Look
+# Release Process for Wndr
 
-This document describes how to build, package, and release Look for macOS.
+This document describes how to build, package, and release Wndr for macOS.
 
 ## Prerequisites
 
@@ -29,8 +29,8 @@ This will:
 ### 1. Update Version Numbers
 
 Update the version in:
-- `Look.xcodeproj` → Target → General → Version
-- `Look.xcodeproj` → Target → General → Build
+- `Wndr.xcodeproj` → Target → General → Version
+- `Wndr.xcodeproj` → Target → General → Build
 
 ### 2. Build the App
 
@@ -39,15 +39,15 @@ Update the version in:
 rm -rf build/
 
 # Build archive
-xcodebuild -project Look.xcodeproj \
-    -scheme Look \
+xcodebuild -project Wndr.xcodeproj \
+    -scheme Wndr \
     -configuration Release \
-    -archivePath build/Look.xcarchive \
+    -archivePath build/Wndr.xcarchive \
     archive
 
 # Export app
 xcodebuild -exportArchive \
-    -archivePath build/Look.xcarchive \
+    -archivePath build/Wndr.xcarchive \
     -exportPath build/export \
     -exportOptionsPlist ExportOptions.plist
 ```
@@ -57,13 +57,13 @@ xcodebuild -exportArchive \
 ```bash
 # Prepare DMG contents
 mkdir -p build/dmg
-cp -R build/export/Look.app build/dmg/
+cp -R build/export/Wndr.app build/dmg/
 
 # Create DMG
-hdiutil create -volname "Look" \
+hdiutil create -volname "Wndr" \
     -srcfolder build/dmg \
     -ov -format UDZO \
-    build/Look-v1.0.0.dmg
+    build/Wndr-v1.0.0.dmg
 ```
 
 ### 4. Create GitHub Release
@@ -75,7 +75,7 @@ git push origin v1.0.0
 ```
 
 Then:
-1. Go to https://github.com/adamkz/look/releases
+1. Go to https://github.com/adamkz/wndr/releases
 2. Click "Create a new release"
 3. Select the tag you just created
 4. Upload the DMG file
@@ -126,13 +126,13 @@ Before releasing:
 1. **Test the DMG**:
    ```bash
    # Mount the DMG
-   hdiutil attach build/Look-v1.0.0.dmg
+   hdiutil attach build/Wndr-v1.0.0.dmg
 
    # Copy to Applications
-   cp -R /Volumes/Look/Look.app /Applications/
+   cp -R /Volumes/Wndr/Wndr.app /Applications/
 
    # Unmount
-   hdiutil detach /Volumes/Look
+   hdiutil detach /Volumes/Wndr
    ```
 
 2. **Verify the app**:
@@ -142,8 +142,8 @@ Before releasing:
 
 3. **Check code signing**:
    ```bash
-   codesign -dv --verbose=4 /Applications/Look.app
-   spctl -a -vvv /Applications/Look.app
+   codesign -dv --verbose=4 /Applications/Wndr.app
+   spctl -a -vvv /Applications/Wndr.app
    ```
 
 ## Landing Page Deployment
@@ -156,7 +156,7 @@ git commit -m "Update landing page"
 git push origin main
 ```
 
-Access at: https://adamkz.github.io/look/
+Access at: https://adamkz.github.io/wndr/
 
 ## Troubleshooting
 
@@ -164,7 +164,7 @@ Access at: https://adamkz.github.io/look/
 
 - Ensure Xcode is installed (not just Command Line Tools)
 - Check that all Swift packages are resolved
-- Clean build folder: `rm -rf ~/Library/Developer/Xcode/DerivedData/Look-*`
+- Clean build folder: `rm -rf ~/Library/Developer/Xcode/DerivedData/Wndr-*`
 
 ### Code Signing Issues
 

@@ -27,37 +27,37 @@ jobs:
 
       - name: Build macOS App
         run: |
-          xcodebuild -project Look.xcodeproj \
-            -scheme Look \
+          xcodebuild -project Wndr.xcodeproj \
+            -scheme WndrApp \
             -configuration Release \
-            -archivePath build/Look.xcarchive \
+            -archivePath build/Wndr.xcarchive \
             archive
 
       - name: Export Archive
         run: |
           xcodebuild -exportArchive \
-            -archivePath build/Look.xcarchive \
+            -archivePath build/Wndr.xcarchive \
             -exportPath build/export \
             -exportOptionsPlist ExportOptions.plist
 
       - name: Create DMG
         run: |
           mkdir -p build/dmg
-          cp -R build/export/Look.app build/dmg/
+          cp -R build/export/Wndr.app build/dmg/
 
           # Create a simple DMG
-          hdiutil create -volname "Look" \
+          hdiutil create -volname "Wndr" \
             -srcfolder build/dmg \
             -ov -format UDZO \
-            build/Look-${{ github.event.inputs.version || github.ref_name }}.dmg
+            build/Wndr-${{ github.event.inputs.version || github.ref_name }}.dmg
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Look-macOS
+          name: Wndr-macOS
           path: |
-            build/Look-*.dmg
-            build/export/Look.app
+            build/Wndr-*.dmg
+            build/export/Wndr.app
 
   release:
     name: Create Release
@@ -69,7 +69,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Look-macOS
+          name: Wndr-macOS
           path: ./artifacts
 
       - name: Create Release
@@ -80,7 +80,7 @@ jobs:
           files: |
             ./artifacts/*.dmg
           body: |
-            ## Look ${{ github.ref_name }}
+            ## Wndr ${{ github.ref_name }}
 
             ### What's New
             - PDF viewing with highlighting and annotations
@@ -90,14 +90,14 @@ jobs:
             - Native macOS and iPadOS support
 
             ### Installation
-            1. Download Look-${{ github.ref_name }}.dmg
+            1. Download Wndr-${{ github.ref_name }}.dmg
             2. Open the DMG file
-            3. Drag Look.app to your Applications folder
-            4. Launch Look from Applications
+            3. Drag Wndr.app to your Applications folder
+            4. Launch Wndr from Applications
 
             ### System Requirements
             - macOS 14.0 (Sonoma) or later
             - Apple Silicon or Intel Mac
 
             ---
-            *Look is a privacy-focused research workspace that stores all data locally.*
+            *Wndr is a privacy-focused research workspace that stores all data locally.*

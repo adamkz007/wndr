@@ -5,7 +5,7 @@
 
 ## Entities
 
-All entities are implemented in `LookModel.xcdatamodeld`.
+All entities are implemented in `WndrModel.xcdatamodeld`.
 
 ### Document ✅
 | Attribute | Type | Description |
@@ -140,9 +140,9 @@ Library Root/
 ├── Attachments/
 │   └── <attachment-uuid>/<original-filename>
 ├── Index/
-│   ├── Look.sqlite (Core Data store)
-│   ├── Look.sqlite-shm
-│   ├── Look.sqlite-wal
+│   ├── Wndr.sqlite (Core Data store)
+│   ├── Wndr.sqlite-shm
+│   ├── Wndr.sqlite-wal
 │   └── Thumbnails/
 │       └── <doc-uuid>.png (80x100px, generated on import)
 └── Cache/
@@ -168,7 +168,7 @@ Library Root/
 Data Transfer Objects decouple Core Data entities from views:
 
 ```swift
-// DocumentDTO (LookData)
+// DocumentDTO (WndrData)
 struct DocumentDTO {
     let id: UUID
     var title: String
@@ -182,7 +182,7 @@ struct DocumentDTO {
     var collectionID: UUID?
 }
 
-// DocumentItem (LookKit - UI model)
+// DocumentItem (WndrKit - UI model)
 struct DocumentItem {
     let id: UUID
     var title: String

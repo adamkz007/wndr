@@ -21,9 +21,9 @@ Library Root/
 ├── Attachments/
 │   └── <attachment-uuid>/<file>    # Note attachments
 ├── Index/
-│   ├── Look.sqlite                 # Core Data store
-│   ├── Look.sqlite-shm             # SQLite shared memory
-│   ├── Look.sqlite-wal             # SQLite write-ahead log
+│   ├── Wndr.sqlite                 # Core Data store
+│   ├── Wndr.sqlite-shm             # SQLite shared memory
+│   ├── Wndr.sqlite-wal             # SQLite write-ahead log
 │   └── Thumbnails/
 │       └── <doc-uuid>.png          # 80×100px thumbnails (auto-generated on import)
 └── Cache/

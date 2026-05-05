@@ -1,10 +1,10 @@
-# Look Implementation Status
+# Wndr Implementation Status
 
 **Last Updated:** February 7, 2026 (EPUB Support, iPadOS Port, Search, Formatting Toolbar, Status Bar, Drag-to-Collections)
 
 ## Overview
 
-Look is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, notes, and annotations with deep linking capabilities. This document tracks the implementation progress.
+Wndr is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, notes, and annotations with deep linking capabilities. This document tracks the implementation progress.
 
 ## Current Phase: MVP Development
 
@@ -21,13 +21,13 @@ Look is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, not
   - `LibraryRootStore` added `EPUBs/` directory and `Cache/EPUB/` for extracted content
   - Import panel and drag-and-drop updated to accept `.epub` alongside `.pdf`
   - SHA-256 deduplication works for EPUBs just like PDFs
-- **EPUB Parser (LookData):**
+- **EPUB Parser (WndrData):**
   - Pure Swift ZIP reader using Apple's Compression framework (cross-platform, no third-party dependencies)
   - Parses EPUB structure: `container.xml` → OPF → manifest + spine
   - Extracts metadata (title, authors, language, publisher, description, cover image)
   - Reads NCX/XHTML Table of Contents for chapter titles
   - Cover image extraction for thumbnail generation
-- **EPUB Reader UI (LookKit):**
+- **EPUB Reader UI (WndrKit):**
   - WKWebView-based reader with chapter-by-chapter navigation
   - **Customizable Reader Settings:**
     - Font size slider (12pt–32pt)
@@ -55,26 +55,26 @@ Look is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, not
 ### iPadOS Port (Feb 7, 2026)
 - **Cross-Platform Architecture:**
   - Created `PlatformCompat.swift` with type aliases (`PlatformImage`, `PlatformColor`) and cross-platform helpers
-  - All shared frameworks (`LookKit`, `LookData`, `LookPDF`, `LookNotes`, `LookAutomation`) now compile for both macOS and iPadOS
+  - All shared frameworks (`WndrKit`, `WndrData`, `WndrPDF`, `WndrNotes`, `WndrAutomation`) now compile for both macOS and iPadOS
   - Platform-conditional compilation via `#if canImport(AppKit)` / `#if canImport(UIKit)` and `#if os(macOS)` / `#if os(iOS)`
-- **LookData Adaptations:**
+- **WndrData Adaptations:**
   - `ThumbnailService`: Replaced `NSBitmapImageRep` with cross-platform `CGBitmapContext` → `UIImage.pngData()` on iPadOS
   - `LibraryRootStore`: iPadOS uses standard bookmarks (no security scope needed in app sandbox); added `defaultiPadLibraryURL()` for Documents-based library
-- **LookPDF Adaptations:**
+- **WndrPDF Adaptations:**
   - `PDFViewRepresentable`: Dual implementation — `NSViewRepresentable` on macOS, `UIViewRepresentable` on iPadOS
   - Shared `PDFViewCoordinator` for page/selection notifications across both platforms
   - iPadOS uses `usePageViewController(true)` for smooth touch scrolling
   - `PDFViewerViewModel`: Replaced `NSImage.lockFocus()` thumbnailing with cross-platform `CGBitmapContext`
   - `PDFAnnotationBridge`: `NSColor` → `PlatformColor` throughout
   - `AnnotationToolbarView`: `NSCursor` gated behind `#if canImport(AppKit)`, `AnnotationColorOption.platformColor` replaces `.nsColor`
-- **LookNotes Adaptations:**
+- **WndrNotes Adaptations:**
   - `MarkdownEditorView`: `HSplitView` → `GeometryReader` + `HStack` on iPadOS; all `NSColor` → `Color.platformXxx` helpers
-- **LookKit Adaptations:**
+- **WndrKit Adaptations:**
   - `ContentAreaView`: `NSImage` → `PlatformImage.loadFromURL()` / `.swiftUIImage`
-  - `LookKit.swift`: `HSplitView` → `HStack` + `Divider` on iPadOS; `NSColor.controlBackgroundColor` → `Color.platformControlBackground`
+  - `WndrKit.swift`: `HSplitView` → `HStack` + `Divider` on iPadOS; `NSColor.controlBackgroundColor` → `Color.platformControlBackground`
   - All sidebar, inspector, and search views: replaced `NSColor` references with cross-platform `Color` extensions
-- **iPadOS App Target (`LookApp_iPad`):**
-  - `LookApp_iPad.swift`: Full SwiftUI entry point with same `RootView` → `ContentWrapper` architecture
+- **iPadOS App Target (`WndrApp_iPad`):**
+  - `WndrApp_iPad.swift`: Full SwiftUI entry point with same `RootView` → `ContentWrapper` architecture
   - `AppEnvironment_iPad`: Central dependency container with auto-library-creation for iPadOS sandbox
   - `LibraryRootCoordinator_iPad`: Auto-creates library in Documents (no folder picker needed)
   - `ImportCoordinator_iPad`: Uses `UIDocumentPickerViewController` for PDF import with security-scoped resource access
@@ -328,7 +328,7 @@ Look is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, not
   - 80×100px PNG thumbnails from first page
   - Validation, regeneration, bulk operations
 - LibraryRootStore with directory management helpers
-- LookLogger for structured OSLog-based logging
+- WndrLogger for structured OSLog-based logging
 
 ### Application Wiring ✅
 - AppEnvironment orchestrating all services
@@ -410,19 +410,19 @@ Look is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, not
 
 ### Module Structure
 ```
-LookApp/          - Main app, coordinators, wiring
-LookKit/          - Reusable UI components, view models
-LookData/         - Core Data, services, persistence
-LookPDF/          - PDF viewing, annotations
-LookNotes/        - Markdown editing, backlinks
-LookAutomation/   - Shortcuts, AppleScript
+WndrApp/          - Main app, coordinators, wiring
+WndrKit/          - Reusable UI components, view models
+WndrData/         - Core Data, services, persistence
+WndrPDF/          - PDF viewing, annotations
+WndrNotes/        - Markdown editing, backlinks
+WndrAutomation/   - Shortcuts, AppleScript
 ```
 
 ### Key Files
 
 | File | Purpose |
 |------|---------|
-| `LookApp.swift` | App entry point, window management |
+| `WndrApp.swift` | App entry point, window management |
 | `AppEnvironment.swift` | Service container, dependency injection |
 | `PersistenceController.swift` | Core Data stack management |
 | `ImportService.swift` | PDF import pipeline |
@@ -439,7 +439,7 @@ LookAutomation/   - Shortcuts, AppleScript
 | `NoteEditorViewModel.swift` | Note editor state management |
 | `ContentAreaView.swift` | Document/Note lists, context menus, info popover |
 | `LibrarySidebarView.swift` | Navigation sidebar with rename support |
-| `LookKit.swift` | Main three-pane layout, toolbar |
+| `WndrKit.swift` | Main three-pane layout, toolbar |
 
 ### Data Flow
 ```

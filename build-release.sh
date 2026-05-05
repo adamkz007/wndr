@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# Build and package Look app for release
+# Build and package Wndr app for release
 # Usage: ./build-release.sh [version]
 
 set -e
 
 VERSION=${1:-"1.0.0"}
 BUILD_DIR="build"
-ARCHIVE_PATH="$BUILD_DIR/Look.xcarchive"
+ARCHIVE_PATH="$BUILD_DIR/Wndr.xcarchive"
 EXPORT_PATH="$BUILD_DIR/export"
-DMG_PATH="$BUILD_DIR/Look-v$VERSION.dmg"
+DMG_PATH="$BUILD_DIR/Wndr-v$VERSION.dmg"
 
-echo "🔨 Building Look v$VERSION..."
+echo "Building Wndr v$VERSION..."
 
 # Clean build directory
 echo "Cleaning build directory..."
@@ -20,8 +20,8 @@ mkdir -p "$BUILD_DIR"
 
 # Build archive
 echo "Building archive..."
-xcodebuild -project Look.xcodeproj \
-    -scheme Look \
+xcodebuild -project Wndr.xcodeproj \
+    -scheme WndrApp \
     -configuration Release \
     -archivePath "$ARCHIVE_PATH" \
     clean archive
@@ -36,10 +36,10 @@ xcodebuild -exportArchive \
 # Create DMG
 echo "Creating DMG..."
 mkdir -p "$BUILD_DIR/dmg"
-cp -R "$EXPORT_PATH/Look.app" "$BUILD_DIR/dmg/"
+cp -R "$EXPORT_PATH/Wndr.app" "$BUILD_DIR/dmg/"
 
 # Create a simple DMG with the app
-hdiutil create -volname "Look" \
+hdiutil create -volname "Wndr" \
     -srcfolder "$BUILD_DIR/dmg" \
     -ov -format UDZO \
     "$DMG_PATH"

@@ -16,11 +16,11 @@ public struct TelemetryEvent: Equatable {
 }
 
 public final class TelemetryClient {
-    private let logger: LookLogger
-    private let queue = DispatchQueue(label: "com.look.telemetry", qos: .utility)
+    private let logger: WndrLogger
+    private let queue = DispatchQueue(label: "com.wndr.telemetry", qos: .utility)
 
-    public init(subsystem: String = "com.look.app", category: String = "telemetry") {
-        self.logger = LookLogger(subsystem: subsystem, category: category)
+    public init(subsystem: String = "com.wndr.app", category: String = "telemetry") {
+        self.logger = WndrLogger(subsystem: subsystem, category: category)
     }
 
     public func record(event: TelemetryEvent) {

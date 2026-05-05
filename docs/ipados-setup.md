@@ -1,69 +1,69 @@
 # iPadOS Target Setup Guide
 
-This document explains how to add the iPadOS target to the Look Xcode project.
+This document explains how to add the iPadOS target to the Wndr Xcode project.
 
 ## Overview
 
-The Look codebase now supports both macOS and iPadOS through shared frameworks with platform-conditional compilation. The shared frameworks (`LookKit`, `LookData`, `LookPDF`, `LookNotes`, `LookAutomation`) compile for both platforms. Platform-specific app shells live in:
+The Wndr codebase now supports both macOS and iPadOS through shared frameworks with platform-conditional compilation. The shared frameworks (`WndrKit`, `WndrData`, `WndrPDF`, `WndrNotes`, `WndrAutomation`) compile for both platforms. Platform-specific app shells live in:
 
-- `Sources/LookApp/` — macOS entry point
-- `Sources/LookApp_iPad/` — iPadOS entry point
+- `Sources/WndrApp/` — macOS entry point
+- `Sources/WndrApp_iPad/` — iPadOS entry point
 
 ## Adding the iPadOS Target in Xcode
 
 ### Step 1: Add New Target
 
-1. Open `Look.xcodeproj` in Xcode
+1. Open `Wndr.xcodeproj` in Xcode
 2. Go to **File → New → Target...**
 3. Select **iOS → App**
 4. Configure the fields as follows:
-   - **Product Name:** `LookApp_iPad`
+   - **Product Name:** `WndrApp_iPad`
    - **Team:** Select your development team (e.g. "Adam KZ (Personal Team)")
-   - **Organization Identifier:** `com.look` — This is the reverse-DNS prefix that, combined with the Product Name, forms the Bundle Identifier. Use `com.look` to keep it consistent with the macOS target (`com.look.app`). The resulting Bundle Identifier will be `com.look.LookApp-iPad`. You can edit it later under the target's **General** tab if you prefer `com.look.app.ipad`.
+   - **Organization Identifier:** `com.wndr` — This is the reverse-DNS prefix that, combined with the Product Name, forms the Bundle Identifier. Use `com.wndr` to keep it consistent with the macOS target (`com.wndr.app`). The resulting Bundle Identifier will be `com.wndr.WndrApp-iPad`. You can edit it later under the target's **General** tab if you prefer `com.wndr.app.ipad`.
    - **Interface:** SwiftUI
    - **Language:** Swift
    - **Testing System:** None (tests will be added later)
-   - **Storage:** None (the project uses Core Data via the `LookData` framework, not SwiftData)
+   - **Storage:** None (the project uses Core Data via the `WndrData` framework, not SwiftData)
    - Leave **Host in CloudKit** unchecked
-   - **Project:** Look
+   - **Project:** Wndr
 5. Click **Finish**
 
 ### Step 2: Remove Auto-Generated Files
 
 Xcode creates default files. Remove them and use our source files instead:
 
-1. Delete the auto-generated `ContentView.swift`, `LookApp_iPadApp.swift`, and `Assets.xcassets` from the new target
-2. Add the following source files to the `LookApp_iPad` target:
-   - `Sources/LookApp_iPad/Sources/LookApp_iPad.swift`
-   - `Sources/LookApp_iPad/Sources/AppEnvironment_iPad.swift`
-   - `Sources/LookApp_iPad/Sources/LibraryRootCoordinator_iPad.swift`
-   - `Sources/LookApp_iPad/Sources/ImportCoordinator_iPad.swift`
-   - `Sources/LookApp_iPad/Sources/ContentWrapper_iPad.swift`
-   - `Sources/LookApp_iPad/Sources/iPadKeyboardShortcuts.swift`
-3. Add `Sources/LookApp_iPad/Resources/Info.plist` as the Info.plist for the target
+1. Delete the auto-generated `ContentView.swift`, `WndrApp_iPadApp.swift`, and `Assets.xcassets` from the new target
+2. Add the following source files to the `WndrApp_iPad` target:
+   - `Sources/WndrApp_iPad/Sources/WndrApp_iPad.swift`
+   - `Sources/WndrApp_iPad/Sources/AppEnvironment_iPad.swift`
+   - `Sources/WndrApp_iPad/Sources/LibraryRootCoordinator_iPad.swift`
+   - `Sources/WndrApp_iPad/Sources/ImportCoordinator_iPad.swift`
+   - `Sources/WndrApp_iPad/Sources/ContentWrapper_iPad.swift`
+   - `Sources/WndrApp_iPad/Sources/iPadKeyboardShortcuts.swift`
+3. Add `Sources/WndrApp_iPad/Resources/Info.plist` as the Info.plist for the target
 
 ### Step 3: Add Framework Dependencies
 
 The iPadOS target needs to link the same shared frameworks:
 
-1. In the **Project Navigator** (left sidebar), click the top-level **Look** project file (the blue icon at the very top of the file tree)
-2. In the editor area that appears, you'll see a list of **TARGETS** in the left column. Click **LookApp_iPad**
+1. In the **Project Navigator** (left sidebar), click the top-level **Wndr** project file (the blue icon at the very top of the file tree)
+2. In the editor area that appears, you'll see a list of **TARGETS** in the left column. Click **WndrApp_iPad**
 3. Along the top of the editor you'll see tabs: **General**, **Signing & Capabilities**, **Resource Tags**, **Info**, **Build Settings**, etc. Click the **General** tab
 4. Scroll down to the **Frameworks, Libraries, and Embedded Content** section
 5. Click the **+** button at the bottom of that section
 6. In the search/filter dialog, find and add each of these (one at a time):
-   - `LookKit.framework`
-   - `LookData.framework`
-   - `LookPDF.framework`
-   - `LookNotes.framework`
-   - `LookAutomation.framework`
+   - `WndrKit.framework`
+   - `WndrData.framework`
+   - `WndrPDF.framework`
+   - `WndrNotes.framework`
+   - `WndrAutomation.framework`
 7. For each framework, make sure the **Embed** column says **Do Not Embed** (since they're built as part of the same project, not external binaries)
 
 ### Step 4: Configure Framework Targets for iOS
 
 Each shared framework needs to be compiled for iOS as well:
 
-1. For each framework target (`LookKit`, `LookData`, `LookPDF`, `LookNotes`, `LookAutomation`):
+1. For each framework target (`WndrKit`, `WndrData`, `WndrPDF`, `WndrNotes`, `WndrAutomation`):
    - Select the target → **Build Settings**
    - Set **Supported Platforms** to include `iOS`
    - Set **iOS Deployment Target** to `17.0`
@@ -77,11 +77,11 @@ Make sure `Shared/Support/Telemetry.swift` is included in the iPadOS target's co
 
 ### Step 6: Add Core Data Model
 
-The `LookModel.xcdatamodeld` in `LookData` must be accessible to the iPadOS target. Since it's in the `LookData` framework (which is linked), this should work automatically.
+The `WndrModel.xcdatamodeld` in `WndrData` must be accessible to the iPadOS target. Since it's in the `WndrData` framework (which is linked), this should work automatically.
 
 ### Step 7: Configure Signing & Capabilities
 
-1. Select the `LookApp_iPad` target
+1. Select the `WndrApp_iPad` target
 2. Under **Signing & Capabilities**:
    - Enable **Automatic Signing**
    - Set your Development Team
@@ -94,8 +94,8 @@ The `LookModel.xcdatamodeld` in `LookData` must be accessible to the iPadOS targ
 Key build settings for the iPadOS target:
 
 ```
-PRODUCT_BUNDLE_IDENTIFIER = com.look.app.ipad
-INFOPLIST_FILE = Sources/LookApp_iPad/Resources/Info.plist
+PRODUCT_BUNDLE_IDENTIFIER = com.wndr.app.ipad
+INFOPLIST_FILE = Sources/WndrApp_iPad/Resources/Info.plist
 TARGETED_DEVICE_FAMILY = 2  (iPad only)
 IPHONEOS_DEPLOYMENT_TARGET = 17.0
 SWIFT_VERSION = 5.9
@@ -135,10 +135,10 @@ SWIFT_VERSION = 5.9
 
 ## Testing
 
-Build and run the `LookApp_iPad` scheme on an iPad simulator or device:
+Build and run the `WndrApp_iPad` scheme on an iPad simulator or device:
 
 ```bash
-xcodebuild -scheme LookApp_iPad -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M4)' build
+xcodebuild -scheme WndrApp_iPad -destination 'platform=iOS Simulator,name=iPad Pro 13-inch (M4)' build
 ```
 
 ## Feature Parity Checklist

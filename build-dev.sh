@@ -5,16 +5,16 @@
 
 set -e
 
-echo "🔨 Building Look (Debug)..."
+echo "Building Wndr (Debug)..."
 
 # Build for running
-xcodebuild -project Look.xcodeproj \
-    -scheme Look \
+xcodebuild -project Wndr.xcodeproj \
+    -scheme WndrApp \
     -configuration Debug \
     -derivedDataPath build/DerivedData \
     build
 
-APP_PATH="build/DerivedData/Build/Products/Debug/Look.app"
+APP_PATH="build/DerivedData/Build/Products/Debug/Wndr.app"
 
 if [ -d "$APP_PATH" ]; then
     echo "✅ Build successful!"

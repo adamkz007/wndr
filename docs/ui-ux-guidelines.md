@@ -204,13 +204,13 @@ Accessible via info circle icon in toolbar (disabled when no document selected):
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| LookPrimaryView | LookKit.swift | Main three-pane container with toolbar |
+| LookPrimaryView | WndrKit.swift | Main three-pane container with toolbar |
 | LibrarySidebarView | LibrarySidebarView.swift | Sidebar navigation with rename, drag-and-drop targets |
 | ContentSearchBar | ContentAreaView.swift | Search bar with filename/content mode picker |
-| ContentListView | LookKit.swift | Document/note list with search |
+| ContentListView | WndrKit.swift | Document/note list with search |
 | ContentListStatusBar | ContentAreaView.swift | Item count and storage size display |
 | SearchResultsListView | ContentAreaView.swift | Unified search results with snippets |
-| DetailAreaView | LookKit.swift | PDF/editor + inspector |
+| DetailAreaView | WndrKit.swift | PDF/editor + inspector |
 | DocumentListView | ContentAreaView.swift | Document row list with thumbnails |
 | DocumentRow | ContentAreaView.swift | Single document with thumbnail, collection badge, tags |
 | NoteListView | ContentAreaView.swift | Note row list with pin indicators |

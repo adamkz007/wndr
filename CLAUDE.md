@@ -4,13 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Look is a native macOS + iPadOS research workspace that combines PDF reading with Markdown note-taking and deep linking between the two. All data is stored locally with privacy-first defaults. The app is built using SwiftUI with modular frameworks and Core Data persistence. Shared frameworks compile for both platforms via `#if canImport(AppKit)` / `#if canImport(UIKit)` conditional compilation.
+Wndr is a native macOS + iPadOS research workspace that combines PDF reading with Markdown note-taking and deep linking between the two. All data is stored locally with privacy-first defaults. The app is built using SwiftUI with modular frameworks and Core Data persistence. Shared frameworks compile for both platforms via `#if canImport(AppKit)` / `#if canImport(UIKit)` conditional compilation.
 
 ## Build & Development Commands
 
 Since this is an Xcode project without Package.swift or traditional build tools, development is done through Xcode:
 
-- **Open Project:** Open `Look.xcodeproj` or `Look.xcworkspace` in Xcode
+- **Open Project:** Open `Wndr.xcodeproj` or `Wndr.xcworkspace` in Xcode
 - **Build:** Use Xcode's build command (Cmd+B) or `xcodebuild` if Xcode is installed
 - **Run:** Use Xcode's run command (Cmd+R)
 
@@ -22,50 +22,50 @@ The codebase uses a modular architecture with distinct frameworks:
 
 ### Module Boundaries
 
-- **LookApp** – Main macOS target, app entry point, window management, and SwiftUI shell
- - Entry point: `Sources/LookApp/Sources/LookApp.swift`
+- **WndrApp** – Main macOS target, app entry point, window management, and SwiftUI shell
+ - Entry point: `Sources/WndrApp/Sources/WndrApp.swift`
  - Handles library location selection flow via `LibraryRootCoordinator`
  - Integrates all other frameworks
 
-- **LookApp_iPad** – iPadOS target, app entry point, touch-optimized UI shell
- - Entry point: `Sources/LookApp_iPad/Sources/LookApp_iPad.swift`
+- **WndrApp_iPad** – iPadOS target, app entry point, touch-optimized UI shell
+ - Entry point: `Sources/WndrApp_iPad/Sources/WndrApp_iPad.swift`
  - Uses `UIDocumentPickerViewController` for PDF import
  - Auto-creates library in app Documents directory
  - Full feature parity with macOS version
 
-- **LookKit** – Shared cross-platform UI components, view models, and SwiftUI utilities
+- **WndrKit** – Shared cross-platform UI components, view models, and SwiftUI utilities
  - Contains `FeatureFlags` for toggling experimental capabilities
  - Provides reusable UI components (document browser, tag pickers, split views)
  - `PlatformCompat.swift`: Type aliases (`PlatformImage`, `PlatformColor`) and cross-platform helpers
 
-- **LookData** – Persistence layer with Core Data + SQLite FTS
-  - Core Data model: `Sources/LookData/Resources/LookModel.xcdatamodeld`
+- **WndrData** – Persistence layer with Core Data + SQLite FTS
+  - Core Data model: `Sources/WndrData/Resources/WndrModel.xcdatamodeld`
   - `PersistenceController` manages Core Data stack with merge policies and background contexts
   - `LibraryRootStore` handles security-scoped bookmarks for sandboxed file access
-  - Logging via `LookLogger` (OSLog wrapper with categories: persistence, library, telemetry)
+  - Logging via `WndrLogger` (OSLog wrapper with categories: persistence, library, telemetry)
 
-- **LookPDF** – PDFKit integration, annotation logic, OCR orchestration
+- **WndrPDF** – PDFKit integration, annotation logic, OCR orchestration
   - `PDFAnnotationBridge` handles annotation coordinate mapping
 
-- **LookNotes** – Markdown editing, backlink engine, templates
+- **WndrNotes** – Markdown editing, backlink engine, templates
   - `NoteTemplateRegistry` manages Markdown templates
 
-- **LookAutomation** – Shortcuts, AppleScript handlers, Quick Capture
+- **WndrAutomation** – Shortcuts, AppleScript handlers, Quick Capture
   - `ShortcutActions` exposes automation capabilities
 
 ### Data Flow
 
 ```
-File Import → LookData Importer → Library Storage
-          → LookPDF processes PDF (OCR + text extraction)
+File Import → WndrData Importer → Library Storage
+          → WndrPDF processes PDF (OCR + text extraction)
           → Indexer updates FTS + vector store
-          → LookNotes links highlights ↔ notes through AnchorService
-UI uses ObservedObject wrappers over LookData entities via Combine publishers
+          → WndrNotes links highlights ↔ notes through AnchorService
+UI uses ObservedObject wrappers over WndrData entities via Combine publishers
 ```
 
 ## Core Data Model
 
-Located in `Sources/LookData/Resources/LookModel.xcdatamodeld`:
+Located in `Sources/WndrData/Resources/WndrModel.xcdatamodeld`:
 
 **Key Entities (7):**
 - `Document` – PDF metadata, checksum, OCR status, page count
@@ -91,7 +91,7 @@ Library Root/
 ├── Notes/<note-uuid>.md
 ├── Attachments/<attachment-uuid>/<original-filename>
 ├── Index/
-│   ├── Look.sqlite (Core Data)
+│   ├── Wndr.sqlite (Core Data)
 │   ├── Search.sqlite (FTS5)
 │   └── Thumbnails/
 └── Cache/
@@ -103,12 +103,12 @@ All file access uses security-scoped bookmarks for sandbox compliance.
 
 ## Logging
 
-Use `LookLogger` instances for structured logging via OSLog:
-- `LookLogger.persistence` – Core Data operations
-- `LookLogger.libraryRoot` – Library location and file operations
-- `LookLogger.telemetry` – Analytics and diagnostics
+Use `WndrLogger` instances for structured logging via OSLog:
+- `WndrLogger.persistence` – Core Data operations
+- `WndrLogger.libraryRoot` – Library location and file operations
+- `WndrLogger.telemetry` – Analytics and diagnostics
 
-Create new loggers: `LookLogger(category: "your-category")`
+Create new loggers: `WndrLogger(category: "your-category")`
 
 ## Development Phase
 
@@ -157,12 +157,12 @@ The `docs/` directory contains comprehensive design specifications:
 ## Services Architecture
 
 ### Implemented Services
-- **ImportService** (`LookData/Sources/ImportService.swift`) – PDF import, SHA-256 deduplication, metadata extraction, OCR detection
-- **DocumentService** (`LookData/Sources/DocumentService.swift`) – CRUD for documents and notes, metadata editing, storage calculation, content search
-- **CollectionService** (`LookData/Sources/CollectionService.swift`) – Collection/tag management, exclusive assignment, document-tag associations
-- **AnnotationService** (`LookData/Sources/AnnotationService.swift`) – Highlight/note creation, color presets, coordinate storage, bulk operations
-- **ThumbnailService** (`LookData/Sources/ThumbnailService.swift`) – PDF thumbnail generation (80×100px PNG), validation, caching, bulk regeneration
-- **LibraryRootStore** (`LookData/Sources/LibraryRootStore.swift`) – Security-scoped bookmarks, directory management
+- **ImportService** (`WndrData/Sources/ImportService.swift`) – PDF import, SHA-256 deduplication, metadata extraction, OCR detection
+- **DocumentService** (`WndrData/Sources/DocumentService.swift`) – CRUD for documents and notes, metadata editing, storage calculation, content search
+- **CollectionService** (`WndrData/Sources/CollectionService.swift`) – Collection/tag management, exclusive assignment, document-tag associations
+- **AnnotationService** (`WndrData/Sources/AnnotationService.swift`) – Highlight/note creation, color presets, coordinate storage, bulk operations
+- **ThumbnailService** (`WndrData/Sources/ThumbnailService.swift`) – PDF thumbnail generation (80×100px PNG), validation, caching, bulk regeneration
+- **LibraryRootStore** (`WndrData/Sources/LibraryRootStore.swift`) – Security-scoped bookmarks, directory management
 
 ### Pending Services (Documented in `docs/architecture.md`)
 - `OCRService` – VisionKit integration for text extraction
@@ -180,11 +180,11 @@ When implementing these, follow protocol-based design for testability and future
 - Wrap file operations in `NSFileCoordinator` / `NSFilePresenter` to avoid race conditions
 - Lazy-load heavy views (PDF pages) using `@StateObject` caches
 - OSLog categories for all logging (never print/NSLog)
-- Feature flags via `FeatureFlags` in LookKit for experimental capabilities
+- Feature flags via `FeatureFlags` in WndrKit for experimental capabilities
 
 ## Error Handling
 
-- Log errors via `LookLogger` with appropriate severity (error, fault)
+- Log errors via `WndrLogger` with appropriate severity (error, fault)
 - Graceful fallbacks for OCR failures or encrypted PDFs (surface status to user)
 - Conflict logging for Core Data merge policy violations
 - Centralized error handling with user-facing alerts via `LibraryRootCoordinator.activeAlert`

@@ -1,4 +1,4 @@
-# Look Product Specification
+# Wndr Product Specification
 
 > **Last Updated:** February 7, 2026
 > **Implementation Status:** MVP feature set complete
@@ -20,7 +20,7 @@
 ## User Workflows
 
 ### 1. Import & Organize ✅
-- ✅ Drag-and-drop PDFs into Look
+- ✅ Drag-and-drop PDFs into Wndr
 - ✅ Import via file picker (⌘I)
 - ✅ Assign tags and collections during import
 - ✅ Automatic SHA-256 deduplication
@@ -181,6 +181,6 @@
 
 ## Open Questions
 
-- Should Look expose a plug-in architecture for custom import pipelines?
+- Should Wndr expose a plug-in architecture for custom import pipelines?
 - Do enterprise customers require integration with on-prem document management systems?
 - Which file metadata fields should be surfaced to users vs. kept internal?

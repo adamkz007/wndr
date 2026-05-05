@@ -1,8 +1,8 @@
-# Look
+# Wndr
 
 > **Last Updated:** February 7, 2026
 
-Look is a native macOS research workspace that combines a high-performance PDF reader with Markdown note-taking and deep linking between the two. All user data is stored locally, giving researchers full control over their library while still offering advanced organization tools inspired by professional research apps such as DEVONthink and Keep It.
+Wndr is a native macOS research workspace that combines a high-performance PDF reader with Markdown note-taking and deep linking between the two. All user data is stored locally, giving researchers full control over their library while still offering advanced organization tools inspired by professional research apps such as DEVONthink and Keep It.
 
 ## Vision
 
@@ -41,12 +41,12 @@ The codebase uses a modular architecture with 6 frameworks:
 
 | Module | Purpose | Files |
 |--------|---------|-------|
-| **LookApp** | App entry point, window management, coordinators | 5 |
-| **LookKit** | Three-pane UI, sidebar, content area, view models | 9 |
-| **LookData** | Core Data persistence, services, file storage | 9 |
-| **LookPDF** | PDF viewer, annotations, annotation bridge | 5 |
-| **LookNotes** | Markdown editor, templates, note view model | 4 |
-| **LookAutomation** | Shortcuts, AppleScript (scaffolding) | 2 |
+| **WndrApp** | App entry point, window management, coordinators | 5 |
+| **WndrKit** | Three-pane UI, sidebar, content area, view models | 9 |
+| **WndrData** | Core Data persistence, services, file storage | 9 |
+| **WndrPDF** | PDF viewer, annotations, annotation bridge | 5 |
+| **WndrNotes** | Markdown editor, templates, note view model | 4 |
+| **WndrAutomation** | Shortcuts, AppleScript (scaffolding) | 2 |
 
 **35 Swift source files** across all modules.
 
@@ -69,12 +69,12 @@ The codebase uses a modular architecture with 6 frameworks:
 
 ```
 Sources/
-├── LookApp/       App entry point, coordinators, wiring
-├── LookKit/       Reusable UI components, view models
-├── LookData/      Core Data, services, persistence
-├── LookPDF/       PDF viewing, annotations
-├── LookNotes/     Markdown editing, templates
-└── LookAutomation/ Shortcuts, AppleScript (scaffolding)
+├── WndrApp/       App entry point, coordinators, wiring
+├── WndrKit/       Reusable UI components, view models
+├── WndrData/      Core Data, services, persistence
+├── WndrPDF/       PDF viewing, annotations
+├── WndrNotes/     Markdown editing, templates
+└── WndrAutomation/ Shortcuts, AppleScript (scaffolding)
 
 docs/              Design specifications
 ├── product-spec.md
@@ -88,7 +88,7 @@ docs/              Design specifications
 
 ## Getting Started
 
-1. Open `Look.xcodeproj` or `Look.xcworkspace` in Xcode
+1. Open `Wndr.xcodeproj` or `Wndr.xcworkspace` in Xcode
 2. Build with ⌘B and run with ⌘R
 3. On first launch, choose a library location — the directory structure is created automatically
 4. Import PDFs via ⌘I or drag-and-drop
