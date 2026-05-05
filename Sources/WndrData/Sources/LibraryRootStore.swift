@@ -274,6 +274,40 @@ public actor LibraryRootStore {
         }
     }
 
+    /// Deletes all library-managed assets for a document, including its stored file,
+    /// extracted EPUB cache, and thumbnail.
+    public func deleteStoredDocumentAssets(
+        for documentID: UUID,
+        preferredFileURL: URL?,
+        in libraryURL: URL
+    ) throws {
+        let pdfDirectoryURL = url(for: .pdfs, in: libraryURL)
+            .appendingPathComponent(documentID.uuidString, isDirectory: true)
+        let epubDirectoryURL = url(for: .epubs, in: libraryURL)
+            .appendingPathComponent(documentID.uuidString, isDirectory: true)
+        let epubCacheDirectoryURL = epubCacheURL(for: documentID, in: libraryURL)
+        let thumbnailFileURL = thumbnailURL(for: documentID, in: libraryURL)
+
+        var urlsToDelete: [URL] = [pdfDirectoryURL, epubDirectoryURL, epubCacheDirectoryURL, thumbnailFileURL]
+
+        if let preferredFileURL,
+           preferredFileURL.path.hasPrefix(libraryURL.path),
+           !urlsToDelete.contains(preferredFileURL) {
+            urlsToDelete.append(preferredFileURL)
+        }
+
+        for url in urlsToDelete {
+            guard fileManager.fileExists(atPath: url.path) else { continue }
+            do {
+                try fileManager.removeItem(at: url)
+                logger.info("Deleted stored asset at \(url.path)")
+            } catch {
+                logger.error("Failed to delete stored asset at \(url.path): \(error.localizedDescription)")
+                throw error
+            }
+        }
+    }
+
     public func thumbnailURL(for documentID: UUID, in libraryURL: URL) -> URL {
         let indexURL = url(for: .index, in: libraryURL)
         return indexURL.appendingPathComponent("Thumbnails", isDirectory: true)

@@ -143,6 +143,7 @@ public enum AnnotationColorOption: String, CaseIterable {
     public var nsColor: PlatformColor { platformColor }
 }
 
+#if DEBUG
 #Preview {
     AnnotationToolbarView(
         selectedTool: .constant(.highlight),
@@ -150,3 +151,4 @@ public enum AnnotationColorOption: String, CaseIterable {
         onClearAll: {}
     )
 }
+#endif

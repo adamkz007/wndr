@@ -670,7 +670,11 @@ private struct RootView: View {
 
     private func handleDeleteDocument(documentID: UUID) {
         Task {
-            try? await environment.documentService.deleteDocument(documentID)
+            try? await environment.documentService.deleteDocument(
+                documentID,
+                libraryURL: environment.libraryURL,
+                libraryStore: environment.libraryRootStore
+            )
             await MainActor.run {
                 refreshDocumentList()
             }

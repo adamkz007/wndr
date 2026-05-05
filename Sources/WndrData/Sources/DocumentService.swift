@@ -187,13 +187,27 @@ public final class DocumentService: ObservableObject {
         }
     }
 
-    public func deleteDocument(_ documentID: UUID) async throws {
+    public func deleteDocument(
+        _ documentID: UUID,
+        libraryURL: URL? = nil,
+        libraryStore: LibraryRootStore? = nil
+    ) async throws {
         let context = persistenceController.newBackgroundContext()
         let fetchRequest = Document.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
 
         let results = try context.fetch(fetchRequest)
         guard let document = results.first else { return }
+
+        let storedFileURL = document.fileURL
+
+        if let libraryURL, let libraryStore {
+            try await libraryStore.deleteStoredDocumentAssets(
+                for: documentID,
+                preferredFileURL: storedFileURL,
+                in: libraryURL
+            )
+        }
 
         context.delete(document)
         try context.save()

@@ -261,6 +261,7 @@ struct MarkdownPreviewView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     MarkdownEditorView(viewModel: NoteEditorViewModel(
         noteID: UUID(),
@@ -269,3 +270,4 @@ struct MarkdownPreviewView: View {
     ))
     .frame(width: 800, height: 600)
 }
+#endif
