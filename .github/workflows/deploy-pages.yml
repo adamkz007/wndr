@@ -28,6 +28,9 @@ jobs:
         run: |
           mkdir -p _site
           cp index.html _site/index.html
+          if [ -f privacy.html ]; then cp privacy.html _site/privacy.html; fi
+          mkdir -p _site/docs
+          if [ -f docs/wndr.png ]; then cp docs/wndr.png _site/docs/wndr.png; fi
           if [ -f icon.png ]; then cp icon.png _site/icon.png; fi
           if [ -f cylinder.svg ]; then cp cylinder.svg _site/cylinder.svg; fi
           touch _site/.nojekyll

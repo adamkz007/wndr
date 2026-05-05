@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy - Wndr</title>
+  <meta name="description" content="Privacy information for the Wndr website and app.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="docs/wndr.png">
+  <link rel="apple-touch-icon" href="docs/wndr.png">
+  <style>
+    :root {
+      --bg: #f7f3ec;
+      --surface: rgba(255,255,255,.78);
+      --text: #201a16;
+      --text-secondary: #6f635a;
+      --accent: #6e56cf;
+      --border: rgba(32,26,22,.1);
+      --shadow: 0 24px 80px rgba(32,26,22,.12);
+      --max-w: 980px;
+      --font-body: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      --font-display: "Instrument Serif", Georgia, serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      font-family: var(--font-body);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(244,162,97,.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(110,86,207,.12), transparent 22%),
+        linear-gradient(180deg, #fbf7f1 0%, var(--bg) 100%);
+      line-height: 1.72;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    h1, h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      letter-spacing: -.03em;
+      line-height: .98;
+    }
+
+    .wrap {
+      width: min(calc(100% - 32px), var(--max-w));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(247,243,236,.78);
+      backdrop-filter: saturate(180%) blur(24px);
+      -webkit-backdrop-filter: saturate(180%) blur(24px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .site-header .wrap,
+    .site-footer .wrap {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      letter-spacing: -.03em;
+    }
+
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.16);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.64);
+      border: 1px solid var(--border);
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      transition: transform .2s, background .2s, color .2s;
+    }
+
+    .nav-links a:hover,
+    .button:hover {
+      transform: translateY(-1px);
+      background: rgba(255,255,255,.9);
+      color: var(--text);
+    }
+
+    main {
+      padding: 40px 0 84px;
+    }
+
+    .hero-card,
+    .summary-card,
+    .policy-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .hero-card {
+      padding: 40px;
+      border-radius: 32px;
+      margin-bottom: 24px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: var(--accent);
+      background: rgba(110,86,207,.08);
+      border: 1px solid rgba(110,86,207,.16);
+      font-size: .82rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 8vw, 5.2rem);
+      max-width: 10ch;
+      margin: 18px 0 16px;
+    }
+
+    .hero-card p,
+    .policy-card p,
+    .policy-card li,
+    .summary-card p {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      padding: 24px;
+      border-radius: 24px;
+    }
+
+    .summary-card h2 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .policy-card {
+      padding: 34px;
+      border-radius: 32px;
+      display: grid;
+      gap: 24px;
+    }
+
+    .policy-section {
+      padding-bottom: 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .policy-section:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .policy-section h2 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      margin-bottom: 12px;
+    }
+
+    .policy-section ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .policy-section li::before {
+      content: "-> ";
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .meta {
+      color: var(--text-secondary);
+      font-size: .92rem;
+    }
+
+    .site-footer {
+      padding-bottom: 40px;
+      color: var(--text-secondary);
+      font-size: .92rem;
+    }
+
+    @media (max-width: 840px) {
+      .summary-grid { grid-template-columns: 1fr; }
+      .hero-card,
+      .summary-card,
+      .policy-card { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap">
+      <a href="index.html" class="brand">
+        <img src="docs/wndr.png" alt="Wndr icon">
+        <span>Wndr</span>
+      </a>
+      <nav class="nav-links" aria-label="Privacy navigation">
+        <a href="index.html">Home</a>
+        <a href="https://github.com/adamkz007/wndr">GitHub</a>
+        <a href="https://github.com/adamkz007/wndr/blob/main/docs/storage-and-security.md">Storage Docs</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <div class="wrap">
+      <section class="hero-card">
+        <span class="eyebrow">Privacy</span>
+        <h1>Clear privacy commitments for Wndr.</h1>
+        <p>This page gives visitors a plain-language summary of how the website and product are intended to handle data before they download the app.</p>
+      </section>
+
+      <section class="summary-grid" aria-label="Privacy summary">
+        <article class="summary-card">
+          <h2>Local First</h2>
+          <p>Your library content is meant to stay on your device by default, including imported documents, notes, tags, and related metadata.</p>
+        </article>
+        <article class="summary-card">
+          <h2>No Forced Account</h2>
+          <p>You do not need an online account to browse the site, inspect the repository, or understand the local-first positioning of the app.</p>
+        </article>
+        <article class="summary-card">
+          <h2>Explicit Sharing</h2>
+          <p>Exporting, sharing, or syncing should happen only when you intentionally trigger those actions through product features you control.</p>
+        </article>
+      </section>
+
+      <section class="policy-card">
+        <section class="policy-section">
+          <h2>Website Data</h2>
+          <p>The public website is a lightweight static site. Its purpose is to present product information, release links, and documentation without requiring sign-in.</p>
+          <ul>
+            <li>The site does not describe any ad-tech requirement or behavioral profiling.</li>
+            <li>Downloads route through GitHub release infrastructure.</li>
+            <li>Any future analytics should be clearly disclosed and remain minimal.</li>
+          </ul>
+        </section>
+
+        <section class="policy-section">
+          <h2>Application Data</h2>
+          <p>Wndr is positioned as a local-first research workspace. Based on the current product messaging and repository documentation, the app is designed to keep working materials close to the user.</p>
+          <ul>
+            <li>Documents, notes, collections, tags, and metadata remain on your machine by default.</li>
+            <li>Cloud storage is not presented as a requirement for core usage.</li>
+            <li>Backups, exports, and automation actions should happen through explicit user intent.</li>
+          </ul>
+        </section>
+
+        <section class="policy-section">
+          <h2>Security Posture</h2>
+          <p>Security details evolve with the product, but the guiding principle is to reduce unnecessary data movement and keep the trust surface small.</p>
+          <ul>
+            <li>Local storage reduces reliance on third-party systems for everyday reading and note-taking.</li>
+            <li>The deeper technical reference remains in `docs/storage-and-security.md`.</li>
+            <li>Material privacy changes should be reflected both here and in the repository docs.</li>
+          </ul>
+        </section>
+
+        <section class="policy-section">
+          <h2>Your Choices</h2>
+          <p>You can inspect the source, review the documentation, and decide whether Wndr fits your expectations before downloading it.</p>
+          <ul>
+            <li>Read the storage and security documentation on GitHub.</li>
+            <li>Review the repository and release history.</li>
+            <li>Use GitHub to contact the maintainer with questions about data handling.</li>
+          </ul>
+        </section>
+
+        <p class="meta">Last updated: May 6, 2026. This page summarizes the current website and product posture in plain language and should stay aligned with repository documentation.</p>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>&copy; 2026 Wndr. Local-first research tools.</p>
+      <a href="index.html" class="button">Back to Home</a>
+    </div>
+  </footer>
+</body>
+</html>
