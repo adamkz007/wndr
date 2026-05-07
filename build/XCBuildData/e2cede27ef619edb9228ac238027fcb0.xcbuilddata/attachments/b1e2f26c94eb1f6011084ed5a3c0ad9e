@@ -1,4 +1,0 @@
-framework module WndrData {
-  header "WndrData-Swift.h"
-  requires objc
-}

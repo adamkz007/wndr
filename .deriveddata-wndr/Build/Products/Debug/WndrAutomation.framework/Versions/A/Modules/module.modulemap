@@ -1,4 +1,0 @@
-framework module WndrAutomation {
-  header "WndrAutomation-Swift.h"
-  requires objc
-}

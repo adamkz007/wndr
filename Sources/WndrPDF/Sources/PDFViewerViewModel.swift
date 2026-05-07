@@ -106,7 +106,7 @@ public final class PDFViewerViewModel: ObservableObject {
 
     public func createAnnotation(from selection: PDFSelection) {
         guard selectedTool == .highlight else { return }
-        guard let pages = selection.pages as? [PDFPage] else { return }
+        let pages = selection.pages
 
         for page in pages {
             guard let pageIndex = pdfDocument?.index(for: page) else { continue }

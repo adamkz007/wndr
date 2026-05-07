@@ -1,4 +1,0 @@
-framework module LookData {
-  header "LookData-Swift.h"
-  requires objc
-}

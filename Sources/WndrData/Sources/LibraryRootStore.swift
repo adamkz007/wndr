@@ -211,67 +211,52 @@ public actor LibraryRootStore {
         }
     }
 
-    /// Renames a document file from generic "document.pdf" to a meaningful filename
-    /// Returns the new URL if successful, or nil if the rename failed
+    private func renameStoredFile(
+        currentURL: URL,
+        to newName: String,
+        withExtension ext: String,
+        kind: String
+    ) -> URL? {
+        let sanitizedName = sanitizeFilename(newName, withExtension: ext)
+        let newURL = currentURL.deletingLastPathComponent().appendingPathComponent(sanitizedName)
+
+        if newURL == currentURL {
+            return currentURL
+        }
+
+        guard !fileManager.fileExists(atPath: newURL.path) else {
+            logger.error("Failed to rename \(kind): target already exists at \(newURL.path)")
+            return nil
+        }
+
+        do {
+            try fileManager.moveItem(at: currentURL, to: newURL)
+            logger.info("Renamed \(kind) from \(currentURL.lastPathComponent) to \(sanitizedName)")
+            return newURL
+        } catch {
+            logger.error("Failed to rename \(kind): \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    /// Renames a PDF file to match the current document title.
     public func renameDocumentFile(documentID: UUID, to newName: String, in libraryURL: URL) -> URL? {
         guard let currentURL = findDocumentFile(for: documentID, in: libraryURL) else {
             logger.error("Cannot find document file for ID: \(documentID)")
             return nil
         }
 
-        // If it's already using a meaningful name (not "document.pdf"), skip
-        if currentURL.lastPathComponent != "document.pdf" {
-            logger.info("Document already has meaningful name: \(currentURL.lastPathComponent)")
-            return currentURL
-        }
-
-        let sanitizedName = sanitizeFilename(newName, withExtension: "pdf")
-        let newURL = currentURL.deletingLastPathComponent().appendingPathComponent(sanitizedName)
-
-        // If the new name is the same as current, no need to rename
-        if newURL == currentURL {
-            return currentURL
-        }
-
-        do {
-            try FileManager.default.moveItem(at: currentURL, to: newURL)
-            logger.info("Renamed document from \(currentURL.lastPathComponent) to \(sanitizedName)")
-            return newURL
-        } catch {
-            logger.error("Failed to rename document: \(error.localizedDescription)")
-            return nil
-        }
+        return renameStoredFile(currentURL: currentURL, to: newName, withExtension: "pdf", kind: "document")
     }
 
-    /// Renames an EPUB file from generic "document.epub" to a meaningful filename
+    /// Renames an EPUB file to match the current document title.
     public func renameEpubFile(documentID: UUID, to newName: String, in libraryURL: URL) -> URL? {
         guard let currentURL = findEpubFile(for: documentID, in: libraryURL) else {
             logger.error("Cannot find EPUB file for ID: \(documentID)")
             return nil
         }
 
-        // If it's already using a meaningful name (not "document.epub"), skip
-        if currentURL.lastPathComponent != "document.epub" {
-            logger.info("EPUB already has meaningful name: \(currentURL.lastPathComponent)")
-            return currentURL
-        }
-
-        let sanitizedName = sanitizeFilename(newName, withExtension: "epub")
-        let newURL = currentURL.deletingLastPathComponent().appendingPathComponent(sanitizedName)
-
-        // If the new name is the same as current, no need to rename
-        if newURL == currentURL {
-            return currentURL
-        }
-
-        do {
-            try FileManager.default.moveItem(at: currentURL, to: newURL)
-            logger.info("Renamed EPUB from \(currentURL.lastPathComponent) to \(sanitizedName)")
-            return newURL
-        } catch {
-            logger.error("Failed to rename EPUB: \(error.localizedDescription)")
-            return nil
-        }
+        return renameStoredFile(currentURL: currentURL, to: newName, withExtension: "epub", kind: "EPUB")
     }
 
     /// Deletes all library-managed assets for a document, including its stored file,

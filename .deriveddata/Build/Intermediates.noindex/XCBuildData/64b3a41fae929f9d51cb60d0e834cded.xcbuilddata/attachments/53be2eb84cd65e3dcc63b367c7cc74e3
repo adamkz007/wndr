@@ -1,4 +1,0 @@
-framework module LookKit {
-  header "LookKit-Swift.h"
-  requires objc
-}

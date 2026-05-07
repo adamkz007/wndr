@@ -11,6 +11,18 @@ ARCHIVE_PATH="$BUILD_DIR/Wndr.xcarchive"
 EXPORT_PATH="$BUILD_DIR/export"
 DMG_PATH="$BUILD_DIR/Wndr-v$VERSION.dmg"
 
+if ! security find-identity -v -p codesigning | grep -q "Developer ID Application"; then
+    echo "Error: No 'Developer ID Application' signing identity found."
+    echo "Public releases must be Developer ID signed and notarized before upload."
+    exit 1
+fi
+
+if grep -q "<string>YOUR_TEAM_ID</string>" ExportOptions.plist; then
+    echo "Error: ExportOptions.plist still contains the placeholder team ID."
+    echo "Set your real Apple Developer team ID before building a public release."
+    exit 1
+fi
+
 echo "Building Wndr v$VERSION..."
 
 # Clean build directory
@@ -60,4 +72,5 @@ echo ""
 echo "To create a GitHub release:"
 echo "1. git tag -a v$VERSION -m 'Release v$VERSION'"
 echo "2. git push origin v$VERSION"
-echo "3. Upload $DMG_PATH to the GitHub release"
+echo "3. Notarize and staple $DMG_PATH"
+echo "4. Upload the notarized DMG to the GitHub release"

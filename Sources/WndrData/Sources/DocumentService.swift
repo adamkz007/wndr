@@ -9,11 +9,89 @@ public final class DocumentService: ObservableObject {
 
     private let persistenceController: PersistenceController
     private let logger: WndrLogger
+    private let fileManager: FileManager
     private var cancellables = Set<AnyCancellable>()
 
-    public init(persistenceController: PersistenceController, logger: WndrLogger = WndrLogger(category: "documents")) {
+    public init(
+        persistenceController: PersistenceController,
+        logger: WndrLogger = WndrLogger(category: "documents"),
+        fileManager: FileManager = .default
+    ) {
         self.persistenceController = persistenceController
         self.logger = logger
+        self.fileManager = fileManager
+    }
+
+    private static let noteDateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private enum NotePersistenceError: LocalizedError {
+        case noteNotFound(UUID)
+
+        var errorDescription: String? {
+            switch self {
+            case let .noteNotFound(noteID):
+                return "Note not found: \(noteID.uuidString)"
+            }
+        }
+    }
+
+    private func renderMarkdownNote(
+        title: String,
+        body: String,
+        pinned: Bool,
+        createdAt: Date,
+        updatedAt: Date
+    ) -> String {
+        let safeTitle = title
+            .replacingOccurrences(of: "\\", with: "\\\\")
+            .replacingOccurrences(of: "\"", with: "\\\"")
+
+        return """
+        ---
+        title: "\(safeTitle)"
+        pinned: \(pinned)
+        createdAt: \(Self.noteDateFormatter.string(from: createdAt))
+        updatedAt: \(Self.noteDateFormatter.string(from: updatedAt))
+        ---
+
+        \(body)
+        """
+    }
+
+    private func writeNoteFile(
+        noteID: UUID,
+        title: String,
+        body: String,
+        pinned: Bool,
+        createdAt: Date,
+        updatedAt: Date,
+        libraryURL: URL,
+        libraryStore: LibraryRootStore
+    ) async throws {
+        try await libraryStore.createLibraryStructure(at: libraryURL)
+        let noteURL = await libraryStore.noteURL(for: noteID, in: libraryURL)
+        let markdown = renderMarkdownNote(
+            title: title,
+            body: body,
+            pinned: pinned,
+            createdAt: createdAt,
+            updatedAt: updatedAt
+        )
+        try markdown.write(to: noteURL, atomically: true, encoding: .utf8)
+    }
+
+    private func deleteNoteFile(
+        noteID: UUID,
+        libraryURL: URL,
+        libraryStore: LibraryRootStore
+    ) async throws {
+        let noteURL = await libraryStore.noteURL(for: noteID, in: libraryURL)
+        guard fileManager.fileExists(atPath: noteURL.path) else { return }
+        try fileManager.removeItem(at: noteURL)
     }
 
     public func fetchAllDocuments() {
@@ -74,11 +152,27 @@ public final class DocumentService: ObservableObject {
         }
     }
 
-    public func createNote(title: String, body: String = "") async throws -> UUID {
+    public func createNote(
+        title: String,
+        body: String = "",
+        libraryURL: URL,
+        libraryStore: LibraryRootStore
+    ) async throws -> UUID {
         let context = persistenceController.newBackgroundContext()
 
         let noteID = UUID()
         let now = Date()
+
+        try await writeNoteFile(
+            noteID: noteID,
+            title: title,
+            body: body,
+            pinned: false,
+            createdAt: now,
+            updatedAt: now,
+            libraryURL: libraryURL,
+            libraryStore: libraryStore
+        )
 
         let note = Note(context: context)
         note.id = noteID
@@ -88,7 +182,12 @@ public final class DocumentService: ObservableObject {
         note.updatedAt = now
         note.pinned = false
 
-        try context.save()
+        do {
+            try context.save()
+        } catch {
+            try? await deleteNoteFile(noteID: noteID, libraryURL: libraryURL, libraryStore: libraryStore)
+            throw error
+        }
         logger.info("Created note: \(noteID.uuidString)")
 
         // Insert the new DTO directly instead of re-fetching all notes
@@ -218,16 +317,41 @@ public final class DocumentService: ObservableObject {
         }
     }
 
-    public func deleteNote(_ noteID: UUID) async throws {
+    public func deleteNote(
+        _ noteID: UUID,
+        libraryURL: URL,
+        libraryStore: LibraryRootStore
+    ) async throws {
         let context = persistenceController.newBackgroundContext()
         let fetchRequest = Note.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
 
         let results = try context.fetch(fetchRequest)
-        guard let note = results.first else { return }
+        guard let note = results.first else {
+            throw NotePersistenceError.noteNotFound(noteID)
+        }
 
+        try await deleteNoteFile(noteID: noteID, libraryURL: libraryURL, libraryStore: libraryStore)
         context.delete(note)
-        try context.save()
+        do {
+            try context.save()
+        } catch {
+            let restoredTitle = note.title ?? "Untitled Note"
+            let restoredBody = note.body ?? ""
+            let restoredCreatedAt = note.createdAt ?? Date()
+            let restoredUpdatedAt = note.updatedAt ?? restoredCreatedAt
+            try? await writeNoteFile(
+                noteID: noteID,
+                title: restoredTitle,
+                body: restoredBody,
+                pinned: note.pinned,
+                createdAt: restoredCreatedAt,
+                updatedAt: restoredUpdatedAt,
+                libraryURL: libraryURL,
+                libraryStore: libraryStore
+            )
+            throw error
+        }
         logger.info("Deleted note: \(noteID.uuidString)")
 
         await MainActor.run {
@@ -235,7 +359,13 @@ public final class DocumentService: ObservableObject {
         }
     }
 
-    public func updateNote(_ noteID: UUID, title: String, body: String) async throws {
+    public func updateNote(
+        _ noteID: UUID,
+        title: String,
+        body: String,
+        libraryURL: URL,
+        libraryStore: LibraryRootStore
+    ) async throws {
         let context = persistenceController.newBackgroundContext()
         let fetchRequest = Note.fetchRequest()
         fetchRequest.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
@@ -243,14 +373,44 @@ public final class DocumentService: ObservableObject {
         let results = try context.fetch(fetchRequest)
         guard let note = results.first else {
             logger.error("Note not found: \(noteID.uuidString)")
-            return
+            throw NotePersistenceError.noteNotFound(noteID)
         }
+
+        let previousTitle = note.title ?? "Untitled Note"
+        let previousBody = note.body ?? ""
+        let createdAt = note.createdAt ?? Date()
+        let updatedAt = Date()
+
+        try await writeNoteFile(
+            noteID: noteID,
+            title: title,
+            body: body,
+            pinned: note.pinned,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            libraryURL: libraryURL,
+            libraryStore: libraryStore
+        )
 
         note.title = title
         note.body = body
-        note.updatedAt = Date()
+        note.updatedAt = updatedAt
 
-        try context.save()
+        do {
+            try context.save()
+        } catch {
+            try? await writeNoteFile(
+                noteID: noteID,
+                title: previousTitle,
+                body: previousBody,
+                pinned: note.pinned,
+                createdAt: createdAt,
+                updatedAt: note.updatedAt ?? createdAt,
+                libraryURL: libraryURL,
+                libraryStore: libraryStore
+            )
+            throw error
+        }
         logger.info("Updated note: \(noteID.uuidString)")
 
         await MainActor.run {

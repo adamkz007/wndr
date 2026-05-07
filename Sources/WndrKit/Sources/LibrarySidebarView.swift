@@ -376,11 +376,11 @@ private struct SidebarFooterView: View {
     private func openReleaseNotes() {
         // TODO: Add actual release notes URL
         #if canImport(AppKit)
-        if let url = URL(string: "https://github.com/adamkz/wndr/releases") {
+        if let url = URL(string: "https://github.com/adamkz007/wndr/releases") {
             NSWorkspace.shared.open(url)
         }
         #elseif canImport(UIKit)
-        if let url = URL(string: "https://github.com/adamkz/wndr/releases") {
+        if let url = URL(string: "https://github.com/adamkz007/wndr/releases") {
             UIApplication.shared.open(url)
         }
         #endif

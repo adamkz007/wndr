@@ -464,10 +464,22 @@ struct ContentWrapper: View {
             body: noteDTO.body
         )
         viewModel.onSave = { [weak environment] id, title, body in
-            try await environment?.documentService.updateNote(id, title: title, body: body)
+            guard let environment, let libraryURL = environment.libraryURL else { return }
+            try await environment.documentService.updateNote(
+                id,
+                title: title,
+                body: body,
+                libraryURL: libraryURL,
+                libraryStore: environment.libraryRootStore
+            )
         }
         viewModel.onDelete = { [weak environment] id in
-            try await environment?.documentService.deleteNote(id)
+            guard let environment, let libraryURL = environment.libraryURL else { return }
+            try await environment.documentService.deleteNote(
+                id,
+                libraryURL: libraryURL,
+                libraryStore: environment.libraryRootStore
+            )
         }
 
         return AnyView(MarkdownEditorView(viewModel: viewModel))

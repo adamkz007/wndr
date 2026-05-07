@@ -247,7 +247,7 @@ public struct ContentListView: View {
                 storageBytes: viewModel.totalStorageBytes
             )
         }
-        .onChange(of: selectedSidebarItem) { newValue in
+        .onChange(of: selectedSidebarItem) { _, newValue in
             Task { @MainActor in
                 viewModel.updateContent(for: newValue)
             }

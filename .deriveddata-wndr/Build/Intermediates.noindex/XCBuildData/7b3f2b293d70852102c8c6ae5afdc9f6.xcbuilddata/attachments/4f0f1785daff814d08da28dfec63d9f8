@@ -1,4 +1,0 @@
-framework module WndrPDF {
-  header "WndrPDF-Swift.h"
-  requires objc
-}

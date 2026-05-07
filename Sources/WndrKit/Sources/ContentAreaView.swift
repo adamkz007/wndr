@@ -132,12 +132,12 @@ struct DocumentListView: View {
         .onAppear {
             internalSelection = selectedID
         }
-        .onChange(of: internalSelection) { newValue in
+        .onChange(of: internalSelection) { _, newValue in
             if let id = newValue {
                 onSelect(id)
             }
         }
-        .onChange(of: selectedID) { newValue in
+        .onChange(of: selectedID) { _, newValue in
             if internalSelection != newValue {
                 internalSelection = newValue
             }
@@ -229,13 +229,13 @@ struct DocumentRow: View {
         .padding(.vertical, 3)
         .contentShape(Rectangle())
         .draggable(DocumentDragItem(documentID: document.id))
-        .onChange(of: isRenameFieldFocused) { focused in
+        .onChange(of: isRenameFieldFocused) { _, focused in
             if !focused && isRenaming {
                 // User clicked away without pressing Enter — cancel rename
                 isRenaming = false
             }
         }
-        .onChange(of: isRenaming) { renaming in
+        .onChange(of: isRenaming) { _, renaming in
             if renaming {
                 // Auto-focus the text field when entering rename mode
                 DispatchQueue.main.async {
@@ -383,12 +383,12 @@ struct NoteListView: View {
         .onAppear {
             internalSelection = selectedID
         }
-        .onChange(of: internalSelection) { newValue in
+        .onChange(of: internalSelection) { _, newValue in
             if let id = newValue {
                 onSelect(id)
             }
         }
-        .onChange(of: selectedID) { newValue in
+        .onChange(of: selectedID) { _, newValue in
             if internalSelection != newValue {
                 internalSelection = newValue
             }

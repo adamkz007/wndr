@@ -1,4 +1,0 @@
-framework module WndrKit {
-  header "WndrKit-Swift.h"
-  requires objc
-}

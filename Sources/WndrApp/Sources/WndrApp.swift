@@ -94,13 +94,13 @@ private struct RootView: View {
                 ImportProgressView(progress: progress)
             }
         }
-        .onChange(of: environment.shouldRegenerateThumbnails) { shouldRegenerate in
+        .onChange(of: environment.shouldRegenerateThumbnails) { _, shouldRegenerate in
             if shouldRegenerate {
                 regenerateAllThumbnails()
                 environment.shouldRegenerateThumbnails = false
             }
         }
-        .onChange(of: environment.shouldReassignTagColors) { shouldReassign in
+        .onChange(of: environment.shouldReassignTagColors) { _, shouldReassign in
             if shouldReassign {
                 reassignTagColors()
                 environment.shouldReassignTagColors = false
@@ -130,9 +130,13 @@ private struct RootView: View {
 
         // Connect note creation handler
         contentViewModel.onCreateNote = { [weak environment, weak contentViewModel] title in
-            guard let env = environment else { return nil }
+            guard let env = environment, let libraryURL = env.libraryURL else { return nil }
             do {
-                let noteID = try await env.documentService.createNote(title: title)
+                let noteID = try await env.documentService.createNote(
+                    title: title,
+                    libraryURL: libraryURL,
+                    libraryStore: env.libraryRootStore
+                )
                 // Sync the notes list so the detail view can find the new note immediately
                 await MainActor.run {
                     contentViewModel?.notes = env.documentService.notes.map { dto in

@@ -342,7 +342,7 @@ struct PDFViewRepresentable: NSViewRepresentable {
         pdfView.document = viewModel.pdfDocument
 
         // Set the coordinator reference for context menu handling
-        (pdfView as? CustomPDFView)?.coordinator = context.coordinator
+        pdfView.coordinator = context.coordinator
 
         context.coordinator.pdfView = pdfView
         context.coordinator.registerNotifications(for: pdfView)
@@ -468,8 +468,8 @@ class PDFViewCoordinator: NSObject {
     }
 
     private func createAnnotationFromSelection(pdfView: PDFView, selection: PDFSelection) {
-        guard let pages = selection.pages as? [PDFPage],
-              let document = pdfView.document else { return }
+        let pages = selection.pages
+        guard let document = pdfView.document else { return }
 
         for page in pages {
             let pageIndex = document.index(for: page)
@@ -483,8 +483,8 @@ class PDFViewCoordinator: NSObject {
             // Create a highlight for each line of selected text
             for lineSelection in lineSelections {
                 // Only process selections on the current page
-                guard let linePages = lineSelection.pages as? [PDFPage],
-                      linePages.contains(page) else { continue }
+                let linePages = lineSelection.pages
+                guard linePages.contains(page) else { continue }
 
                 let lineBounds = lineSelection.bounds(for: page)
                 allBounds.append(lineBounds)
@@ -496,8 +496,9 @@ class PDFViewCoordinator: NSObject {
 
             // Store all bounds for persistence
             if !allBounds.isEmpty {
+                let persistedBounds = allBounds
                 Task { @MainActor in
-                    await viewModel.onCreateAnnotation?(pageIndex, allBounds, textSnippet, currentColor)
+                    await viewModel.onCreateAnnotation?(pageIndex, persistedBounds, textSnippet, currentColor)
                 }
             }
         }

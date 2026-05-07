@@ -17,6 +17,22 @@ jobs:
     runs-on: macos-14
 
     steps:
+      - name: Resolve version
+        id: version
+        run: |
+          RAW_VERSION="${{ github.event.inputs.version || github.ref_name }}"
+          VERSION="${RAW_VERSION#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate release secrets
+        run: |
+          test -n "${{ secrets.APPLE_CERTIFICATE }}" || { echo "Missing APPLE_CERTIFICATE"; exit 1; }
+          test -n "${{ secrets.APPLE_CERTIFICATE_PASSWORD }}" || { echo "Missing APPLE_CERTIFICATE_PASSWORD"; exit 1; }
+          test -n "${{ secrets.APPLE_TEAM_ID }}" || { echo "Missing APPLE_TEAM_ID"; exit 1; }
+          test -n "${{ secrets.APPLE_ID }}" || { echo "Missing APPLE_ID"; exit 1; }
+          test -n "${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}" || { echo "Missing APPLE_APP_SPECIFIC_PASSWORD"; exit 1; }
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -25,20 +41,60 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Import Developer ID certificate
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+        run: |
+          KEYCHAIN_PATH="$RUNNER_TEMP/app-signing.keychain-db"
+          CERT_PATH="$RUNNER_TEMP/developer-id.p12"
+
+          echo "$APPLE_CERTIFICATE" | base64 --decode > "$CERT_PATH"
+
+          security create-keychain -p "$APPLE_CERTIFICATE_PASSWORD" "$KEYCHAIN_PATH"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN_PATH"
+          security unlock-keychain -p "$APPLE_CERTIFICATE_PASSWORD" "$KEYCHAIN_PATH"
+          security import "$CERT_PATH" -P "$APPLE_CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN_PATH"
+          security list-keychains -d user -s "$KEYCHAIN_PATH" login.keychain-db
+          security default-keychain -d user -s "$KEYCHAIN_PATH"
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_CERTIFICATE_PASSWORD" "$KEYCHAIN_PATH"
+
       - name: Build macOS App
         run: |
           xcodebuild -project Wndr.xcodeproj \
             -scheme WndrApp \
             -configuration Release \
             -archivePath build/Wndr.xcarchive \
+            DEVELOPMENT_TEAM=${{ secrets.APPLE_TEAM_ID }} \
             archive
+
+      - name: Create export options
+        run: |
+          cat > build/ExportOptions.plist <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+              <key>method</key>
+              <string>developer-id</string>
+              <key>teamID</key>
+              <string>${{ secrets.APPLE_TEAM_ID }}</string>
+              <key>signingStyle</key>
+              <string>automatic</string>
+              <key>stripSwiftSymbols</key>
+              <true/>
+              <key>destination</key>
+              <string>export</string>
+          </dict>
+          </plist>
+          EOF
 
       - name: Export Archive
         run: |
           xcodebuild -exportArchive \
             -archivePath build/Wndr.xcarchive \
             -exportPath build/export \
-            -exportOptionsPlist ExportOptions.plist
+            -exportOptionsPlist build/ExportOptions.plist
 
       - name: Create DMG
         run: |
@@ -49,7 +105,28 @@ jobs:
           hdiutil create -volname "Wndr" \
             -srcfolder build/dmg \
             -ov -format UDZO \
-            build/Wndr-${{ github.event.inputs.version || github.ref_name }}.dmg
+            build/Wndr-v${{ steps.version.outputs.version }}.dmg
+
+      - name: Notarize DMG
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool submit build/Wndr-v${{ steps.version.outputs.version }}.dmg \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_APP_SPECIFIC_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+
+      - name: Staple notarization ticket
+        run: |
+          xcrun stapler staple build/Wndr-v${{ steps.version.outputs.version }}.dmg
+          xcrun stapler validate build/Wndr-v${{ steps.version.outputs.version }}.dmg
+
+      - name: Verify DMG with Gatekeeper
+        run: |
+          spctl -a -vvv --type open build/Wndr-v${{ steps.version.outputs.version }}.dmg
 
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
@@ -58,6 +135,11 @@ jobs:
           path: |
             build/Wndr-*.dmg
             build/export/Wndr.app
+
+      - name: Cleanup signing keychain
+        if: always()
+        run: |
+          security delete-keychain "$RUNNER_TEMP/app-signing.keychain-db" || true
 
   release:
     name: Create Release

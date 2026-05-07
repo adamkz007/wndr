@@ -6,12 +6,23 @@ This document describes how to build, package, and release Wndr for macOS.
 
 - macOS 14.0 (Sonoma) or later
 - Xcode 15 or later
-- Apple Developer account (for code signing)
+- Apple Developer account with a **Developer ID Application** certificate
 - GitHub repository access
+- App-specific password for notarization (`notarytool`)
+
+## Important
+
+Public macOS downloads must be **Developer ID signed and notarized**.
+
+If you upload a DMG built from an ad-hoc or "Sign to Run Locally" archive, macOS Gatekeeper will reject it and users may see:
+
+> "Check with the developer to make sure Wndr works with this version of macOS."
+
+Do not publish unsigned or ad-hoc signed builds to GitHub Releases.
 
 ## Quick Release
 
-For a quick release, use the automated script:
+For a local signed build, use the release script:
 
 ```bash
 ./build-release.sh 1.0.0
@@ -19,10 +30,12 @@ For a quick release, use the automated script:
 
 This will:
 1. Build the app in Release configuration
-2. Create a signed archive
-3. Export the app
+2. Create an archive
+3. Export a Developer ID signed app
 4. Package it in a DMG file
 5. Display checksums for verification
+
+If the required signing identity is missing, the build should be treated as a local test build only and not uploaded publicly.
 
 ## Manual Release Process
 
@@ -66,7 +79,20 @@ hdiutil create -volname "Wndr" \
     build/Wndr-v1.0.0.dmg
 ```
 
-### 4. Create GitHub Release
+### 4. Notarize the DMG
+
+```bash
+xcrun notarytool submit build/Wndr-v1.0.0.dmg \
+  --apple-id "YOUR_APPLE_ID" \
+  --password "YOUR_APP_SPECIFIC_PASSWORD" \
+  --team-id "YOUR_TEAM_ID" \
+  --wait
+
+xcrun stapler staple build/Wndr-v1.0.0.dmg
+xcrun stapler validate build/Wndr-v1.0.0.dmg
+```
+
+### 5. Create GitHub Release
 
 ```bash
 # Tag the release
@@ -75,7 +101,7 @@ git push origin v1.0.0
 ```
 
 Then:
-1. Go to https://github.com/adamkz/wndr/releases
+1. Go to https://github.com/adamkz007/wndr/releases
 2. Click "Create a new release"
 3. Select the tag you just created
 4. Upload the DMG file
@@ -92,10 +118,12 @@ git push origin v1.0.0
 ```
 
 The GitHub Action will:
-1. Build the app on macOS runners
-2. Create the DMG package
-3. Create a GitHub release
-4. Upload the DMG to the release
+1. Import the Developer ID certificate from GitHub secrets
+2. Build and export a signed app on macOS runners
+3. Create and notarize the DMG package
+4. Staple the notarization ticket
+5. Create a GitHub release
+6. Upload the DMG to the release
 
 ## Code Signing
 
@@ -118,6 +146,8 @@ For automated builds, add these secrets to your repository:
 - `APPLE_CERTIFICATE`: Base64 encoded .p12 certificate
 - `APPLE_CERTIFICATE_PASSWORD`: Certificate password
 - `APPLE_TEAM_ID`: Your Apple Developer team ID
+- `APPLE_ID`: Apple ID email used for notarization
+- `APPLE_APP_SPECIFIC_PASSWORD`: App-specific password for notarization
 
 ## Testing the Release
 
@@ -140,11 +170,22 @@ Before releasing:
    - Check all main features work
    - Verify version number in About panel
 
-3. **Check code signing**:
+3. **Check code signing and Gatekeeper**:
    ```bash
    codesign -dv --verbose=4 /Applications/Wndr.app
    spctl -a -vvv /Applications/Wndr.app
+   spctl -a -vvv --type open build/Wndr-v1.0.0.dmg
    ```
+
+## User Workaround For Existing Unsigned Builds
+
+If you already downloaded an older unsigned test build and trust its source, remove the quarantine flag after copying it to `Applications`:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Wndr.app
+```
+
+This is only a temporary workaround for local testing. The proper fix is to redistribute a notarized release.
 
 ## Landing Page Deployment
 
