@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import UniformTypeIdentifiers
 #if canImport(AppKit)
@@ -49,13 +50,9 @@ private struct ThumbnailImageView: View {
         }
     }
 
-    private var fallbackIcon: String {
-        documentType == "epub" ? "book.fill" : "doc.fill"
-    }
+    private var fallbackIcon: String { "doc.fill" }
 
-    private var fallbackColor: Color {
-        documentType == "epub" ? .teal : .blue
-    }
+    private var fallbackColor: Color { .blue }
 
     private func loadImage() async -> PlatformImage? {
         guard let url = url else { return nil }
@@ -158,6 +155,7 @@ struct DocumentRow: View {
     @State private var isRenaming = false
     @State private var renameText = ""
     @State private var showDeleteConfirmation = false
+    @State private var progressRefreshTick = 0
     @FocusState private var isRenameFieldFocused: Bool
 
     var body: some View {
@@ -177,9 +175,16 @@ struct DocumentRow: View {
                     .font(.system(size: 13))
                     .focused($isRenameFieldFocused)
                 } else {
-                    Text(document.title)
-                        .font(.system(size: 13))
-                        .lineLimit(1)
+                    HStack(spacing: 6) {
+                        Text(document.title)
+                            .font(.system(size: 13))
+                            .lineLimit(1)
+                        if let progressPercent {
+                            Text("\(progressPercent)%")
+                                .font(.system(size: 11, design: .monospaced))
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
 
                 HStack(spacing: 3) {
@@ -192,7 +197,7 @@ struct DocumentRow: View {
                     }
 
                     // Page count for PDFs
-                    if !document.isEPUB && document.pageCount > 0 {
+                    if document.pageCount > 0 {
                         Text("\(document.pageCount) page\(document.pageCount == 1 ? "" : "s")")
                         Text("/")
                     }
@@ -241,6 +246,14 @@ struct DocumentRow: View {
                 DispatchQueue.main.async {
                     isRenameFieldFocused = true
                 }
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: PDFReadProgressStore.didUpdateNotification)) { notification in
+            if let updatedID = notification.userInfo?["documentID"] as? UUID, updatedID == document.id {
+                progressRefreshTick += 1
+            } else if let updatedID = notification.userInfo?["documentID"] as? NSUUID,
+                      updatedID as UUID == document.id {
+                progressRefreshTick += 1
             }
         }
         .contextMenu {
@@ -345,6 +358,14 @@ struct DocumentRow: View {
         guard let collectionID = document.collectionID else { return nil }
         return availableCollections.first(where: { $0.id == collectionID })?.name
     }
+
+    private var progressPercent: Int? {
+        _ = progressRefreshTick
+        return PDFReadProgressStore.progressPercent(
+            for: document.id,
+            pageCount: document.pageCount > 0 ? document.pageCount : nil
+        )
+    }
 }
 
 struct TagBadge: View {
@@ -371,12 +392,23 @@ struct NoteListView: View {
     let notes: [NoteItem]
     var selectedID: UUID?
     let onSelect: (UUID) -> Void
+    var onRename: ((UUID, String) -> Void)? = nil
+    var onDelete: ((UUID) -> Void)? = nil
 
     @State private var internalSelection: UUID?
 
     var body: some View {
         List(notes, selection: $internalSelection) { note in
-            NoteRow(note: note, isSelected: note.id == internalSelection)
+            NoteRow(
+                note: note,
+                isSelected: note.id == internalSelection,
+                onRename: { newName in
+                    onRename?(note.id, newName)
+                },
+                onDelete: {
+                    onDelete?(note.id)
+                }
+            )
                 .tag(note.id)
         }
         .listStyle(.sidebar)
@@ -399,6 +431,12 @@ struct NoteListView: View {
 struct NoteRow: View {
     let note: NoteItem
     var isSelected: Bool = false
+    var onRename: ((String) -> Void)? = nil
+    var onDelete: (() -> Void)? = nil
+    @State private var isRenaming = false
+    @State private var renameText = ""
+    @State private var showDeleteConfirmation = false
+    @FocusState private var isRenameFieldFocused: Bool
 
     var body: some View {
         HStack(spacing: 8) {
@@ -409,9 +447,22 @@ struct NoteRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 4) {
-                    Text(note.title)
+                    if isRenaming {
+                        TextField("Note title", text: $renameText, onCommit: {
+                            let newName = renameText.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !newName.isEmpty {
+                                onRename?(newName)
+                            }
+                            isRenaming = false
+                        })
+                        .textFieldStyle(.plain)
                         .font(.system(size: 13))
-                        .lineLimit(1)
+                        .focused($isRenameFieldFocused)
+                    } else {
+                        Text(note.title)
+                            .font(.system(size: 13))
+                            .lineLimit(1)
+                    }
                     Spacer()
                     if note.pinned {
                         Image(systemName: "pin.fill")
@@ -436,6 +487,38 @@ struct NoteRow: View {
             }
         }
         .padding(.vertical, 3)
+        .onChange(of: isRenameFieldFocused) { _, focused in
+            if !focused && isRenaming {
+                isRenaming = false
+            }
+        }
+        .onChange(of: isRenaming) { _, renaming in
+            if renaming {
+                DispatchQueue.main.async {
+                    isRenameFieldFocused = true
+                }
+            }
+        }
+        .contextMenu {
+            Button("Rename") {
+                renameText = note.title
+                isRenaming = true
+            }
+            Divider()
+            Button(role: .destructive) {
+                showDeleteConfirmation = true
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+        }
+        .alert("Delete Note?", isPresented: $showDeleteConfirmation) {
+            Button("Cancel", role: .cancel) { }
+            Button("Delete", role: .destructive) {
+                onDelete?()
+            }
+        } message: {
+            Text("Are you sure you want to delete \"\(note.title)\"? This action cannot be undone.")
+        }
     }
 
     private func formattedDate(_ date: Date) -> String {
@@ -500,7 +583,6 @@ public struct DocumentItem: Identifiable, Equatable {
     public var tags: [DocumentTagItem]
     public var collectionID: UUID?
 
-    public var isEPUB: Bool { documentType == "epub" }
     public var isPDF: Bool { documentType == "pdf" }
 
     public init(id: UUID, title: String, subtitle: String? = nil, authors: [String]? = nil, pageCount: Int = 0, createdAt: Date? = nil, updatedAt: Date? = nil, fileURL: URL? = nil, thumbnailURL: URL? = nil, documentType: String = "pdf", tags: [DocumentTagItem] = [], collectionID: UUID? = nil) {
@@ -1029,10 +1111,6 @@ struct SearchResultRow: View {
         case .document:
             if let page = result.pageIndex {
                 return "PDF p.\(page + 1)"
-            }
-            // Check file extension for EPUB
-            if let url = result.fileURL, url.pathExtension.lowercased() == "epub" {
-                return "EPUB"
             }
             return "PDF"
         case .note:

@@ -3,7 +3,6 @@ import Foundation
 public actor LibraryRootStore {
     public enum LibraryDirectory: String {
         case pdfs = "PDFs"
-        case epubs = "EPUBs"
         case notes = "Notes"
         case attachments = "Attachments"
         case index = "Index"
@@ -14,7 +13,7 @@ public actor LibraryRootStore {
             case .index:
                 return ["Thumbnails"]
             case .cache:
-                return ["OCR", "Previews", "EPUB"]
+                return ["OCR", "Previews"]
             default:
                 return []
             }
@@ -57,7 +56,7 @@ public actor LibraryRootStore {
     }
 
     public func createLibraryStructure(at libraryURL: URL) throws {
-        let directories: [LibraryDirectory] = [.pdfs, .epubs, .notes, .attachments, .index, .cache]
+        let directories: [LibraryDirectory] = [.pdfs, .notes, .attachments, .index, .cache]
 
         for directory in directories {
             let directoryURL = libraryURL.appendingPathComponent(directory.rawValue, isDirectory: true)
@@ -124,6 +123,57 @@ public actor LibraryRootStore {
         return sanitized
     }
 
+    private func uniqueFileURL(
+        in directoryURL: URL,
+        desiredFilename: String,
+        excluding existingURL: URL? = nil
+    ) -> URL {
+        let desiredURL = directoryURL.appendingPathComponent(desiredFilename)
+        if desiredURL == existingURL || !fileManager.fileExists(atPath: desiredURL.path) {
+            return desiredURL
+        }
+
+        let baseName = desiredURL.deletingPathExtension().lastPathComponent
+        let fileExtension = desiredURL.pathExtension
+        var counter = 2
+
+        while true {
+            let candidateName = "\(baseName) (\(counter)).\(fileExtension)"
+            let candidateURL = directoryURL.appendingPathComponent(candidateName)
+            if candidateURL == existingURL || !fileManager.fileExists(atPath: candidateURL.path) {
+                return candidateURL
+            }
+            counter += 1
+        }
+    }
+
+    private func noteFilename(for title: String) -> String {
+        sanitizeFilename(title, withExtension: "md")
+    }
+
+    private func extractNoteID(fromMarkdown markdown: String) -> UUID? {
+        let lines = markdown.components(separatedBy: .newlines)
+        guard !lines.isEmpty else { return nil }
+
+        // Only parse YAML front matter at the top of the file.
+        guard lines[0].trimmingCharacters(in: .whitespaces) == "---" else {
+            return nil
+        }
+
+        for line in lines.dropFirst() {
+            let trimmed = line.trimmingCharacters(in: .whitespaces)
+            if trimmed == "---" {
+                break
+            }
+
+            guard trimmed.hasPrefix("id:") else { continue }
+            let value = trimmed.dropFirst(3).trimmingCharacters(in: .whitespaces)
+            return UUID(uuidString: value)
+        }
+
+        return nil
+    }
+
     public func documentURL(for documentID: UUID, in libraryURL: URL, filename: String? = nil) -> URL {
         let pdfsURL = url(for: .pdfs, in: libraryURL)
         let documentDir = pdfsURL.appendingPathComponent(documentID.uuidString, isDirectory: true)
@@ -133,24 +183,70 @@ public actor LibraryRootStore {
         return documentDir.appendingPathComponent(finalFilename)
     }
 
-    public func epubURL(for documentID: UUID, in libraryURL: URL, filename: String? = nil) -> URL {
-        let epubsURL = url(for: .epubs, in: libraryURL)
-        let documentDir = epubsURL.appendingPathComponent(documentID.uuidString, isDirectory: true)
-
-        // Use provided filename or fall back to generic "document.epub"
-        let finalFilename = filename.map { sanitizeFilename($0, withExtension: "epub") } ?? "document.epub"
-        return documentDir.appendingPathComponent(finalFilename)
-    }
-
-    public func epubCacheURL(for documentID: UUID, in libraryURL: URL) -> URL {
-        let cacheURL = url(for: .cache, in: libraryURL)
-        return cacheURL.appendingPathComponent("EPUB", isDirectory: true)
-            .appendingPathComponent(documentID.uuidString, isDirectory: true)
-    }
-
     public func noteURL(for noteID: UUID, in libraryURL: URL) -> URL {
         let notesURL = url(for: .notes, in: libraryURL)
         return notesURL.appendingPathComponent("\(noteID.uuidString).md")
+    }
+
+    public func noteURL(for noteID: UUID, title: String, in libraryURL: URL) -> URL {
+        let notesURL = url(for: .notes, in: libraryURL)
+        let existingURL = resolveNoteFile(for: noteID, in: libraryURL)
+        let desiredFilename = noteFilename(for: title)
+        return uniqueFileURL(in: notesURL, desiredFilename: desiredFilename, excluding: existingURL)
+    }
+
+    public func resolveNoteFile(for noteID: UUID, in libraryURL: URL) -> URL? {
+        let notesURL = url(for: .notes, in: libraryURL)
+
+        // Backward compatibility: legacy note files were named as <noteID>.md.
+        let legacyURL = notesURL.appendingPathComponent("\(noteID.uuidString).md")
+        if fileManager.fileExists(atPath: legacyURL.path) {
+            return legacyURL
+        }
+
+        guard let fileURLs = try? fileManager.contentsOfDirectory(
+            at: notesURL,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        ) else {
+            return nil
+        }
+
+        for fileURL in fileURLs where fileURL.pathExtension.lowercased() == "md" {
+            guard let markdown = try? String(contentsOf: fileURL, encoding: .utf8) else { continue }
+            if extractNoteID(fromMarkdown: markdown) == noteID {
+                return fileURL
+            }
+        }
+
+        return nil
+    }
+
+    public func renameNoteFile(noteID: UUID, to newTitle: String, in libraryURL: URL) -> URL? {
+        let notesURL = url(for: .notes, in: libraryURL)
+        guard let currentURL = resolveNoteFile(for: noteID, in: libraryURL) else {
+            return nil
+        }
+
+        let desiredFilename = noteFilename(for: newTitle)
+        let destinationURL = uniqueFileURL(
+            in: notesURL,
+            desiredFilename: desiredFilename,
+            excluding: currentURL
+        )
+
+        if destinationURL == currentURL {
+            return currentURL
+        }
+
+        do {
+            try fileManager.moveItem(at: currentURL, to: destinationURL)
+            logger.info("Renamed note file from \(currentURL.lastPathComponent) to \(destinationURL.lastPathComponent)")
+            return destinationURL
+        } catch {
+            logger.error("Failed to rename note file: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     public func attachmentURL(for attachmentID: UUID, filename: String, in libraryURL: URL) -> URL {
@@ -173,19 +269,6 @@ public actor LibraryRootStore {
         }
     }
 
-    /// Finds the actual EPUB file in a document directory (for backward compatibility)
-    public func findEpubFile(for documentID: UUID, in libraryURL: URL) -> URL? {
-        let epubsURL = url(for: .epubs, in: libraryURL)
-        let documentDir = epubsURL.appendingPathComponent(documentID.uuidString, isDirectory: true)
-
-        do {
-            let contents = try FileManager.default.contentsOfDirectory(at: documentDir, includingPropertiesForKeys: nil)
-            return contents.first { $0.pathExtension.lowercased() == "epub" }
-        } catch {
-            return nil
-        }
-    }
-
     /// Resolves the current on-disk location for a document when a stored URL is missing or stale.
     public func resolveDocumentFile(
         for documentID: UUID,
@@ -198,17 +281,10 @@ public actor LibraryRootStore {
         }
 
         let normalizedType = documentType?.lowercased()
-        switch normalizedType {
-        case "epub":
-            return findEpubFile(for: documentID, in: libraryURL)
-                ?? findDocumentFile(for: documentID, in: libraryURL)
-        case "pdf":
+        if normalizedType == "pdf" || normalizedType == nil {
             return findDocumentFile(for: documentID, in: libraryURL)
-                ?? findEpubFile(for: documentID, in: libraryURL)
-        default:
-            return findDocumentFile(for: documentID, in: libraryURL)
-                ?? findEpubFile(for: documentID, in: libraryURL)
         }
+        return nil
     }
 
     private func renameStoredFile(
@@ -249,18 +325,7 @@ public actor LibraryRootStore {
         return renameStoredFile(currentURL: currentURL, to: newName, withExtension: "pdf", kind: "document")
     }
 
-    /// Renames an EPUB file to match the current document title.
-    public func renameEpubFile(documentID: UUID, to newName: String, in libraryURL: URL) -> URL? {
-        guard let currentURL = findEpubFile(for: documentID, in: libraryURL) else {
-            logger.error("Cannot find EPUB file for ID: \(documentID)")
-            return nil
-        }
-
-        return renameStoredFile(currentURL: currentURL, to: newName, withExtension: "epub", kind: "EPUB")
-    }
-
-    /// Deletes all library-managed assets for a document, including its stored file,
-    /// extracted EPUB cache, and thumbnail.
+    /// Deletes all library-managed assets for a document, including its stored file and thumbnail.
     public func deleteStoredDocumentAssets(
         for documentID: UUID,
         preferredFileURL: URL?,
@@ -268,12 +333,9 @@ public actor LibraryRootStore {
     ) throws {
         let pdfDirectoryURL = url(for: .pdfs, in: libraryURL)
             .appendingPathComponent(documentID.uuidString, isDirectory: true)
-        let epubDirectoryURL = url(for: .epubs, in: libraryURL)
-            .appendingPathComponent(documentID.uuidString, isDirectory: true)
-        let epubCacheDirectoryURL = epubCacheURL(for: documentID, in: libraryURL)
         let thumbnailFileURL = thumbnailURL(for: documentID, in: libraryURL)
 
-        var urlsToDelete: [URL] = [pdfDirectoryURL, epubDirectoryURL, epubCacheDirectoryURL, thumbnailFileURL]
+        var urlsToDelete: [URL] = [pdfDirectoryURL, thumbnailFileURL]
 
         if let preferredFileURL,
            preferredFileURL.path.hasPrefix(libraryURL.path),

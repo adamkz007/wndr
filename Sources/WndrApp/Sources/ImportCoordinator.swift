@@ -48,7 +48,7 @@ final class ImportCoordinator: ObservableObject {
         panel.allowsMultipleSelection = true
         panel.canCreateDirectories = false
         panel.title = "Import Documents"
-        panel.allowedContentTypes = [.pdf, .epub]
+        panel.allowedContentTypes = [.pdf]
 
         guard panel.runModal() == .OK else { return }
 

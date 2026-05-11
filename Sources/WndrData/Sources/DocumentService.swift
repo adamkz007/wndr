@@ -2,6 +2,20 @@ import Combine
 import CoreData
 import Foundation
 
+public struct DocumentLinkSuggestion: Identifiable, Equatable {
+    public let id: UUID
+    public let title: String
+    public let subtitle: String?
+    public let documentType: String
+
+    public init(id: UUID, title: String, subtitle: String? = nil, documentType: String) {
+        self.id = id
+        self.title = title
+        self.subtitle = subtitle
+        self.documentType = documentType
+    }
+}
+
 @MainActor
 public final class DocumentService: ObservableObject {
     @Published public private(set) var documents: [DocumentDTO] = []
@@ -39,7 +53,10 @@ public final class DocumentService: ObservableObject {
         }
     }
 
+    private static let documentLinkPattern = #"\[\[([^\[\]\n]+)\]\]"#
+
     private func renderMarkdownNote(
+        noteID: UUID,
         title: String,
         body: String,
         pinned: Bool,
@@ -52,6 +69,7 @@ public final class DocumentService: ObservableObject {
 
         return """
         ---
+        id: \(noteID.uuidString)
         title: "\(safeTitle)"
         pinned: \(pinned)
         createdAt: \(Self.noteDateFormatter.string(from: createdAt))
@@ -73,8 +91,18 @@ public final class DocumentService: ObservableObject {
         libraryStore: LibraryRootStore
     ) async throws {
         try await libraryStore.createLibraryStructure(at: libraryURL)
-        let noteURL = await libraryStore.noteURL(for: noteID, in: libraryURL)
+        let existingNoteURL = await libraryStore.resolveNoteFile(for: noteID, in: libraryURL)
+        let noteURL = await libraryStore.noteURL(for: noteID, title: title, in: libraryURL)
+
+        if let existingNoteURL,
+           existingNoteURL != noteURL,
+           fileManager.fileExists(atPath: existingNoteURL.path),
+           !fileManager.fileExists(atPath: noteURL.path) {
+            try? fileManager.moveItem(at: existingNoteURL, to: noteURL)
+        }
+
         let markdown = renderMarkdownNote(
+            noteID: noteID,
             title: title,
             body: body,
             pinned: pinned,
@@ -89,7 +117,14 @@ public final class DocumentService: ObservableObject {
         libraryURL: URL,
         libraryStore: LibraryRootStore
     ) async throws {
-        let noteURL = await libraryStore.noteURL(for: noteID, in: libraryURL)
+        guard let noteURL = await libraryStore.resolveNoteFile(for: noteID, in: libraryURL) else {
+            // Backward compatibility fallback for pre-title-based notes.
+            let legacyURL = await libraryStore.noteURL(for: noteID, in: libraryURL)
+            guard fileManager.fileExists(atPath: legacyURL.path) else { return }
+            try fileManager.removeItem(at: legacyURL)
+            return
+        }
+
         guard fileManager.fileExists(atPath: noteURL.path) else { return }
         try fileManager.removeItem(at: noteURL)
     }
@@ -162,7 +197,6 @@ public final class DocumentService: ObservableObject {
 
         let noteID = UUID()
         let now = Date()
-
         try await writeNoteFile(
             noteID: noteID,
             title: title,
@@ -217,14 +251,7 @@ public final class DocumentService: ObservableObject {
            let currentFileURL = document.fileURL,
            oldTitle != title {
 
-            let isEpub = document.documentType == "epub"
-            let newURL: URL?
-
-            if isEpub {
-                newURL = await libraryStore.renameEpubFile(documentID: documentID, to: title, in: libraryURL)
-            } else {
-                newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
-            }
+            let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
 
             if let newURL = newURL {
                 document.fileURL = newURL
@@ -259,14 +286,7 @@ public final class DocumentService: ObservableObject {
                let currentFileURL = document.fileURL,
                oldTitle != title {
 
-                let isEpub = document.documentType == "epub"
-                let newURL: URL?
-
-                if isEpub {
-                    newURL = await libraryStore.renameEpubFile(documentID: documentID, to: title, in: libraryURL)
-                } else {
-                    newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
-                }
+                let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
 
                 if let newURL = newURL {
                     document.fileURL = newURL
@@ -380,6 +400,16 @@ public final class DocumentService: ObservableObject {
         let previousBody = note.body ?? ""
         let createdAt = note.createdAt ?? Date()
         let updatedAt = Date()
+        let titleChanged = previousTitle != title
+        var renamedFile = false
+
+        if titleChanged {
+            if await libraryStore.renameNoteFile(noteID: noteID, to: title, in: libraryURL) == nil {
+                logger.error("Failed to rename note file for note: \(noteID.uuidString)")
+            } else {
+                renamedFile = true
+            }
+        }
 
         try await writeNoteFile(
             noteID: noteID,
@@ -399,6 +429,9 @@ public final class DocumentService: ObservableObject {
         do {
             try context.save()
         } catch {
+            if renamedFile {
+                _ = await libraryStore.renameNoteFile(noteID: noteID, to: previousTitle, in: libraryURL)
+            }
             try? await writeNoteFile(
                 noteID: noteID,
                 title: previousTitle,
@@ -451,6 +484,73 @@ public final class DocumentService: ObservableObject {
             logger.error("Failed to fetch document: \(error.localizedDescription)")
         }
         return nil
+    }
+
+    public func searchDocumentsForLinking(query: String, limit: Int = 12) -> [DocumentLinkSuggestion] {
+        let trimmedQuery = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        let context = persistenceController.viewContext
+        let fetchRequest = Document.fetchRequest()
+
+        if trimmedQuery.isEmpty {
+            fetchRequest.predicate = NSPredicate(format: "title != nil")
+        } else {
+            fetchRequest.predicate = NSPredicate(format: "title CONTAINS[cd] %@", trimmedQuery)
+        }
+
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "title", ascending: true)]
+        fetchRequest.fetchLimit = max(limit * 3, limit)
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            let normalizedQuery = normalizeDocumentLinkTitle(trimmedQuery)
+
+            return results
+                .compactMap { document -> DocumentLinkSuggestion? in
+                    guard let id = document.id else { return nil }
+                    let title = (document.title ?? "Untitled").trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !title.isEmpty else { return nil }
+                    return DocumentLinkSuggestion(
+                        id: id,
+                        title: title,
+                        subtitle: document.subtitle,
+                        documentType: document.documentType ?? "pdf"
+                    )
+                }
+                .sorted { lhs, rhs in
+                    rankDocumentSuggestion(lhs, query: normalizedQuery) < rankDocumentSuggestion(rhs, query: normalizedQuery)
+                }
+                .prefix(limit)
+                .map { $0 }
+        } catch {
+            logger.error("Failed to search documents for linking: \(error.localizedDescription)")
+            return []
+        }
+    }
+
+    public func linkedNotes(forDocumentID documentID: UUID) -> [NoteDTO] {
+        guard let document = getDocument(byID: documentID) else { return [] }
+        return linkedNotes(forDocumentTitle: document.title)
+    }
+
+    public func linkedNotes(forDocumentTitle title: String) -> [NoteDTO] {
+        let normalizedTitle = normalizeDocumentLinkTitle(title)
+        guard !normalizedTitle.isEmpty else { return [] }
+
+        let context = persistenceController.viewContext
+        let fetchRequest = Note.fetchRequest()
+        fetchRequest.sortDescriptors = [NSSortDescriptor(keyPath: \Note.updatedAt, ascending: false)]
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            return results
+                .filter { note in
+                    matchesDocumentLink(in: note.body ?? "", normalizedTitle: normalizedTitle)
+                }
+                .map { NoteDTO(from: $0) }
+        } catch {
+            logger.error("Failed to fetch linked notes: \(error.localizedDescription)")
+            return []
+        }
     }
 
     /// Repairs stale or missing file URLs by resolving each document back to the current library layout.
@@ -592,19 +692,11 @@ public final class DocumentService: ObservableObject {
                 }
 
                 // Skip if not using generic name
-                if fileURL.lastPathComponent != "document.pdf" && fileURL.lastPathComponent != "document.epub" {
+                if fileURL.lastPathComponent != "document.pdf" {
                     continue
                 }
 
-                // Determine type and rename
-                let isEpub = document.documentType == "epub"
-                let newURL: URL?
-
-                if isEpub {
-                    newURL = await libraryStore.renameEpubFile(documentID: documentID, to: title, in: libraryURL)
-                } else {
-                    newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
-                }
+                let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
 
                 if let newURL = newURL, newURL != fileURL {
                     document.fileURL = newURL
@@ -625,6 +717,42 @@ public final class DocumentService: ObservableObject {
         }
 
         return (migratedCount, failedCount)
+    }
+
+    private func rankDocumentSuggestion(_ suggestion: DocumentLinkSuggestion, query: String) -> Int {
+        guard !query.isEmpty else { return 2 }
+        let normalizedTitle = normalizeDocumentLinkTitle(suggestion.title)
+        if normalizedTitle == query { return 0 }
+        if normalizedTitle.hasPrefix(query) { return 1 }
+        return 2
+    }
+
+    private func matchesDocumentLink(in body: String, normalizedTitle: String) -> Bool {
+        extractLinkedDocumentTitles(from: body).contains(normalizedTitle)
+    }
+
+    private func extractLinkedDocumentTitles(from body: String) -> Set<String> {
+        guard let regex = try? NSRegularExpression(pattern: Self.documentLinkPattern) else {
+            return []
+        }
+
+        let nsRange = NSRange(body.startIndex..., in: body)
+        let matches = regex.matches(in: body, range: nsRange)
+
+        return Set(matches.compactMap { match in
+            guard match.numberOfRanges > 1,
+                  let range = Range(match.range(at: 1), in: body) else {
+                return nil
+            }
+            let rawTitle = String(body[range])
+            return normalizeDocumentLinkTitle(rawTitle)
+        })
+    }
+
+    private func normalizeDocumentLinkTitle(_ title: String) -> String {
+        title
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
     }
 }
 

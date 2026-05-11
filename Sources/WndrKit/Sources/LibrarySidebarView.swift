@@ -364,7 +364,7 @@ private struct SidebarFooterView: View {
                 }
                 #endif
 
-                Text("by @adamkz")
+                Text("by @adamkz007")
                     .font(.system(size: 9))
                     .foregroundColor(.secondary)
                     .opacity(0.4)

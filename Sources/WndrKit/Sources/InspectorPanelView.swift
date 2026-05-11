@@ -1,22 +1,34 @@
 import SwiftUI
 
 public struct InspectorPanelView: View {
-    @ObservedObject var viewModel: InspectorPanelViewModel
+    let inspectorMode: InspectorMode
+    let linkedNotes: [NoteItem]
+    let onSelectNote: (UUID) -> Void
 
-    public init(viewModel: InspectorPanelViewModel) {
-        self.viewModel = viewModel
+    public init(
+        inspectorMode: InspectorMode,
+        linkedNotes: [NoteItem] = [],
+        onSelectNote: @escaping (UUID) -> Void = { _ in }
+    ) {
+        self.inspectorMode = inspectorMode
+        self.linkedNotes = linkedNotes
+        self.onSelectNote = onSelectNote
     }
 
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                switch viewModel.inspectorMode {
+                switch inspectorMode {
                 case .none:
                     Text("No Selection")
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 case .document(let document):
-                    DocumentInspectorView(document: document)
+                    DocumentInspectorView(
+                        document: document,
+                        linkedNotes: linkedNotes,
+                        onSelectNote: onSelectNote
+                    )
                 case .note(let note):
                     NoteInspectorView(note: note)
                 }
@@ -30,6 +42,8 @@ public struct InspectorPanelView: View {
 
 struct DocumentInspectorView: View {
     let document: DocumentItem
+    let linkedNotes: [NoteItem]
+    let onSelectNote: (UUID) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -62,9 +76,17 @@ struct DocumentInspectorView: View {
             }
 
             InspectorSection(title: "Linked Notes") {
-                Text("No linked notes")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
+                if linkedNotes.isEmpty {
+                    Text("No linked notes")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                } else {
+                    ForEach(linkedNotes) { note in
+                        LinkedNoteTile(note: note) {
+                            onSelectNote(note.id)
+                        }
+                    }
+                }
             }
         }
     }
@@ -138,6 +160,46 @@ struct InspectorField: View {
                 .font(.body)
                 .textSelection(.enabled)
         }
+    }
+}
+
+struct LinkedNoteTile: View {
+    let note: NoteItem
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(alignment: .leading, spacing: 6) {
+                HStack(spacing: 6) {
+                    Image(systemName: "note.text")
+                        .foregroundColor(.orange)
+                    Text(note.title)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    Spacer()
+                }
+
+                if !note.preview.isEmpty {
+                    Text(note.preview)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .lineLimit(3)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+            .padding(10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.platformTextBackground)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.secondary.opacity(0.12), lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
     }
 }
 

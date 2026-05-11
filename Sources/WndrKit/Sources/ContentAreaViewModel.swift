@@ -303,3 +303,74 @@ public final class ContentAreaViewModel: ObservableObject {
         }
     }
 }
+
+public enum PDFReadProgressStore {
+    public static let didUpdateNotification = Notification.Name("wndr.pdf.read.progress.updated")
+
+    private static let keyPrefix = "wndr.pdf.read.progress."
+    private static let pageIndexKey = "pageIndex"
+    private static let pageCountKey = "pageCount"
+    private static let percentKey = "percent"
+
+    public static func save(documentID: UUID, currentPage: Int, pageCount: Int) {
+        guard pageCount > 0 else { return }
+
+        let clampedPage = min(max(currentPage, 1), pageCount)
+        let pageIndex = clampedPage - 1
+        let percent = Int((Double(clampedPage) / Double(pageCount) * 100).rounded())
+        let key = storageKey(for: documentID)
+
+        let payload: [String: Int] = [
+            pageIndexKey: pageIndex,
+            pageCountKey: pageCount,
+            percentKey: min(max(percent, 1), 100)
+        ]
+        UserDefaults.standard.set(payload, forKey: key)
+
+        NotificationCenter.default.post(
+            name: didUpdateNotification,
+            object: nil,
+            userInfo: [
+                "documentID": documentID,
+                "percent": payload[percentKey] as Any
+            ]
+        )
+    }
+
+    public static func pageIndex(for documentID: UUID) -> Int? {
+        guard let payload = UserDefaults.standard.dictionary(forKey: storageKey(for: documentID)) as? [String: Int] else {
+            return nil
+        }
+        return payload[pageIndexKey]
+    }
+
+    public static func progressPercent(for documentID: UUID, pageCount fallbackPageCount: Int? = nil) -> Int? {
+        guard let payload = UserDefaults.standard.dictionary(forKey: storageKey(for: documentID)) as? [String: Int] else {
+            return nil
+        }
+
+        if let fallbackPageCount, fallbackPageCount > 0, let pageIndex = payload[pageIndexKey] {
+            let clampedIndex = min(max(pageIndex, 0), fallbackPageCount - 1)
+            let percent = Int((Double(clampedIndex + 1) / Double(fallbackPageCount) * 100).rounded())
+            return min(max(percent, 1), 100)
+        }
+
+        if let percent = payload[percentKey] {
+            return min(max(percent, 1), 100)
+        }
+
+        guard let pageIndex = payload[pageIndexKey],
+              let pageCount = payload[pageCountKey],
+              pageCount > 0 else {
+            return nil
+        }
+
+        let clampedIndex = min(max(pageIndex, 0), pageCount - 1)
+        let percent = Int((Double(clampedIndex + 1) / Double(pageCount) * 100).rounded())
+        return min(max(percent, 1), 100)
+    }
+
+    private static func storageKey(for documentID: UUID) -> String {
+        keyPrefix + documentID.uuidString
+    }
+}

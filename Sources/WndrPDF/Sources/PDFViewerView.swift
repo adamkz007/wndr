@@ -87,11 +87,9 @@ public struct PDFViewerView: View {
                 Picker("Tool", selection: $viewModel.selectedTool) {
                     Image(systemName: "highlighter")
                         .tag(AnnotationTool.highlight)
-                    Image(systemName: "note.text")
-                        .tag(AnnotationTool.note)
                 }
                 .pickerStyle(.segmented)
-                .frame(width: 80)
+                .frame(width: 44)
 
                 // Color picker button with popover
                 Button(action: { showColorPopover.toggle() }) {
@@ -354,6 +352,13 @@ struct PDFViewRepresentable: NSViewRepresentable {
         if pdfView.document !== viewModel.pdfDocument {
             pdfView.document = viewModel.pdfDocument
         }
+        if let document = pdfView.document,
+           viewModel.currentPage > 0,
+           viewModel.currentPage <= document.pageCount,
+           let targetPage = document.page(at: viewModel.currentPage - 1),
+           pdfView.currentPage != targetPage {
+            pdfView.go(to: targetPage)
+        }
         if pdfView.displayMode != viewModel.displayMode {
             pdfView.displayMode = viewModel.displayMode
         }
@@ -395,6 +400,13 @@ struct PDFViewRepresentable: UIViewRepresentable {
     func updateUIView(_ pdfView: PDFView, context: Context) {
         if pdfView.document !== viewModel.pdfDocument {
             pdfView.document = viewModel.pdfDocument
+        }
+        if let document = pdfView.document,
+           viewModel.currentPage > 0,
+           viewModel.currentPage <= document.pageCount,
+           let targetPage = document.page(at: viewModel.currentPage - 1),
+           pdfView.currentPage != targetPage {
+            pdfView.go(to: targetPage)
         }
         if pdfView.displayMode != viewModel.displayMode {
             pdfView.displayMode = viewModel.displayMode
@@ -447,7 +459,7 @@ class PDFViewCoordinator: NSObject {
               let pageIndex = pdfView.document?.index(for: currentPage) else { return }
 
         Task { @MainActor in
-            viewModel.currentPage = pageIndex + 1
+            viewModel.setCurrentPage(pageIndex + 1)
         }
     }
 

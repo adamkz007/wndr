@@ -9,7 +9,7 @@ It gives you one place to collect papers, reports, and reference docs, highlight
 The easiest way to install Wndr is from GitHub Releases:
 
 1. Open the [Releases](https://github.com/adamkz007/wndr/releases) page.
-2. Download `Wndr-v0.2.0.dmg`.
+2. Download `Wndr-v0.3.0.dmg`.
 3. Open the `.dmg` file.
 4. Drag `Wndr.app` into your `Applications` folder.
 5. Open Wndr from `Applications`.
@@ -39,7 +39,7 @@ Wndr creates the library structure for you automatically.
 
 ## Current Status
 
-`v0.2.0` is an early release, but the core workflow is already in place.
+`v0.3.0` is an early release, but the core workflow is already in place.
 
 Available today:
 

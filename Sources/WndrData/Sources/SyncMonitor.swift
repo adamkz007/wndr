@@ -550,6 +550,6 @@ public actor SyncMonitor {
               values.isRegularFile == true else {
             return false
         }
-        return ["pdf", "epub"].contains(fileURL.pathExtension.lowercased())
+        return ["pdf"].contains(fileURL.pathExtension.lowercased())
     }
 }

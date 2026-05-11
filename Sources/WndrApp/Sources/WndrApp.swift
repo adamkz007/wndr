@@ -66,6 +66,8 @@ private struct RootView: View {
                     onDeleteCollection: handleDeleteCollection,
                     onRenameDocument: handleRenameDocument,
                     onDeleteDocument: handleDeleteDocument,
+                    onRenameNote: handleRenameNote,
+                    onDeleteNote: handleDeleteNote,
                     onSetDocumentCollection: handleSetDocumentCollection,
                     onDropDocumentOnCollection: { documentID, collectionID in
                         handleSetDocumentCollection(documentID: documentID, collectionID: collectionID)
@@ -685,6 +687,43 @@ private struct RootView: View {
         }
     }
 
+    private func handleRenameNote(noteID: UUID, newName: String) {
+        Task {
+            guard let libraryURL = environment.libraryURL else { return }
+            guard let existing = environment.documentService.getNote(byID: noteID) else { return }
+            let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmedName.isEmpty else { return }
+
+            try? await environment.documentService.updateNote(
+                noteID,
+                title: trimmedName,
+                body: existing.body,
+                libraryURL: libraryURL,
+                libraryStore: environment.libraryRootStore
+            )
+            await MainActor.run {
+                refreshDocumentList()
+            }
+        }
+    }
+
+    private func handleDeleteNote(noteID: UUID) {
+        Task {
+            guard let libraryURL = environment.libraryURL else { return }
+            try? await environment.documentService.deleteNote(
+                noteID,
+                libraryURL: libraryURL,
+                libraryStore: environment.libraryRootStore
+            )
+            await MainActor.run {
+                if case .noteDetail(let selectedID) = contentViewModel.contentMode, selectedID == noteID {
+                    contentViewModel.contentMode = contentViewModel.notes.isEmpty ? .empty : .noteList
+                }
+                refreshDocumentList()
+            }
+        }
+    }
+
     private func handleSetDocumentCollection(documentID: UUID, collectionID: UUID?) {
         Task {
             try? await environment.collectionService.setDocumentCollection(documentID, collectionID: collectionID)
@@ -884,7 +923,7 @@ private struct AboutContentView: View {
                     if hovering { NSCursor.pointingHand.push() } else { NSCursor.pop() }
                 }
 
-                Text("Created by @adamkz")
+                Text("Created by @adamkz007")
                     .font(.system(size: 10))
                     .foregroundColor(.secondary.opacity(0.6))
             }
@@ -892,7 +931,7 @@ private struct AboutContentView: View {
     }
 
     private func openReleaseNotes() {
-        if let url = URL(string: "https://github.com/adamkz/wndr/releases") {
+        if let url = URL(string: "https://github.com/adamkz007/wndr/releases") {
             NSWorkspace.shared.open(url)
         }
     }

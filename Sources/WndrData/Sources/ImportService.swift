@@ -7,17 +7,15 @@ import UniformTypeIdentifiers
 /// Supported document types for import.
 public enum DocumentType: String {
     case pdf
-    case epub
 
     public static func from(pathExtension ext: String) -> DocumentType? {
         switch ext.lowercased() {
         case "pdf": return .pdf
-        case "epub": return .epub
         default: return nil
         }
     }
 
-    public static let supportedExtensions: Set<String> = ["pdf", "epub"]
+    public static let supportedExtensions: Set<String> = ["pdf"]
 }
 
 public actor ImportService {
@@ -92,10 +90,6 @@ public actor ImportService {
         // Check if it's a directory instead of a file
         if isDirectory.boolValue {
             logger.error("Cannot import directory as document: \(sourceURL.lastPathComponent)")
-            // Special message for EPUB directories
-            if ext == "epub" {
-                throw ImportError.custom("The EPUB appears to be an extracted directory. Please compress it as a .epub file first.")
-            }
             throw ImportError.custom("Cannot import directory. Please select a file instead.")
         }
 
@@ -112,12 +106,7 @@ public actor ImportService {
 
         // Extract metadata based on document type
         let metadata: DocumentMetadata
-        switch docType {
-        case .pdf:
-            metadata = try await extractPDFMetadata(from: sourceURL)
-        case .epub:
-            metadata = try await extractEPUBMetadata(from: sourceURL)
-        }
+        metadata = try await extractPDFMetadata(from: sourceURL)
 
         // Create document entity
         let documentID = UUID()
@@ -141,13 +130,7 @@ public actor ImportService {
 
         // Copy file to library
         if copyFile {
-            let destinationURL: URL
-            switch docType {
-            case .pdf:
-                destinationURL = await libraryStore.documentURL(for: documentID, in: libraryURL, filename: documentTitle)
-            case .epub:
-                destinationURL = await libraryStore.epubURL(for: documentID, in: libraryURL, filename: documentTitle)
-            }
+            let destinationURL = await libraryStore.documentURL(for: documentID, in: libraryURL, filename: documentTitle)
             try await copyDocument(from: sourceURL, to: destinationURL)
             document.fileURL = destinationURL
             logger.info("Copied \(docType.rawValue) to: \(destinationURL.path)")
@@ -246,36 +229,6 @@ public actor ImportService {
             pageCount: document.pageCount,
             needsOCR: needsOCR
         )
-    }
-
-    private func extractEPUBMetadata(from url: URL) async throws -> DocumentMetadata {
-        let epubParser = EPUBParser()
-        do {
-            let epubMeta = try epubParser.extractMetadata(from: url)
-            return DocumentMetadata(
-                title: epubMeta.title,
-                subtitle: epubMeta.description,
-                authors: epubMeta.authors.isEmpty ? nil : epubMeta.authors,
-                source: epubMeta.publisher,
-                publicationDate: nil,
-                keywords: nil,
-                pageCount: 0, // EPUBs don't have fixed page counts
-                needsOCR: false
-            )
-        } catch {
-            logger.error("EPUB metadata extraction failed: \(error.localizedDescription)")
-            // Fall back to filename-based metadata
-            return DocumentMetadata(
-                title: nil,
-                subtitle: nil,
-                authors: nil,
-                source: nil,
-                publicationDate: nil,
-                keywords: nil,
-                pageCount: 0,
-                needsOCR: false
-            )
-        }
     }
 
     private func checkNeedsOCR(document: PDFDocument) async -> Bool {

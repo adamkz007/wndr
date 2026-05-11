@@ -30,6 +30,7 @@ public final class PDFViewerViewModel: ObservableObject {
     public var onDeleteAnnotation: ((UUID) async -> Void)?
     public var onDeleteAllAnnotations: (() async -> Void)?
     public var onRemoveAnnotationAt: ((Int, CGRect) async -> Void)?
+    public var onPageChanged: ((Int, Int) -> Void)?
 
     private var thumbnailCache: [Int: PlatformImage] = [:]
 
@@ -173,19 +174,28 @@ public final class PDFViewerViewModel: ObservableObject {
         }
     }
 
+    public func setCurrentPage(_ page: Int, notifyProgress: Bool = true) {
+        guard pageCount > 0 else { return }
+        let clampedPage = min(max(page, 1), pageCount)
+        currentPage = clampedPage
+        if notifyProgress {
+            onPageChanged?(clampedPage, pageCount)
+        }
+    }
+
     public func nextPage() {
         guard canGoNext else { return }
-        currentPage += 1
+        setCurrentPage(currentPage + 1)
     }
 
     public func previousPage() {
         guard canGoPrevious else { return }
-        currentPage -= 1
+        setCurrentPage(currentPage - 1)
     }
 
     public func goToPage(_ pageIndex: Int) {
         guard pageIndex >= 0 && pageIndex < pageCount else { return }
-        currentPage = pageIndex + 1
+        setCurrentPage(pageIndex + 1)
     }
 
     public func toggleThumbnails() {

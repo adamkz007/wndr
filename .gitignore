@@ -1,0 +1,18 @@
+.DS_Store
+
+# Xcode user-specific state
+*.xcuserstate
+*.xcuserdatad/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+
+# Local build products and archives
+DerivedData/
+.build/
+build/*
+!build/*.dmg
+
+# Xcode archives and unpacked app bundles
+*.xcarchive/
+*.dSYM/
+*.app/

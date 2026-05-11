@@ -4,114 +4,6 @@ import WndrData
 import WndrPDF
 import WndrNotes
 
-// TEMPORARY: EPUB types stub - Remove after adding EPUB files to Xcode project
-// The actual implementations exist in WndrKit/Sources but need to be added to the Xcode project
-#if true // Set to false once EPUB files are properly added to Xcode
-struct EPUBHighlightData: Identifiable {
-    let id: UUID
-    let chapterIndex: Int
-    let chapterHref: String
-    let startOffset: Int
-    let endOffset: Int
-    let selectedText: String
-    let colorCategory: String
-    let createdAt: Date
-
-    init(id: UUID, chapterIndex: Int, chapterHref: String, startOffset: Int, endOffset: Int, selectedText: String, colorCategory: String = "yellow", createdAt: Date = Date()) {
-        self.id = id
-        self.chapterIndex = chapterIndex
-        self.chapterHref = chapterHref
-        self.startOffset = startOffset
-        self.endOffset = endOffset
-        self.selectedText = selectedText
-        self.colorCategory = colorCategory
-        self.createdAt = createdAt
-    }
-}
-
-@MainActor
-class EPUBReaderViewModel: ObservableObject {
-    let documentID: UUID
-    let documentURL: URL
-    let title: String
-    @Published var isLoading: Bool = true
-    @Published var errorMessage: String?
-    @Published var chapterCount: Int = 0
-    @Published var chapterTitles: [String] = []
-    var chapterHTMLPaths: [URL] = []
-    var extractedBookURL: URL?
-    var opfDirectory: String = ""
-
-    var onCreateHighlight: ((Int, String, Int, Int, String, String) async -> Void)?
-    var onDeleteAllHighlights: (() async -> Void)?
-
-    init(documentID: UUID, documentURL: URL, title: String) {
-        self.documentID = documentID
-        self.documentURL = documentURL
-        self.title = title
-    }
-
-    func setHighlights(_ highlights: [EPUBHighlightData]) {
-        // Stub implementation
-    }
-}
-
-struct EPUBReaderView: View {
-    @ObservedObject var viewModel: EPUBReaderViewModel
-
-    init(viewModel: EPUBReaderViewModel) {
-        self.viewModel = viewModel
-    }
-
-    var body: some View {
-        VStack {
-            if viewModel.isLoading {
-                ProgressView("Loading EPUB...")
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let error = viewModel.errorMessage {
-                VStack {
-                    Image(systemName: "exclamationmark.triangle")
-                        .font(.largeTitle)
-                        .foregroundColor(.orange)
-                    Text("Error Loading EPUB")
-                        .font(.title2)
-                    Text(error)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                Text("EPUB Reader Placeholder")
-                    .font(.title)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                Text("Add EPUBReaderView.swift and EPUBReaderViewModel.swift to Xcode project")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-        }
-    }
-}
-
-struct EPUBBook {
-    struct SpineItem {
-        let index: Int
-        let title: String?
-    }
-    let spine: [SpineItem] = []
-    let extractedURL: URL = URL(fileURLWithPath: "/tmp")
-    let opfDirectory: String = ""
-    func resolvedURL(for item: SpineItem) -> URL {
-        return URL(fileURLWithPath: "/tmp")
-    }
-}
-
-class EPUBParser {
-    func parse(epubURL: URL, extractTo: URL) throws -> EPUBBook {
-        return EPUBBook()
-    }
-}
-#endif
-
 struct ContentWrapper: View {
     let environment: AppEnvironment
     @ObservedObject var sidebarViewModel: LibrarySidebarViewModel
@@ -126,6 +18,8 @@ struct ContentWrapper: View {
     var onDeleteCollection: ((UUID) -> Void)? = nil
     var onRenameDocument: ((UUID, String) -> Void)? = nil
     var onDeleteDocument: ((UUID) -> Void)? = nil
+    var onRenameNote: ((UUID, String) -> Void)? = nil
+    var onDeleteNote: ((UUID) -> Void)? = nil
     var onSetDocumentCollection: ((UUID, UUID?) -> Void)? = nil
     var onDropDocumentOnCollection: ((UUID, UUID) -> Void)? = nil
     var onUpdateDocumentMetadata: ((UUID, String, String?, [String]?) -> Void)? = nil
@@ -145,6 +39,8 @@ struct ContentWrapper: View {
             onDeleteCollection: onDeleteCollection,
             onRenameDocument: onRenameDocument,
             onDeleteDocument: onDeleteDocument,
+            onRenameNote: onRenameNote,
+            onDeleteNote: onDeleteNote,
             onSetDocumentCollection: onSetDocumentCollection,
             onDropDocumentOnCollection: onDropDocumentOnCollection,
             onUpdateDocumentMetadata: onUpdateDocumentMetadata
@@ -152,6 +48,7 @@ struct ContentWrapper: View {
         .environment(\.contentAreaDocumentHandler, documentHandler)
         .environment(\.contentAreaNoteHandler, noteHandler)
         .environment(\.contentAreaDropHandler, dropHandler)
+        .environment(\.contentAreaDocumentLinkedNotesHandler, linkedNotesHandler)
     }
 
     private func dropHandler(urls: [URL]) {
@@ -227,12 +124,7 @@ struct ContentWrapper: View {
             )
         }
 
-        // Route to EPUB reader if file is an EPUB
-        if url.pathExtension.lowercased() == "epub" {
-            return makeEPUBViewer(documentID: documentID, url: url, title: title)
-        }
-
-        // Default: PDF viewer
+        // PDF viewer
         print("DEBUG: Loading PDF from URL: \(url.path)")
         return makePDFViewer(documentID: documentID, url: url, title: title)
     }
@@ -241,6 +133,16 @@ struct ContentWrapper: View {
 
     private func makePDFViewer(documentID: UUID, url: URL, title: String) -> AnyView {
         let viewModel = PDFViewerViewModel(documentID: documentID, documentURL: url, title: title)
+        if let savedPageIndex = PDFReadProgressStore.pageIndex(for: documentID) {
+            viewModel.goToPage(savedPageIndex)
+        }
+        viewModel.onPageChanged = { currentPage, pageCount in
+            PDFReadProgressStore.save(
+                documentID: documentID,
+                currentPage: currentPage,
+                pageCount: pageCount
+            )
+        }
 
         // Load annotations for this document
         environment.annotationService.fetchAnnotations(for: documentID)
@@ -355,116 +257,75 @@ struct ContentWrapper: View {
         return AnyView(PDFViewerView(viewModel: viewModel))
     }
 
-    // MARK: - EPUB Viewer
-
-    private func makeEPUBViewer(documentID: UUID, url: URL, title: String) -> AnyView {
-        let viewModel = EPUBReaderViewModel(documentID: documentID, documentURL: url, title: title)
-
-        // Load annotations for this document
-        environment.annotationService.fetchAnnotations(for: documentID)
-
-        // Wire up highlight creation
-        viewModel.onCreateHighlight = { [weak environment] (chapterIndex: Int, chapterHref: String, startOffset: Int, endOffset: Int, text: String, color: String) in
-            guard let env = environment else { return }
-            // Store EPUB highlight data in the annotation's rects field as JSON
-            let epubLocation: [[String: Any]] = [[
-                "type": "epub",
-                "chapterHref": chapterHref,
-                "startOffset": startOffset,
-                "endOffset": endOffset
-            ]]
-            let rectsDict = epubLocation.map { entry -> [String: Double] in
-                // Encode offsets as doubles in the existing rect format
-                [
-                    "x": Double(startOffset),
-                    "y": Double(endOffset),
-                    "width": 0,
-                    "height": 0
-                ]
-            }
-            _ = try? await env.annotationService.createHighlight(
-                in: documentID,
-                pageIndex: chapterIndex,
-                rects: rectsDict,
-                textSnippet: text,
-                colorCategory: color
+    private func noteHandler(noteID: UUID, title: String, preview: String) -> AnyView {
+        AnyView(
+            NoteEditorContainerView(
+                noteID: noteID,
+                environment: environment,
+                contentViewModel: contentViewModel
             )
-        }
-
-        viewModel.onDeleteAllHighlights = { [weak environment] in
-            guard let env = environment else { return }
-            try? await env.annotationService.deleteAllAnnotations(for: documentID)
-        }
-
-        // Set initial highlights from existing annotations
-        let initialHighlights: [EPUBHighlightData] = environment.annotationService.annotations.compactMap { dto in
-            // Convert annotation DTO to EPUB highlight data
-            guard !dto.rects.isEmpty else { return nil }
-            let startOffset = Int(dto.rects[0].origin.x)
-            let endOffset = Int(dto.rects[0].origin.y)
-            return EPUBHighlightData(
-                id: dto.id,
-                chapterIndex: dto.pageIndex,
-                chapterHref: "",
-                startOffset: startOffset,
-                endOffset: endOffset,
-                selectedText: dto.textSnippet ?? "",
-                colorCategory: dto.colorCategory,
-                createdAt: dto.createdAt
-            )
-        }
-        viewModel.setHighlights(initialHighlights)
-
-        // Parse EPUB and set up chapters
-        Task { @MainActor in
-            do {
-                guard let libraryURL = environment.libraryURL else {
-                    viewModel.errorMessage = "Library not available"
-                    viewModel.isLoading = false
-                    return
-                }
-                let cacheURL = await environment.libraryRootStore.epubCacheURL(for: documentID, in: libraryURL)
-                let parser = EPUBParser()
-                let book = try parser.parse(epubURL: url, extractTo: cacheURL)
-
-                viewModel.chapterCount = book.spine.count
-                viewModel.chapterTitles = book.spine.map { $0.title ?? "Chapter \($0.index + 1)" }
-                viewModel.chapterHTMLPaths = book.spine.map { book.resolvedURL(for: $0) }
-                viewModel.extractedBookURL = book.extractedURL
-                viewModel.opfDirectory = book.opfDirectory
-                viewModel.isLoading = false
-            } catch {
-                viewModel.errorMessage = error.localizedDescription
-                viewModel.isLoading = false
-            }
-        }
-
-        return AnyView(EPUBReaderView(viewModel: viewModel))
+            .id(noteID)
+        )
     }
 
-    private func noteHandler(noteID: UUID, title: String, preview: String) -> AnyView {
-        // Fetch the full note from the service
-        guard let noteDTO = environment.documentService.getNote(byID: noteID) else {
-            return AnyView(
-                VStack {
-                    Image(systemName: "exclamationmark.triangle")
-                        .font(.largeTitle)
-                        .foregroundColor(.orange)
-                    Text("Note Not Found")
-                        .font(.title2)
-                    Text("The note could not be loaded")
-                        .foregroundColor(.secondary)
-                }
+    private func linkedNotesHandler(documentID: UUID) -> [NoteItem] {
+        environment.documentService.linkedNotes(forDocumentID: documentID).map { dto in
+            NoteItem(
+                id: dto.id,
+                title: dto.title,
+                preview: dto.preview,
+                pinned: dto.pinned,
+                createdAt: dto.createdAt,
+                updatedAt: dto.updatedAt
             )
         }
+    }
+}
 
-        let viewModel = NoteEditorViewModel(
-            noteID: noteDTO.id,
-            title: noteDTO.title,
-            body: noteDTO.body
+private struct NoteEditorContainerView: View {
+    let noteID: UUID
+    let environment: AppEnvironment
+    @ObservedObject var contentViewModel: ContentAreaViewModel
+
+    @StateObject private var viewModel: NoteEditorViewModel
+
+    init(noteID: UUID, environment: AppEnvironment, contentViewModel: ContentAreaViewModel) {
+        self.noteID = noteID
+        self.environment = environment
+        self._contentViewModel = ObservedObject(wrappedValue: contentViewModel)
+
+        let noteDTO = environment.documentService.getNote(byID: noteID)
+        _viewModel = StateObject(
+            wrappedValue: NoteEditorViewModel(
+                noteID: noteID,
+                title: noteDTO?.title ?? "Untitled Note",
+                body: noteDTO?.body ?? ""
+            )
         )
-        viewModel.onSave = { [weak environment] id, title, body in
-            guard let environment, let libraryURL = environment.libraryURL else { return }
+    }
+
+    var body: some View {
+        MarkdownEditorView(viewModel: viewModel)
+            .task(id: noteID) {
+                configureViewModel()
+                syncFromStoreIfNeeded()
+            }
+    }
+
+    private func configureViewModel() {
+        viewModel.onSearchDocumentLinks = { query in
+            environment.documentService.searchDocumentsForLinking(query: query).map { suggestion in
+                NoteDocumentLinkSuggestion(
+                    id: suggestion.id,
+                    title: suggestion.title,
+                    subtitle: suggestion.subtitle,
+                    documentType: suggestion.documentType
+                )
+            }
+        }
+
+        viewModel.onSave = { id, title, body in
+            guard let libraryURL = environment.libraryURL else { return }
             try await environment.documentService.updateNote(
                 id,
                 title: title,
@@ -472,16 +333,42 @@ struct ContentWrapper: View {
                 libraryURL: libraryURL,
                 libraryStore: environment.libraryRootStore
             )
+
+            await MainActor.run {
+                contentViewModel.notes = environment.documentService.notes.map { dto in
+                    NoteItem(
+                        id: dto.id,
+                        title: dto.title,
+                        preview: dto.preview,
+                        pinned: dto.pinned,
+                        createdAt: dto.createdAt,
+                        updatedAt: dto.updatedAt
+                    )
+                }
+            }
         }
-        viewModel.onDelete = { [weak environment] id in
-            guard let environment, let libraryURL = environment.libraryURL else { return }
+
+        viewModel.onDelete = { id in
+            guard let libraryURL = environment.libraryURL else { return }
             try await environment.documentService.deleteNote(
                 id,
                 libraryURL: libraryURL,
                 libraryStore: environment.libraryRootStore
             )
         }
+    }
 
-        return AnyView(MarkdownEditorView(viewModel: viewModel))
+    private func syncFromStoreIfNeeded() {
+        guard let noteDTO = environment.documentService.getNote(byID: noteID) else { return }
+        guard !viewModel.isDirty else { return }
+
+        if viewModel.title != noteDTO.title {
+            viewModel.title = noteDTO.title
+        }
+        if viewModel.body != noteDTO.body {
+            viewModel.body = noteDTO.body
+        }
+        viewModel.lastSaved = noteDTO.updatedAt ?? noteDTO.createdAt
+        viewModel.isDirty = false
     }
 }

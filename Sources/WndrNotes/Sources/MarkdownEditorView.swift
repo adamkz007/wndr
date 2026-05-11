@@ -1,5 +1,8 @@
 import SwiftUI
 import WndrKit
+#if os(macOS)
+import AppKit
+#endif
 
 public struct MarkdownEditorView: View {
     @ObservedObject var viewModel: NoteEditorViewModel
@@ -34,6 +37,9 @@ public struct MarkdownEditorView: View {
             statusBar
         }
         .background(Color.platformTextBackground)
+        .onDisappear {
+            viewModel.clearLinkSuggestions()
+        }
     }
 
     // MARK: - Title Bar
@@ -116,13 +122,7 @@ public struct MarkdownEditorView: View {
     }
 
     private var editorOnly: some View {
-        ScrollView {
-            TextEditor(text: $viewModel.body)
-                .font(.system(.body, design: .monospaced))
-                .scrollContentBackground(.hidden)
-                .padding(16)
-                .focused($isEditorFocused)
-        }
+        editorView
         .onAppear { isEditorFocused = true }
     }
 
@@ -147,13 +147,7 @@ public struct MarkdownEditorView: View {
     }
 
     private var editorPane: some View {
-        ScrollView {
-            TextEditor(text: $viewModel.body)
-                .font(.system(.body, design: .monospaced))
-                .scrollContentBackground(.hidden)
-                .padding(16)
-                .focused($isEditorFocused)
-        }
+        editorView
     }
 
     private var previewPane: some View {
@@ -162,6 +156,92 @@ public struct MarkdownEditorView: View {
                 .padding(16)
         }
         .background(Color.platformTextBackground)
+    }
+
+    private var editorView: some View {
+        ZStack(alignment: .topLeading) {
+            editorTextView
+
+            if viewModel.isShowingLinkSuggestions {
+                linkSuggestionDropdown
+                    .padding(.top, 12)
+                    .padding(.leading, 24)
+            }
+        }
+        .background(Color.platformTextBackground)
+    }
+
+    @ViewBuilder
+    private var editorTextView: some View {
+        #if os(macOS)
+        MarkdownTextView(
+            text: $viewModel.body,
+            pendingCursorLocation: $viewModel.pendingCursorLocation
+        ) { cursorLocation in
+            viewModel.updateLinkSuggestions(cursorLocation: cursorLocation)
+        }
+        .padding(12)
+        #else
+        ScrollView {
+            TextEditor(text: $viewModel.body)
+                .font(.system(.body, design: .monospaced))
+                .scrollContentBackground(.hidden)
+                .padding(16)
+                .focused($isEditorFocused)
+        }
+        #endif
+    }
+
+    private var linkSuggestionDropdown: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(viewModel.activeLinkQuery.isEmpty ? "Link Document" : "Link \"\(viewModel.activeLinkQuery)\"")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .padding(.horizontal, 12)
+                .padding(.top, 10)
+                .padding(.bottom, 6)
+
+            ForEach(viewModel.linkSuggestions) { suggestion in
+                Button {
+                    viewModel.applyLinkSuggestion(suggestion)
+                } label: {
+                    HStack(spacing: 10) {
+                        Image(systemName: "doc.text")
+                            .foregroundColor(.blue)
+                            .frame(width: 16)
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text(suggestion.title)
+                                .foregroundColor(.primary)
+                                .lineLimit(1)
+
+                            if let subtitle = suggestion.subtitle, !subtitle.isEmpty {
+                                Text(subtitle)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                            }
+                        }
+
+                        Spacer()
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .frame(width: 320, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.platformControlBackground)
+                .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(Color.secondary.opacity(0.15), lineWidth: 1)
+        )
     }
 
     private var statusBar: some View {
@@ -199,6 +279,104 @@ public struct MarkdownEditorView: View {
         .background(Color.platformControlBackground)
     }
 }
+
+#if os(macOS)
+private struct MarkdownTextView: NSViewRepresentable {
+    @Binding var text: String
+    @Binding var pendingCursorLocation: Int?
+    let onSelectionChange: (Int) -> Void
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+
+    func makeNSView(context: Context) -> NSScrollView {
+        let scrollView = NSTextView.scrollableTextView()
+        guard let textView = scrollView.documentView as? NSTextView else {
+            return scrollView
+        }
+
+        scrollView.drawsBackground = false
+        scrollView.borderType = .noBorder
+
+        textView.delegate = context.coordinator
+        textView.string = text
+        textView.drawsBackground = false
+        textView.isEditable = true
+        textView.isSelectable = true
+        textView.isRichText = false
+        textView.usesFindBar = true
+        textView.allowsUndo = true
+        textView.importsGraphics = false
+        textView.allowsImageEditing = false
+        textView.isAutomaticQuoteSubstitutionEnabled = false
+        textView.isAutomaticDashSubstitutionEnabled = false
+        textView.isAutomaticTextReplacementEnabled = false
+        textView.isContinuousSpellCheckingEnabled = false
+        textView.font = NSFont.monospacedSystemFont(ofSize: NSFont.systemFontSize, weight: .regular)
+        textView.textContainerInset = NSSize(width: 0, height: 4)
+        textView.minSize = .zero
+        textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        textView.isHorizontallyResizable = false
+        textView.isVerticallyResizable = true
+        textView.textContainer?.containerSize = NSSize(width: 0, height: CGFloat.greatestFiniteMagnitude)
+        textView.textContainer?.widthTracksTextView = true
+        textView.autoresizingMask = [.width]
+        textView.setSelectedRange(NSRange(location: text.utf16.count, length: 0))
+
+        context.coordinator.textView = textView
+
+        DispatchQueue.main.async {
+            textView.window?.makeFirstResponder(textView)
+        }
+
+        return scrollView
+    }
+
+    func updateNSView(_ scrollView: NSScrollView, context: Context) {
+        guard let textView = context.coordinator.textView else { return }
+
+        if textView.string != text {
+            textView.string = text
+        }
+
+        if let pendingCursorLocation {
+            let clampedLocation = min(max(0, pendingCursorLocation), textView.string.utf16.count)
+            textView.setSelectedRange(NSRange(location: clampedLocation, length: 0))
+            textView.scrollRangeToVisible(NSRange(location: clampedLocation, length: 0))
+            textView.window?.makeFirstResponder(textView)
+
+            DispatchQueue.main.async {
+                self.pendingCursorLocation = nil
+                self.onSelectionChange(clampedLocation)
+            }
+        }
+    }
+
+    final class Coordinator: NSObject, NSTextViewDelegate {
+        var parent: MarkdownTextView
+        weak var textView: NSTextView?
+
+        init(parent: MarkdownTextView) {
+            self.parent = parent
+        }
+
+        func textDidChange(_ notification: Notification) {
+            guard let textView else { return }
+            let newText = textView.string
+            if parent.text != newText {
+                parent.text = newText
+            }
+            parent.onSelectionChange(textView.selectedRange().location)
+        }
+
+        func textViewDidChangeSelection(_ notification: Notification) {
+            guard let textView else { return }
+            parent.onSelectionChange(textView.selectedRange().location)
+        }
+    }
+}
+#endif
 
 // MARK: - Format Icon Button
 

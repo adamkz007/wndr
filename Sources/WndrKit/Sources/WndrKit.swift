@@ -11,9 +11,7 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
     @ObservedObject private var coordinator: Coordinator
     @ObservedObject private var sidebarViewModel: LibrarySidebarViewModel
     @ObservedObject private var contentViewModel: ContentAreaViewModel
-    @StateObject private var inspectorViewModel = InspectorPanelViewModel()
     @State private var showInspector = false
-    @State private var showInfoPopover = false
     @State private var columnVisibility: NavigationSplitViewVisibility = .all
     var statusMessage: String?
     var availableTags: [DocumentTagItem]
@@ -25,6 +23,8 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
     var onDeleteCollection: ((UUID) -> Void)?
     var onRenameDocument: ((UUID, String) -> Void)?
     var onDeleteDocument: ((UUID) -> Void)?
+    var onRenameNote: ((UUID, String) -> Void)?
+    var onDeleteNote: ((UUID) -> Void)?
     var onSetDocumentCollection: ((UUID, UUID?) -> Void)?
     var onDropDocumentOnCollection: ((UUID, UUID) -> Void)?
     var onUpdateDocumentMetadata: ((UUID, String, String?, [String]?) -> Void)?
@@ -43,6 +43,8 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
         onDeleteCollection: ((UUID) -> Void)? = nil,
         onRenameDocument: ((UUID, String) -> Void)? = nil,
         onDeleteDocument: ((UUID) -> Void)? = nil,
+        onRenameNote: ((UUID, String) -> Void)? = nil,
+        onDeleteNote: ((UUID) -> Void)? = nil,
         onSetDocumentCollection: ((UUID, UUID?) -> Void)? = nil,
         onDropDocumentOnCollection: ((UUID, UUID) -> Void)? = nil,
         onUpdateDocumentMetadata: ((UUID, String, String?, [String]?) -> Void)? = nil
@@ -60,6 +62,8 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
         self.onDeleteCollection = onDeleteCollection
         self.onRenameDocument = onRenameDocument
         self.onDeleteDocument = onDeleteDocument
+        self.onRenameNote = onRenameNote
+        self.onDeleteNote = onDeleteNote
         self.onSetDocumentCollection = onSetDocumentCollection
         self.onDropDocumentOnCollection = onDropDocumentOnCollection
         self.onUpdateDocumentMetadata = onUpdateDocumentMetadata
@@ -79,6 +83,8 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
                 onToggleTag: onToggleTag,
                 onRenameDocument: onRenameDocument,
                 onDeleteDocument: onDeleteDocument,
+                onRenameNote: onRenameNote,
+                onDeleteNote: onDeleteNote,
                 onSetDocumentCollection: onSetDocumentCollection
             )
             .navigationTitle(contentTitle)
@@ -86,7 +92,6 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
         } detail: {
             DetailAreaView(
                 viewModel: contentViewModel,
-                inspectorViewModel: inspectorViewModel,
                 showInspector: showInspector
             )
             .navigationSplitViewColumnWidth(min: 400, ideal: 500, max: .infinity)
@@ -94,19 +99,6 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
         .navigationSplitViewStyle(.balanced)
         .toolbar {
             ToolbarItemGroup(placement: .primaryAction) {
-                Button(action: { showInfoPopover.toggle() }) {
-                    Image(systemName: "info.circle")
-                }
-                .help("Document Info")
-                .disabled(selectedDocument == nil)
-                .popover(isPresented: $showInfoPopover, arrowEdge: .bottom) {
-                    if let document = selectedDocument {
-                        DocumentInfoPopover(document: document) { id, title, subtitle, authors in
-                            onUpdateDocumentMetadata?(id, title, subtitle, authors)
-                        }
-                    }
-                }
-
                 Button(action: toggleInspector) {
                     Image(systemName: "sidebar.right")
                 }
@@ -117,13 +109,6 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
         .onAppear {
             sidebarViewModel.refresh()
         }
-    }
-
-    private var selectedDocument: DocumentItem? {
-        if case .documentDetail(let id) = contentViewModel.contentMode {
-            return contentViewModel.documents.first { $0.id == id }
-        }
-        return nil
     }
 
     private var contentTitle: String {
@@ -162,6 +147,8 @@ public struct ContentListView: View {
     var onToggleTag: ((UUID, UUID) -> Void)? = nil
     var onRenameDocument: ((UUID, String) -> Void)? = nil
     var onDeleteDocument: ((UUID) -> Void)? = nil
+    var onRenameNote: ((UUID, String) -> Void)? = nil
+    var onDeleteNote: ((UUID) -> Void)? = nil
     var onSetDocumentCollection: ((UUID, UUID?) -> Void)? = nil
 
     public init(
@@ -172,6 +159,8 @@ public struct ContentListView: View {
         onToggleTag: ((UUID, UUID) -> Void)? = nil,
         onRenameDocument: ((UUID, String) -> Void)? = nil,
         onDeleteDocument: ((UUID) -> Void)? = nil,
+        onRenameNote: ((UUID, String) -> Void)? = nil,
+        onDeleteNote: ((UUID) -> Void)? = nil,
         onSetDocumentCollection: ((UUID, UUID?) -> Void)? = nil
     ) {
         self.viewModel = viewModel
@@ -181,6 +170,8 @@ public struct ContentListView: View {
         self.onToggleTag = onToggleTag
         self.onRenameDocument = onRenameDocument
         self.onDeleteDocument = onDeleteDocument
+        self.onRenameNote = onRenameNote
+        self.onDeleteNote = onDeleteNote
         self.onSetDocumentCollection = onSetDocumentCollection
     }
 
@@ -234,7 +225,9 @@ public struct ContentListView: View {
                             NoteListView(
                                 notes: viewModel.filteredNotes,
                                 selectedID: selectedNoteID,
-                                onSelect: viewModel.selectNote
+                                onSelect: viewModel.selectNote,
+                                onRename: onRenameNote,
+                                onDelete: onDeleteNote
                             )
                         }
                     }
@@ -274,7 +267,7 @@ public struct ContentListView: View {
                 }
             )
         }
-        .onDrop(of: [.pdf, .epub, .fileURL], isTargeted: $isDropTargeted) { providers in
+        .onDrop(of: [.pdf, .fileURL], isTargeted: $isDropTargeted) { providers in
             handleDrop(providers: providers)
             return true
         }
@@ -309,7 +302,7 @@ public struct ContentListView: View {
         return nil
     }
 
-    private static let supportedExtensions: Set<String> = ["pdf", "epub"]
+    private static let supportedExtensions: Set<String> = ["pdf"]
 
     private func handleDrop(providers: [NSItemProvider]) {
         var urls: [URL] = []
@@ -319,17 +312,6 @@ public struct ContentListView: View {
             if provider.hasItemConformingToTypeIdentifier("com.adobe.pdf") {
                 group.enter()
                 provider.loadItem(forTypeIdentifier: "com.adobe.pdf", options: nil) { item, error in
-                    defer { group.leave() }
-                    if let url = item as? URL {
-                        urls.append(url)
-                    } else if let data = item as? Data,
-                              let url = URL(dataRepresentation: data, relativeTo: nil) {
-                        urls.append(url)
-                    }
-                }
-            } else if provider.hasItemConformingToTypeIdentifier("org.idpf.epub-container") {
-                group.enter()
-                provider.loadItem(forTypeIdentifier: "org.idpf.epub-container", options: nil) { item, error in
                     defer { group.leave() }
                     if let url = item as? URL {
                         urls.append(url)
@@ -368,7 +350,7 @@ public struct ContentListView: View {
                 .foregroundColor(.secondary)
             Text("No Documents")
                 .font(.title2)
-            Text("Drop PDF or EPUB files here or use the Import button")
+            Text("Drop PDF files here or use the Import button")
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
@@ -438,11 +420,11 @@ struct ContentListStatusBar: View {
 
 public struct DetailAreaView: View {
     @ObservedObject var viewModel: ContentAreaViewModel
-    @ObservedObject var inspectorViewModel: InspectorPanelViewModel
     var showInspector: Bool
 
     @Environment(\.contentAreaDocumentHandler) var documentHandler
     @Environment(\.contentAreaNoteHandler) var noteHandler
+    @Environment(\.contentAreaDocumentLinkedNotesHandler) var linkedNotesHandler
 
     public var body: some View {
         #if os(macOS)
@@ -451,7 +433,11 @@ public struct DetailAreaView: View {
                 .frame(minWidth: 400)
 
             if showInspector {
-                InspectorPanelView(viewModel: inspectorViewModel)
+                InspectorPanelView(
+                    inspectorMode: currentInspectorMode,
+                    linkedNotes: currentLinkedNotes,
+                    onSelectNote: viewModel.selectNote
+                )
                     .frame(minWidth: 250, maxWidth: 300)
             }
         }
@@ -462,7 +448,11 @@ public struct DetailAreaView: View {
 
             if showInspector {
                 Divider()
-                InspectorPanelView(viewModel: inspectorViewModel)
+                InspectorPanelView(
+                    inspectorMode: currentInspectorMode,
+                    linkedNotes: currentLinkedNotes,
+                    onSelectNote: viewModel.selectNote
+                )
                     .frame(width: 280)
             }
         }
@@ -503,6 +493,24 @@ public struct DetailAreaView: View {
                 .foregroundColor(.secondary.opacity(0.8))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var currentInspectorMode: InspectorMode {
+        switch viewModel.contentMode {
+        case .documentDetail(let id):
+            guard let document = viewModel.documents.first(where: { $0.id == id }) else { return .none }
+            return .document(document)
+        case .noteDetail(let id):
+            guard let note = viewModel.notes.first(where: { $0.id == id }) else { return .none }
+            return .note(note)
+        case .empty, .documentList, .noteList:
+            return .none
+        }
+    }
+
+    private var currentLinkedNotes: [NoteItem] {
+        guard case .documentDetail(let id) = viewModel.contentMode else { return [] }
+        return linkedNotesHandler?(id) ?? []
     }
 }
 

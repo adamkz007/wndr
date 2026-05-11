@@ -27,7 +27,6 @@ public struct AnnotationToolbarView: View {
             toolButton(.select, icon: "arrow.up.left.and.arrow.down.right", label: "Select")
             toolButton(.highlight, icon: "highlighter", label: "Highlight")
             toolButton(.underline, icon: "underline", label: "Underline")
-            toolButton(.note, icon: "note.text", label: "Note")
 
             Divider()
                 .frame(height: 20)
@@ -90,7 +89,6 @@ public enum AnnotationTool: String, CaseIterable {
     case select
     case highlight
     case underline
-    case note
 
     #if canImport(AppKit)
     public var cursor: NSCursor {
@@ -99,8 +97,6 @@ public enum AnnotationTool: String, CaseIterable {
             return .arrow
         case .highlight, .underline:
             return .iBeam
-        case .note:
-            return .crosshair
         }
     }
     #endif

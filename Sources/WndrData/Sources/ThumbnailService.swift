@@ -44,14 +44,9 @@ public actor ThumbnailService {
             logger.info("Removed invalid thumbnail for \(documentID), regenerating")
         }
 
-        // Generate thumbnail based on file type
-        let ext = pdfURL.pathExtension.lowercased()
+        // Generate thumbnail from the document's first PDF page.
         do {
-            if ext == "epub" {
-                try await generateEPUBThumbnail(from: pdfURL, to: thumbURL)
-            } else {
-                try await generateThumbnail(from: pdfURL, to: thumbURL)
-            }
+            try await generateThumbnail(from: pdfURL, to: thumbURL)
             return thumbURL
         } catch {
             logger.error("Failed to generate thumbnail for \(documentID): \(error.localizedDescription)")
@@ -173,133 +168,6 @@ public actor ThumbnailService {
             try fileManager.removeItem(at: thumbURL)
             logger.info("Deleted thumbnail for document: \(documentID)")
         }
-    }
-
-    /// Generate a thumbnail from an EPUB cover image.
-    public func generateEPUBThumbnail(from epubURL: URL, to destinationURL: URL) async throws {
-        let parser = EPUBParser()
-        guard let coverData = try? parser.extractCoverImage(from: epubURL),
-              !coverData.isEmpty else {
-            // No cover image found — generate a fallback book icon thumbnail
-            try generateFallbackBookThumbnail(to: destinationURL)
-            return
-        }
-
-        #if canImport(AppKit)
-        guard let nsImage = NSImage(data: coverData) else {
-            try generateFallbackBookThumbnail(to: destinationURL)
-            return
-        }
-        // Resize to thumbnail size
-        let targetSize = Self.thumbnailSize
-        let originalSize = nsImage.size
-        let scaleX = targetSize.width / originalSize.width
-        let scaleY = targetSize.height / originalSize.height
-        let scale = min(scaleX, scaleY)
-        let newWidth = Int(ceil(originalSize.width * scale))
-        let newHeight = Int(ceil(originalSize.height * scale))
-
-        let bitmapRep = NSBitmapImageRep(
-            bitmapDataPlanes: nil,
-            pixelsWide: newWidth,
-            pixelsHigh: newHeight,
-            bitsPerSample: 8,
-            samplesPerPixel: 4,
-            hasAlpha: true,
-            isPlanar: false,
-            colorSpaceName: .deviceRGB,
-            bytesPerRow: 0,
-            bitsPerPixel: 0
-        )
-        guard let rep = bitmapRep else {
-            throw ThumbnailError.imageConversionFailed
-        }
-        NSGraphicsContext.saveGraphicsState()
-        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
-        nsImage.draw(in: NSRect(x: 0, y: 0, width: newWidth, height: newHeight))
-        NSGraphicsContext.restoreGraphicsState()
-
-        guard let pngData = rep.representation(using: .png, properties: [:]) else {
-            throw ThumbnailError.imageConversionFailed
-        }
-        #else
-        guard let uiImage = UIImage(data: coverData) else {
-            try generateFallbackBookThumbnail(to: destinationURL)
-            return
-        }
-        let targetSize = Self.thumbnailSize
-        let renderer = UIGraphicsImageRenderer(size: targetSize)
-        let resizedImage = renderer.image { _ in
-            uiImage.draw(in: CGRect(origin: .zero, size: targetSize))
-        }
-        guard let pngData = resizedImage.pngData() else {
-            throw ThumbnailError.imageConversionFailed
-        }
-        #endif
-
-        let directory = destinationURL.deletingLastPathComponent()
-        if !fileManager.fileExists(atPath: directory.path) {
-            try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-        }
-        try pngData.write(to: destinationURL)
-        logger.info("Generated EPUB thumbnail at: \(destinationURL.path)")
-    }
-
-    /// Generate a generic book icon thumbnail as fallback.
-    private func generateFallbackBookThumbnail(to destinationURL: URL) throws {
-        let pixelWidth = Int(Self.thumbnailSize.width)
-        let pixelHeight = Int(Self.thumbnailSize.height)
-        let colorSpace = CGColorSpaceCreateDeviceRGB()
-
-        guard let cgContext = CGContext(
-            data: nil,
-            width: pixelWidth,
-            height: pixelHeight,
-            bitsPerComponent: 8,
-            bytesPerRow: 0,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-        ) else {
-            throw ThumbnailError.imageConversionFailed
-        }
-
-        // Draw a teal background with book icon shape
-        cgContext.setFillColor(CGColor(red: 0.2, green: 0.7, blue: 0.6, alpha: 1.0))
-        cgContext.fill(CGRect(x: 0, y: 0, width: pixelWidth, height: pixelHeight))
-
-        // Draw a simple book shape
-        cgContext.setFillColor(CGColor(red: 1, green: 1, blue: 1, alpha: 0.8))
-        let bookRect = CGRect(
-            x: CGFloat(pixelWidth) * 0.2,
-            y: CGFloat(pixelHeight) * 0.15,
-            width: CGFloat(pixelWidth) * 0.6,
-            height: CGFloat(pixelHeight) * 0.7
-        )
-        cgContext.fill(bookRect)
-
-        guard let cgImage = cgContext.makeImage() else {
-            throw ThumbnailError.imageConversionFailed
-        }
-
-        let pngData: Data?
-        #if canImport(AppKit)
-        let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
-        pngData = bitmapRep.representation(using: .png, properties: [:])
-        #else
-        let uiImage = UIImage(cgImage: cgImage)
-        pngData = uiImage.pngData()
-        #endif
-
-        guard let imageData = pngData else {
-            throw ThumbnailError.imageConversionFailed
-        }
-
-        let directory = destinationURL.deletingLastPathComponent()
-        if !fileManager.fileExists(atPath: directory.path) {
-            try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
-        }
-        try imageData.write(to: destinationURL)
-        logger.info("Generated fallback EPUB thumbnail at: \(destinationURL.path)")
     }
 
     public enum ThumbnailError: LocalizedError {

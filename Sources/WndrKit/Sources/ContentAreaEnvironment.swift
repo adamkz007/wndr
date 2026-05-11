@@ -12,6 +12,10 @@ public struct ContentAreaDropHandlerKey: EnvironmentKey {
     public static let defaultValue: (([URL]) -> Void)? = nil
 }
 
+public struct ContentAreaDocumentLinkedNotesHandlerKey: EnvironmentKey {
+    public static let defaultValue: ((UUID) -> [NoteItem])? = nil
+}
+
 extension EnvironmentValues {
     public var contentAreaDocumentHandler: ((UUID, URL?, String) -> AnyView)? {
         get { self[ContentAreaDocumentHandlerKey.self] }
@@ -26,5 +30,10 @@ extension EnvironmentValues {
     public var contentAreaDropHandler: (([URL]) -> Void)? {
         get { self[ContentAreaDropHandlerKey.self] }
         set { self[ContentAreaDropHandlerKey.self] = newValue }
+    }
+
+    public var contentAreaDocumentLinkedNotesHandler: ((UUID) -> [NoteItem])? {
+        get { self[ContentAreaDocumentLinkedNotesHandlerKey.self] }
+        set { self[ContentAreaDocumentLinkedNotesHandlerKey.self] = newValue }
     }
 }
