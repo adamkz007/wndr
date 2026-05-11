@@ -9,10 +9,12 @@ xcuserdata/
 # Local build products and archives
 DerivedData/
 .build/
-build/*
-!build/*.dmg
+build/
 
 # Xcode archives and unpacked app bundles
 *.xcarchive/
 *.dSYM/
 *.app/
+
+# Local app data
+wndr/
