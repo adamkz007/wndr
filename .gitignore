@@ -18,3 +18,7 @@ build/
 
 # Local app data
 wndr/
+
+# Local-only docs and assistant notes
+docs/
+CLAUDE.md
