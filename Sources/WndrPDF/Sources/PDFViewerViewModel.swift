@@ -1,13 +1,8 @@
+import AppKit
 import Combine
 import Foundation
 import PDFKit
 import WndrKit
-
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 
 @MainActor
 public final class PDFViewerViewModel: ObservableObject {
@@ -262,11 +257,7 @@ public final class PDFViewerViewModel: ObservableObject {
 
         guard let cgImage = cgContext.makeImage() else { return nil }
 
-        #if canImport(AppKit)
         let image = NSImage(cgImage: cgImage, size: CGSize(width: pixelWidth, height: pixelHeight))
-        #else
-        let image = UIImage(cgImage: cgImage)
-        #endif
 
         thumbnailCache[pageIndex] = image
         return image

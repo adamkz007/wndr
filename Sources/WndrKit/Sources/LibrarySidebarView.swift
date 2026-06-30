@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -358,11 +359,9 @@ private struct SidebarFooterView: View {
                         .underline(color: .clear)
                 }
                 .buttonStyle(.plain)
-                #if canImport(AppKit)
                 .onHover { hovering in
                     if hovering { NSCursor.pointingHand.push() } else { NSCursor.pop() }
                 }
-                #endif
 
                 Text("by @adamkz007")
                     .font(.system(size: 9))
@@ -374,16 +373,9 @@ private struct SidebarFooterView: View {
     }
 
     private func openReleaseNotes() {
-        // TODO: Add actual release notes URL
-        #if canImport(AppKit)
         if let url = URL(string: "https://github.com/adamkz007/wndr/releases") {
             NSWorkspace.shared.open(url)
         }
-        #elseif canImport(UIKit)
-        if let url = URL(string: "https://github.com/adamkz007/wndr/releases") {
-            UIApplication.shared.open(url)
-        }
-        #endif
     }
 }
 

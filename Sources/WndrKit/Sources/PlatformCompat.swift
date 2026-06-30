@@ -1,11 +1,10 @@
 // PlatformCompat.swift
-// Cross-platform type aliases and helpers for macOS + iPadOS support.
-// Import this module to use PlatformImage, PlatformColor, and platform-adaptive views.
+// Type aliases and helpers for the macOS app.
+// Import this module to use PlatformImage, PlatformColor, and shared view helpers.
 
-import SwiftUI
-
-#if canImport(AppKit)
 import AppKit
+import PDFKit
+import SwiftUI
 
 public typealias PlatformImage = NSImage
 public typealias PlatformColor = NSColor
@@ -17,112 +16,66 @@ extension NSImage {
     }
 }
 
-#elseif canImport(UIKit)
-import UIKit
-
-public typealias PlatformImage = UIImage
-public typealias PlatformColor = UIColor
-#endif
-
-// MARK: - Cross-Platform Color Helpers
+// MARK: - Color Helpers
 
 extension Color {
-    /// Platform-adaptive background color for controls/toolbars.
+    /// Background color for controls/toolbars.
     public static var platformControlBackground: Color {
-        #if canImport(AppKit)
-        return Color(NSColor.controlBackgroundColor)
-        #else
-        return Color(UIColor.secondarySystemBackground)
-        #endif
+        Color(NSColor.controlBackgroundColor)
     }
 
-    /// Platform-adaptive background color for text areas.
+    /// Background color for text areas.
     public static var platformTextBackground: Color {
-        #if canImport(AppKit)
-        return Color(NSColor.textBackgroundColor)
-        #else
-        return Color(UIColor.systemBackground)
-        #endif
+        Color(NSColor.textBackgroundColor)
     }
 
-    /// Platform-adaptive separator color.
+    /// Separator color.
     public static var platformSeparator: Color {
-        #if canImport(AppKit)
-        return Color(NSColor.separatorColor)
-        #else
-        return Color(UIColor.separator)
-        #endif
+        Color(NSColor.separatorColor)
     }
 
-    /// Platform-adaptive window/scene background.
+    /// Window background color.
     public static var platformWindowBackground: Color {
-        #if canImport(AppKit)
-        return Color(NSColor.windowBackgroundColor)
-        #else
-        return Color(UIColor.systemBackground)
-        #endif
+        Color(NSColor.windowBackgroundColor)
     }
 }
 
-// MARK: - Cross-Platform Image Loading
+// MARK: - Image Loading
 
 extension PlatformImage {
-    /// Load an image from a file URL on either platform.
+    /// Load an image from a file URL.
     public static func loadFromURL(_ url: URL) -> PlatformImage? {
-        #if canImport(AppKit)
-        return NSImage(contentsOf: url)
-        #else
-        guard let data = try? Data(contentsOf: url) else { return nil }
-        return UIImage(data: data)
-        #endif
+        NSImage(contentsOf: url)
     }
 
     /// Convert to SwiftUI Image.
     public var swiftUIImage: Image {
-        #if canImport(AppKit)
-        return Image(nsImage: self)
-        #else
-        return Image(uiImage: self)
-        #endif
+        Image(nsImage: self)
     }
 }
 
-// MARK: - Platform-Adaptive URL Opening
+// MARK: - URL Opening
 
 public func openURL(_ url: URL) {
-    #if canImport(AppKit)
     NSWorkspace.shared.open(url)
-    #else
-    UIApplication.shared.open(url)
-    #endif
 }
 
-// MARK: - Platform-Adaptive PNG Data
+// MARK: - PNG Data
 
 extension PlatformImage {
-    /// Returns PNG data for this image on either platform.
+    /// Returns PNG data for this image.
     public var pngRepresentation: Data? {
-        #if canImport(AppKit)
         guard let tiffData = self.tiffRepresentation,
               let bitmap = NSBitmapImageRep(data: tiffData) else { return nil }
         return bitmap.representation(using: .png, properties: [:])
-        #else
-        return self.pngData()
-        #endif
     }
 }
 
-// MARK: - Cross-Platform PDFKit Color
+// MARK: - PDFKit Color
 
-import PDFKit
-
-/// Returns a platform-native color for annotation use (with alpha for highlight translucency).
+/// Returns a native color for annotation use (with alpha for highlight translucency).
 public func annotationPlatformColor(red: CGFloat, green: CGFloat, blue: CGFloat, alpha: CGFloat = 0.4) -> PlatformColor {
-    #if canImport(AppKit)
-    return NSColor(red: red, green: green, blue: blue, alpha: alpha)
-    #else
-    return UIColor(red: red, green: green, blue: blue, alpha: alpha)
-    #endif
+    NSColor(red: red, green: green, blue: blue, alpha: alpha)
 }
 
 /// Returns a system-named platform color.
@@ -138,15 +91,11 @@ public func systemPlatformColor(_ name: String) -> PlatformColor {
     }
 }
 
-// MARK: - Hover Modifier (no-op on iOS)
+// MARK: - Hover Modifier
 
 extension View {
-    /// Applies `.onHover` on macOS, no-op on iOS (where hover is not common).
+    /// Applies `.onHover` on macOS.
     public func onHoverIfAvailable(perform action: @escaping (Bool) -> Void) -> some View {
-        #if canImport(AppKit)
-        return self.onHover(perform: action)
-        #else
-        return self
-        #endif
+        self.onHover(perform: action)
     }
 }

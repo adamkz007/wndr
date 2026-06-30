@@ -92,20 +92,12 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
         } detail: {
             DetailAreaView(
                 viewModel: contentViewModel,
-                showInspector: showInspector
+                showInspector: showInspector,
+                onToggleInspector: toggleInspector
             )
             .navigationSplitViewColumnWidth(min: 400, ideal: 500, max: .infinity)
         }
         .navigationSplitViewStyle(.balanced)
-        .toolbar {
-            ToolbarItemGroup(placement: .primaryAction) {
-                Button(action: toggleInspector) {
-                    Image(systemName: "sidebar.right")
-                }
-                .keyboardShortcut("i", modifiers: [.command, .option])
-                .help("Toggle Inspector")
-            }
-        }
         .onAppear {
             sidebarViewModel.refresh()
         }
@@ -131,7 +123,9 @@ public struct LookPrimaryView<Coordinator: LibraryRootHandling>: View {
     }
 
     private func toggleInspector() {
-        showInspector.toggle()
+        withAnimation(.easeInOut(duration: 0.24)) {
+            showInspector.toggle()
+        }
     }
 }
 
@@ -240,6 +234,7 @@ public struct ContentListView: View {
                 storageBytes: viewModel.totalStorageBytes
             )
         }
+        .background(Color.platformTextBackground)
         .onChange(of: selectedSidebarItem) { _, newValue in
             Task { @MainActor in
                 viewModel.updateContent(for: newValue)
@@ -409,10 +404,7 @@ struct ContentListStatusBar: View {
     }
 
     private var formattedStorage: String {
-        let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
-        formatter.countStyle = .file
-        return formatter.string(fromByteCount: storageBytes)
+        SharedFormatters.storageTotal.string(fromByteCount: storageBytes)
     }
 }
 
@@ -421,42 +413,55 @@ struct ContentListStatusBar: View {
 public struct DetailAreaView: View {
     @ObservedObject var viewModel: ContentAreaViewModel
     var showInspector: Bool
+    var onToggleInspector: () -> Void
 
     @Environment(\.contentAreaDocumentHandler) var documentHandler
     @Environment(\.contentAreaNoteHandler) var noteHandler
     @Environment(\.contentAreaDocumentLinkedNotesHandler) var linkedNotesHandler
 
+    private let inspectorWidth: CGFloat = 300
+    private let inspectorDividerWidth: CGFloat = 1
+
     public var body: some View {
-        #if os(macOS)
-        HSplitView {
+        ZStack(alignment: .trailing) {
             detailContent
-                .frame(minWidth: 400)
+                .frame(minWidth: 400, maxWidth: .infinity, maxHeight: .infinity)
 
-            if showInspector {
-                InspectorPanelView(
-                    inspectorMode: currentInspectorMode,
-                    linkedNotes: currentLinkedNotes,
-                    onSelectNote: viewModel.selectNote
-                )
-                    .frame(minWidth: 250, maxWidth: 300)
+            inspectorOverlay
+        }
+        .clipped()
+        .animation(.easeInOut(duration: 0.24), value: showInspector)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(action: onToggleInspector) {
+                    Image(systemName: "sidebar.right")
+                }
+                .keyboardShortcut("i", modifiers: [.command, .option])
+                .help("Toggle Inspector")
             }
         }
-        #else
+    }
+
+    private var inspectorOverlay: some View {
         HStack(spacing: 0) {
-            detailContent
-                .frame(maxWidth: .infinity)
+            Divider()
+                .opacity(showInspector ? 1 : 0)
 
-            if showInspector {
-                Divider()
-                InspectorPanelView(
-                    inspectorMode: currentInspectorMode,
-                    linkedNotes: currentLinkedNotes,
-                    onSelectNote: viewModel.selectNote
-                )
-                    .frame(width: 280)
-            }
+            InspectorPanelView(
+                inspectorMode: currentInspectorMode,
+                linkedNotes: currentLinkedNotes,
+                onSelectNote: viewModel.selectNote
+            )
+            .frame(width: inspectorWidth)
         }
-        #endif
+        .frame(width: inspectorWidth + inspectorDividerWidth)
+        .frame(maxHeight: .infinity, alignment: .trailing)
+        .background(Color.clear)
+        .offset(x: showInspector ? 0 : inspectorWidth + inspectorDividerWidth)
+        .opacity(showInspector ? 1 : 0.01)
+        .allowsHitTesting(showInspector)
+        .accessibilityHidden(!showInspector)
+        .shadow(color: Color.black.opacity(showInspector ? 0.08 : 0), radius: 10, x: -2, y: 0)
     }
 
     @ViewBuilder

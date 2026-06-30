@@ -54,30 +54,6 @@ struct ContentWrapper: View {
     private func dropHandler(urls: [URL]) {
         Task {
             await environment.importCoordinator.importDocuments(from: urls)
-            // Refresh the document list after import
-            environment.documentService.fetchAllDocuments()
-            await MainActor.run {
-                contentViewModel.documents = environment.documentService.documents.map { dto in
-                    DocumentItem(
-                        id: dto.id,
-                        title: dto.title,
-                        subtitle: dto.subtitle,
-                        authors: dto.authors,
-                        pageCount: dto.pageCount,
-                        createdAt: dto.createdAt,
-                        updatedAt: dto.updatedAt,
-                        fileURL: dto.fileURL,
-                        thumbnailURL: thumbnailURL(for: dto.id),
-                        documentType: dto.documentType,
-                        tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                        collectionID: dto.collectionID
-                    )
-                }
-                // Update to document list view if we were on empty state
-                if contentViewModel.contentMode == .empty {
-                    contentViewModel.contentMode = .documentList
-                }
-            }
         }
     }
 
@@ -254,7 +230,11 @@ struct ContentWrapper: View {
         print("DEBUG: Setting \(initialAnnotations.count) initial annotations on PDF viewer")
         viewModel.setAnnotations(initialAnnotations)
 
-        return AnyView(PDFViewerView(viewModel: viewModel))
+        return AnyView(
+            DocumentOpenMetricsView(documentID: documentID) {
+                PDFViewerView(viewModel: viewModel)
+            }
+        )
     }
 
     private func noteHandler(noteID: UUID, title: String, preview: String) -> AnyView {
@@ -370,5 +350,19 @@ private struct NoteEditorContainerView: View {
         }
         viewModel.lastSaved = noteDTO.updatedAt ?? noteDTO.createdAt
         viewModel.isDirty = false
+    }
+}
+
+private struct DocumentOpenMetricsView<Content: View>: View {
+    let documentID: UUID
+    @ViewBuilder let content: () -> Content
+
+    var body: some View {
+        content()
+            .task(id: documentID) {
+                PerformanceMonitor.shared.begin(.documentOpen)
+                await Task.yield()
+                PerformanceMonitor.shared.end(.documentOpen, metadata: ["document_id": documentID.uuidString])
+            }
     }
 }

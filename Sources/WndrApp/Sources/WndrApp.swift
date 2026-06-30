@@ -8,6 +8,10 @@ import WndrPDF
 struct WndrApp: App {
     @StateObject private var environment = AppEnvironment()
 
+    init() {
+        PerformanceMonitor.shared.markLaunchStart()
+    }
+
     var body: some Scene {
         WindowGroup {
             RootView()
@@ -77,6 +81,7 @@ private struct RootView: View {
                 .environment(\.managedObjectContext, environment.persistenceController.viewContext)
                 .onAppear {
                     setupViewModels()
+                    PerformanceMonitor.shared.markLaunchComplete()
                 }
             }
         }
@@ -108,20 +113,22 @@ private struct RootView: View {
                 environment.shouldReassignTagColors = false
             }
         }
-        .onChange(of: environment.importCoordinator.isImporting) { _, newValue in
-            // Refresh document list when import completes
-            if !newValue {
-                refreshDocumentList()
-            }
+        .onChange(of: environment.importCoordinator.lastImportedDocumentIDs) { _, importedIDs in
+            guard !importedIDs.isEmpty else { return }
+            let sync = makeViewStateSync()
+            sync.applyImportedDocuments(importedIDs)
+            environment.importCoordinator.clearImportedDocumentIDs()
         }
     }
 
-    private func thumbnailURL(for documentID: UUID) -> URL? {
-        guard let libraryURL = environment.libraryURL else { return nil }
-        let indexURL = libraryURL.appendingPathComponent("Index", isDirectory: true)
-        let thumbURL = indexURL.appendingPathComponent("Thumbnails", isDirectory: true)
-            .appendingPathComponent("\(documentID.uuidString).png")
-        return FileManager.default.fileExists(atPath: thumbURL.path) ? thumbURL : nil
+    private func makeViewStateSync() -> LibraryViewStateSync {
+        LibraryViewStateSync(
+            environment: environment,
+            sidebarViewModel: sidebarViewModel,
+            contentViewModel: contentViewModel,
+            availableTags: $availableTags,
+            availableCollections: $availableCollections
+        )
     }
 
     private func setupViewModels() {
@@ -141,16 +148,7 @@ private struct RootView: View {
                 )
                 // Sync the notes list so the detail view can find the new note immediately
                 await MainActor.run {
-                    contentViewModel?.notes = env.documentService.notes.map { dto in
-                        NoteItem(
-                            id: dto.id,
-                            title: dto.title,
-                            preview: dto.preview,
-                            pinned: dto.pinned,
-                            createdAt: dto.createdAt,
-                            updatedAt: dto.updatedAt
-                        )
-                    }
+                    contentViewModel?.notes = RootViewMapper.noteItems(from: env.documentService.notes)
                 }
                 return noteID
             } catch {
@@ -162,72 +160,73 @@ private struct RootView: View {
         contentViewModel.onContentSearch = { [weak environment, weak contentViewModel] query in
             guard let env = environment, let vm = contentViewModel else { return }
 
-            // 1. Search notes via Core Data (fast, runs on main actor)
-            let noteMatches = env.documentService.searchNoteContent(query: query)
-            for note in noteMatches {
-                guard !Task.isCancelled else { return }
-                vm.contentSearchResults.append(SearchResultItem(
-                    id: note.id,
-                    title: note.title,
-                    snippet: contextualSnippet(from: note.body, matching: query),
-                    kind: .note
-                ))
-            }
+            await PerformanceMonitor.shared.measure(.contentSearch, metadata: ["query_length": String(query.count)]) {
+                // 1. Search notes via Core Data (fast, runs on main actor)
+                let noteMatches = env.documentService.searchNoteContent(query: query)
+                for note in noteMatches {
+                    guard !Task.isCancelled else { return }
+                    vm.contentSearchResults.append(SearchResultItem(
+                        id: note.id,
+                        title: note.title,
+                        snippet: contextualSnippet(from: note.body, matching: query),
+                        kind: .note
+                    ))
+                }
 
-            // 2. Search PDFs via PDFKit (slow, each PDF searched on background thread)
-            env.documentService.fetchAllDocuments()
-            let allDocs = env.documentService.documents
+                // 2. Search PDFs via PDFKit (slow, each PDF searched on background thread)
+                let allDocs = env.documentService.documents
 
-            for doc in allDocs {
-                guard !Task.isCancelled else { return }
-                guard let url = doc.fileURL else { continue }
+                for doc in allDocs {
+                    guard !Task.isCancelled else { return }
+                    guard let url = doc.fileURL else { continue }
 
-                // Search this PDF on a background thread to avoid blocking UI
-                let match: SearchResultItem? = await Task.detached(priority: .utility) {
-                    guard let pdfDoc = PDFDocument(url: url) else { return nil }
-                    let selections = pdfDoc.findString(query, withOptions: [.caseInsensitive])
-                    guard let firstMatch = selections.first else { return nil }
+                    // Search this PDF on a background thread to avoid blocking UI
+                    let match: SearchResultItem? = await Task.detached(priority: .utility) {
+                        guard let pdfDoc = PDFDocument(url: url) else { return nil }
+                        let selections = pdfDoc.findString(query, withOptions: [.caseInsensitive])
+                        guard let firstMatch = selections.first else { return nil }
 
-                    // Build a contextual snippet from the page text around the match
-                    let pageIdx = firstMatch.pages.first.flatMap { pdfDoc.index(for: $0) }
-                    var snippetText = firstMatch.string ?? ""
+                        // Build a contextual snippet from the page text around the match
+                        let pageIdx = firstMatch.pages.first.flatMap { pdfDoc.index(for: $0) }
+                        var snippetText = firstMatch.string ?? ""
 
-                    // Try to get surrounding context from the page
-                    if let page = firstMatch.pages.first, let pageText = page.string {
-                        if let matchRange = pageText.range(of: query, options: .caseInsensitive) {
-                            let start = pageText.index(
-                                matchRange.lowerBound,
-                                offsetBy: -80,
-                                limitedBy: pageText.startIndex
-                            ) ?? pageText.startIndex
-                            let end = pageText.index(
-                                matchRange.upperBound,
-                                offsetBy: 80,
-                                limitedBy: pageText.endIndex
-                            ) ?? pageText.endIndex
-                            snippetText = String(pageText[start..<end])
-                                .replacingOccurrences(of: "\n", with: " ")
-                                .trimmingCharacters(in: .whitespaces)
-                            if start != pageText.startIndex { snippetText = "…" + snippetText }
-                            if end != pageText.endIndex { snippetText += "…" }
+                        // Try to get surrounding context from the page
+                        if let page = firstMatch.pages.first, let pageText = page.string {
+                            if let matchRange = pageText.range(of: query, options: .caseInsensitive) {
+                                let start = pageText.index(
+                                    matchRange.lowerBound,
+                                    offsetBy: -80,
+                                    limitedBy: pageText.startIndex
+                                ) ?? pageText.startIndex
+                                let end = pageText.index(
+                                    matchRange.upperBound,
+                                    offsetBy: 80,
+                                    limitedBy: pageText.endIndex
+                                ) ?? pageText.endIndex
+                                snippetText = String(pageText[start..<end])
+                                    .replacingOccurrences(of: "\n", with: " ")
+                                    .trimmingCharacters(in: .whitespaces)
+                                if start != pageText.startIndex { snippetText = "…" + snippetText }
+                                if end != pageText.endIndex { snippetText += "…" }
+                            }
                         }
+
+                        let pageLabel = pageIdx.map { "Page \($0 + 1): " } ?? ""
+
+                        return SearchResultItem(
+                            id: doc.id,
+                            title: doc.title,
+                            snippet: "\(pageLabel)\(snippetText)",
+                            kind: .document,
+                            fileURL: doc.fileURL,
+                            pageIndex: pageIdx
+                        )
+                    }.value
+
+                    guard !Task.isCancelled else { return }
+                    if let match = match {
+                        vm.contentSearchResults.append(match)
                     }
-
-                    let pageLabel = pageIdx.map { "Page \($0 + 1): " } ?? ""
-
-                    return SearchResultItem(
-                        id: doc.id,
-                        title: doc.title,
-                        snippet: "\(pageLabel)\(snippetText)",
-                        kind: .document,
-                        fileURL: doc.fileURL,
-                        pageIndex: pageIdx
-                    )
-                }.value
-
-                guard !Task.isCancelled else { return }
-                if let match = match {
-                    vm.contentSearchResults.append(match)
                 }
             }
         }
@@ -239,9 +238,7 @@ private struct RootView: View {
                 let tagID = try await env.collectionService.createTag(name: name, color: color)
                 // createTag already calls fetchAllTags() internally
                 await MainActor.run {
-                    sidebarViewModel?.tags = env.collectionService.tags.map { dto in
-                        TagItem(id: dto.id, name: dto.name, color: dto.color, itemCount: dto.itemCount)
-                    }
+                    sidebarViewModel?.tags = RootViewMapper.tagItems(from: env.collectionService.tags)
                 }
                 return tagID
             } catch {
@@ -256,9 +253,7 @@ private struct RootView: View {
                 let collectionID = try await env.collectionService.createCollection(name: name, icon: icon)
                 // createCollection already calls fetchAllCollections() internally
                 await MainActor.run {
-                    sidebarViewModel?.collections = env.collectionService.collections.map { dto in
-                        CollectionItem(id: dto.id, name: dto.name, icon: dto.icon, documentCount: dto.documentCount)
-                    }
+                    sidebarViewModel?.collections = RootViewMapper.collectionItems(from: env.collectionService.collections)
                 }
                 return collectionID
             } catch {
@@ -270,35 +265,20 @@ private struct RootView: View {
         contentViewModel.onRefresh = { [weak sidebarViewModel, weak contentViewModel] selection in
             guard let selection = selection else { return }
 
-            // Helper to compute thumbnail URL
-            let thumbURL: (UUID) -> URL? = { docID in
-                guard let libraryURL = environment.libraryURL else { return nil }
-                let url = libraryURL.appendingPathComponent("Index/Thumbnails/\(docID.uuidString).png")
-                return FileManager.default.fileExists(atPath: url.path) ? url : nil
-            }
-
             switch selection {
             case .allDocuments:
                 environment.documentService.fetchAllDocuments()
-                contentViewModel?.documents = environment.documentService.documents.map { dto in
-                    DocumentItem(
-                        id: dto.id,
-                        title: dto.title,
-                        subtitle: dto.subtitle,
-                        authors: dto.authors,
-                        pageCount: dto.pageCount,
-                        createdAt: dto.createdAt,
-                        updatedAt: dto.updatedAt,
-                        fileURL: dto.fileURL,
-                        thumbnailURL: thumbURL(dto.id),
-                        documentType: dto.documentType,
-                        tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                        collectionID: dto.collectionID
-                    )
-                }
+                contentViewModel?.documents = RootViewMapper.documentItems(
+                    from: environment.documentService.documents,
+                    libraryURL: environment.libraryURL
+                )
                 // Update content mode based on document count
                 if let vm = contentViewModel {
-                    vm.contentMode = vm.documents.isEmpty ? .empty : .documentList
+                    vm.contentMode = RootViewMapper.contentMode(
+                        for: selection,
+                        documentCount: vm.documents.count,
+                        noteCount: vm.notes.count
+                    )
                 }
                 // Update total counts only when viewing all documents
                 sidebarViewModel?.documentCount = environment.documentService.documents.count
@@ -307,167 +287,65 @@ private struct RootView: View {
                 environment.documentService.fetchAllDocuments()
                 // Filter to show only documents without collections
                 let unsortedDocs = environment.documentService.documents.filter { $0.collectionID == nil }
-                contentViewModel?.documents = unsortedDocs.map { dto in
-                    DocumentItem(
-                        id: dto.id,
-                        title: dto.title,
-                        subtitle: dto.subtitle,
-                        authors: dto.authors,
-                        pageCount: dto.pageCount,
-                        createdAt: dto.createdAt,
-                        updatedAt: dto.updatedAt,
-                        fileURL: dto.fileURL,
-                        thumbnailURL: thumbURL(dto.id),
-                        documentType: dto.documentType,
-                        tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                        collectionID: dto.collectionID
-                    )
-                }
+                contentViewModel?.documents = RootViewMapper.documentItems(
+                    from: unsortedDocs,
+                    libraryURL: environment.libraryURL
+                )
                 // Update content mode based on document count
                 if let vm = contentViewModel {
-                    vm.contentMode = vm.documents.isEmpty ? .empty : .documentList
+                    vm.contentMode = RootViewMapper.contentMode(
+                        for: selection,
+                        documentCount: vm.documents.count,
+                        noteCount: vm.notes.count
+                    )
                 }
             case .allNotes:
                 environment.documentService.fetchAllNotes()
-                contentViewModel?.notes = environment.documentService.notes.map { dto in
-                    NoteItem(
-                        id: dto.id,
-                        title: dto.title,
-                        preview: dto.preview,
-                        pinned: dto.pinned,
-                        createdAt: dto.createdAt,
-                        updatedAt: dto.updatedAt
-                    )
-                }
+                contentViewModel?.notes = RootViewMapper.noteItems(from: environment.documentService.notes)
                 // Update content mode based on note count
                 if let vm = contentViewModel {
-                    vm.contentMode = vm.notes.isEmpty ? .empty : .noteList
+                    vm.contentMode = RootViewMapper.contentMode(
+                        for: selection,
+                        documentCount: vm.documents.count,
+                        noteCount: vm.notes.count
+                    )
                 }
                 // Update total counts only when viewing all notes
                 sidebarViewModel?.noteCount = environment.documentService.notes.count
             case .collection(let id):
                 environment.documentService.fetchDocuments(for: id)
-                contentViewModel?.documents = environment.documentService.documents.map { dto in
-                    DocumentItem(
-                        id: dto.id,
-                        title: dto.title,
-                        subtitle: dto.subtitle,
-                        authors: dto.authors,
-                        pageCount: dto.pageCount,
-                        createdAt: dto.createdAt,
-                        updatedAt: dto.updatedAt,
-                        fileURL: dto.fileURL,
-                        thumbnailURL: thumbURL(dto.id),
-                        documentType: dto.documentType,
-                        tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                        collectionID: dto.collectionID
-                    )
-                }
+                contentViewModel?.documents = RootViewMapper.documentItems(
+                    from: environment.documentService.documents,
+                    libraryURL: environment.libraryURL
+                )
                 // Update content mode
                 if let vm = contentViewModel {
-                    vm.contentMode = vm.documents.isEmpty ? .empty : .documentList
+                    vm.contentMode = RootViewMapper.contentMode(
+                        for: selection,
+                        documentCount: vm.documents.count,
+                        noteCount: vm.notes.count
+                    )
                 }
             case .tag(let id):
                 environment.documentService.fetchDocuments(forTag: id)
-                contentViewModel?.documents = environment.documentService.documents.map { dto in
-                    DocumentItem(
-                        id: dto.id,
-                        title: dto.title,
-                        subtitle: dto.subtitle,
-                        authors: dto.authors,
-                        pageCount: dto.pageCount,
-                        createdAt: dto.createdAt,
-                        updatedAt: dto.updatedAt,
-                        fileURL: dto.fileURL,
-                        thumbnailURL: thumbURL(dto.id),
-                        documentType: dto.documentType,
-                        tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                        collectionID: dto.collectionID
-                    )
-                }
+                contentViewModel?.documents = RootViewMapper.documentItems(
+                    from: environment.documentService.documents,
+                    libraryURL: environment.libraryURL
+                )
                 // Update content mode
                 if let vm = contentViewModel {
-                    vm.contentMode = vm.documents.isEmpty ? .empty : .documentList
+                    vm.contentMode = RootViewMapper.contentMode(
+                        for: selection,
+                        documentCount: vm.documents.count,
+                        noteCount: vm.notes.count
+                    )
                 }
             }
         }
 
         // Initial load
-        environment.documentService.fetchAllDocuments()
-        environment.documentService.fetchAllNotes()
-        environment.collectionService.fetchAllTags()
-        environment.collectionService.fetchAllCollections()
-        updateViewModelsFromService()
-    }
-
-    private func updateViewModelsFromService() {
-        // Update counts in sidebar
-        sidebarViewModel.documentCount = environment.documentService.documents.count
-        sidebarViewModel.unsortedDocumentCount = environment.documentService.documents.filter { $0.collectionID == nil }.count
-        sidebarViewModel.noteCount = environment.documentService.notes.count
-
-        // Update sidebar tags
-        sidebarViewModel.tags = environment.collectionService.tags.map { dto in
-            TagItem(id: dto.id, name: dto.name, color: dto.color, itemCount: dto.itemCount)
-        }
-
-        // Update sidebar collections
-        sidebarViewModel.collections = environment.collectionService.collections.map { dto in
-            CollectionItem(id: dto.id, name: dto.name, icon: dto.icon, documentCount: dto.documentCount)
-        }
-
-        // Update available tags for context menus
-        availableTags = environment.collectionService.tags.map { dto in
-            DocumentTagItem(id: dto.id, name: dto.name, color: dto.color)
-        }
-
-        // Update available collections for context menus
-        availableCollections = environment.collectionService.collections.map { dto in
-            CollectionMenuItem(id: dto.id, name: dto.name)
-        }
-
-        // Populate documents directly
-        contentViewModel.documents = environment.documentService.documents.map { dto in
-            DocumentItem(
-                id: dto.id,
-                title: dto.title,
-                subtitle: dto.subtitle,
-                authors: dto.authors,
-                pageCount: dto.pageCount,
-                createdAt: dto.createdAt,
-                updatedAt: dto.updatedAt,
-                fileURL: dto.fileURL,
-                thumbnailURL: thumbnailURL(for: dto.id),
-                documentType: dto.documentType,
-                tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                collectionID: dto.collectionID
-            )
-        }
-
-        contentViewModel.notes = environment.documentService.notes.map { dto in
-            NoteItem(
-                id: dto.id,
-                title: dto.title,
-                preview: dto.preview,
-                pinned: dto.pinned,
-                createdAt: dto.createdAt,
-                updatedAt: dto.updatedAt
-            )
-        }
-
-        // Update content mode based on selection
-        if let selection = sidebarViewModel.selectedItem {
-            switch selection {
-            case .allDocuments, .unsortedDocuments:
-                contentViewModel.contentMode = contentViewModel.documents.isEmpty ? .empty : .documentList
-            case .allNotes:
-                contentViewModel.contentMode = contentViewModel.notes.isEmpty ? .empty : .noteList
-            case .collection, .tag:
-                contentViewModel.contentMode = contentViewModel.documents.isEmpty ? .empty : .documentList
-            }
-        }
-
-        // Calculate total storage
+        let sync = makeViewStateSync()
+        sync.syncFullLibraryFromService()
         updateStorageInfo()
     }
 
@@ -481,95 +359,25 @@ private struct RootView: View {
         }
     }
 
-    private func refreshDocumentList() {
-        environment.documentService.fetchAllDocuments()
-        environment.documentService.fetchAllNotes()
-        environment.collectionService.fetchAllTags()
-        environment.collectionService.fetchAllCollections()
-
-        contentViewModel.documents = environment.documentService.documents.map { dto in
-            DocumentItem(
-                id: dto.id,
-                title: dto.title,
-                subtitle: dto.subtitle,
-                authors: dto.authors,
-                pageCount: dto.pageCount,
-                createdAt: dto.createdAt,
-                updatedAt: dto.updatedAt,
-                fileURL: dto.fileURL,
-                thumbnailURL: thumbnailURL(for: dto.id),
-                documentType: dto.documentType,
-                tags: dto.tags.map { DocumentTagItem(id: $0.id, name: $0.name, color: $0.color) },
-                collectionID: dto.collectionID
-            )
-        }
-
-        contentViewModel.notes = environment.documentService.notes.map { dto in
-            NoteItem(
-                id: dto.id,
-                title: dto.title,
-                preview: dto.preview,
-                pinned: dto.pinned,
-                createdAt: dto.createdAt,
-                updatedAt: dto.updatedAt
-            )
-        }
-
-        // Update total counts from service (not filtered view)
-        sidebarViewModel.documentCount = environment.documentService.documents.count
-        sidebarViewModel.unsortedDocumentCount = environment.documentService.documents.filter { $0.collectionID == nil }.count
-        sidebarViewModel.noteCount = environment.documentService.notes.count
-
-        // Update sidebar tags
-        sidebarViewModel.tags = environment.collectionService.tags.map { dto in
-            TagItem(id: dto.id, name: dto.name, color: dto.color, itemCount: dto.itemCount)
-        }
-
-        // Update sidebar collections
-        sidebarViewModel.collections = environment.collectionService.collections.map { dto in
-            CollectionItem(id: dto.id, name: dto.name, icon: dto.icon, documentCount: dto.documentCount)
-        }
-
-        // Update available tags
-        availableTags = environment.collectionService.tags.map { dto in
-            DocumentTagItem(id: dto.id, name: dto.name, color: dto.color)
-        }
-
-        // Update available collections
-        availableCollections = environment.collectionService.collections.map { dto in
-            CollectionMenuItem(id: dto.id, name: dto.name)
-        }
-
-        // Update content mode
-        if let selection = sidebarViewModel.selectedItem {
-            switch selection {
-            case .allDocuments, .unsortedDocuments:
-                contentViewModel.contentMode = contentViewModel.documents.isEmpty ? .empty : .documentList
-            case .allNotes:
-                contentViewModel.contentMode = contentViewModel.notes.isEmpty ? .empty : .noteList
-            default:
-                contentViewModel.contentMode = contentViewModel.documents.isEmpty ? .empty : .documentList
-            }
-        }
-
-        // Recalculate storage
-        updateStorageInfo()
-    }
-
     private func handleToggleTag(documentID: UUID, tagID: UUID) {
         Task {
-            // Check if document already has this tag
-            if let doc = contentViewModel.documents.first(where: { $0.id == documentID }),
-               doc.tags.contains(where: { $0.id == tagID }) {
-                // Remove tag
-                try? await environment.collectionService.removeTag(tagID, from: documentID)
+            let isTagged = contentViewModel.documents
+                .first(where: { $0.id == documentID })?
+                .tags
+                .contains(where: { $0.id == tagID }) ?? false
+
+            let result: CollectionMutationResult?
+            if isTagged {
+                result = try? await environment.collectionService.removeTag(tagID, from: documentID)
             } else {
-                // Add tag
-                try? await environment.collectionService.addTag(tagID, to: documentID)
+                result = try? await environment.collectionService.addTag(tagID, to: documentID)
             }
-            // Refresh to update UI
+
             await MainActor.run {
-                refreshDocumentList()
+                if let result {
+                    let sync = makeViewStateSync()
+                    sync.applyTagMutation(result)
+                }
             }
         }
     }
@@ -584,15 +392,10 @@ private struct RootView: View {
         }
 
         Task {
-            try? await environment.collectionService.updateTag(tagID, name: newName)
-            // updateTag already calls fetchAllTags() internally
+            _ = try? await environment.collectionService.updateTag(tagID, name: newName)
             await MainActor.run {
-                sidebarViewModel.tags = environment.collectionService.tags.map { dto in
-                    TagItem(id: dto.id, name: dto.name, color: dto.color, itemCount: dto.itemCount)
-                }
-                availableTags = environment.collectionService.tags.map { dto in
-                    DocumentTagItem(id: dto.id, name: dto.name, color: dto.color)
-                }
+                let sync = makeViewStateSync()
+                sync.applyTagMutation(CollectionMutationResult(renamedTagID: tagID, renamedTagName: newName))
             }
         }
     }
@@ -607,55 +410,40 @@ private struct RootView: View {
         }
 
         Task {
-            try? await environment.collectionService.updateCollection(collectionID, name: newName)
-            // updateCollection already calls fetchAllCollections() internally
+            _ = try? await environment.collectionService.updateCollection(collectionID, name: newName)
             await MainActor.run {
-                sidebarViewModel.collections = environment.collectionService.collections.map { dto in
-                    CollectionItem(id: dto.id, name: dto.name, icon: dto.icon, documentCount: dto.documentCount)
-                }
-                availableCollections = environment.collectionService.collections.map { dto in
-                    CollectionMenuItem(id: dto.id, name: dto.name)
-                }
+                let sync = makeViewStateSync()
+                sync.applyCollectionMutation(CollectionMutationResult(affectedCollectionIDs: [collectionID]))
             }
         }
     }
 
     private func handleDeleteTag(tagID: UUID) {
         Task {
-            try? await environment.collectionService.deleteTag(tagID)
-            environment.collectionService.fetchAllTags()
+            let result = try? await environment.collectionService.deleteTag(tagID)
             await MainActor.run {
-                // If the deleted tag was selected, switch to All Documents
                 if case .tag(let selectedID) = sidebarViewModel.selectedItem, selectedID == tagID {
                     sidebarViewModel.selectedItem = .allDocuments
                 }
-                sidebarViewModel.tags = environment.collectionService.tags.map { dto in
-                    TagItem(id: dto.id, name: dto.name, color: dto.color, itemCount: dto.itemCount)
+                if let result {
+                    let sync = makeViewStateSync()
+                    sync.applyTagMutation(result)
                 }
-                availableTags = environment.collectionService.tags.map { dto in
-                    DocumentTagItem(id: dto.id, name: dto.name, color: dto.color)
-                }
-                refreshDocumentList()
             }
         }
     }
 
     private func handleDeleteCollection(collectionID: UUID) {
         Task {
-            try? await environment.collectionService.deleteCollection(collectionID)
-            environment.collectionService.fetchAllCollections()
+            let result = try? await environment.collectionService.deleteCollection(collectionID)
             await MainActor.run {
-                // If the deleted collection was selected, switch to All Documents
                 if case .collection(let selectedID) = sidebarViewModel.selectedItem, selectedID == collectionID {
                     sidebarViewModel.selectedItem = .allDocuments
                 }
-                sidebarViewModel.collections = environment.collectionService.collections.map { dto in
-                    CollectionItem(id: dto.id, name: dto.name, icon: dto.icon, documentCount: dto.documentCount)
+                if let result {
+                    let sync = makeViewStateSync()
+                    sync.applyCollectionMutation(result)
                 }
-                availableCollections = environment.collectionService.collections.map { dto in
-                    CollectionMenuItem(id: dto.id, name: dto.name)
-                }
-                refreshDocumentList()
             }
         }
     }
@@ -669,7 +457,8 @@ private struct RootView: View {
                 libraryStore: environment.libraryRootStore
             )
             await MainActor.run {
-                refreshDocumentList()
+                let sync = makeViewStateSync()
+                sync.applyDocumentChange(documentID)
             }
         }
     }
@@ -682,7 +471,8 @@ private struct RootView: View {
                 libraryStore: environment.libraryRootStore
             )
             await MainActor.run {
-                refreshDocumentList()
+                let sync = makeViewStateSync()
+                sync.applyDocumentDeletion(documentID)
             }
         }
     }
@@ -702,7 +492,8 @@ private struct RootView: View {
                 libraryStore: environment.libraryRootStore
             )
             await MainActor.run {
-                refreshDocumentList()
+                let sync = makeViewStateSync()
+                sync.applyNoteChange(noteID)
             }
         }
     }
@@ -717,18 +508,22 @@ private struct RootView: View {
             )
             await MainActor.run {
                 if case .noteDetail(let selectedID) = contentViewModel.contentMode, selectedID == noteID {
-                    contentViewModel.contentMode = contentViewModel.notes.isEmpty ? .empty : .noteList
+                    contentViewModel.contentMode = .noteList
                 }
-                refreshDocumentList()
+                let sync = makeViewStateSync()
+                sync.applyNoteDeletion(noteID)
             }
         }
     }
 
     private func handleSetDocumentCollection(documentID: UUID, collectionID: UUID?) {
         Task {
-            try? await environment.collectionService.setDocumentCollection(documentID, collectionID: collectionID)
+            let result = try? await environment.collectionService.setDocumentCollection(documentID, collectionID: collectionID)
             await MainActor.run {
-                refreshDocumentList()
+                if let result {
+                    let sync = makeViewStateSync()
+                    sync.applyCollectionMutation(result)
+                }
             }
         }
     }
@@ -744,7 +539,8 @@ private struct RootView: View {
                 libraryStore: environment.libraryRootStore
             )
             await MainActor.run {
-                refreshDocumentList()
+                let sync = makeViewStateSync()
+                sync.applyDocumentChange(documentID)
             }
         }
     }
@@ -774,7 +570,7 @@ private struct RootView: View {
                 let newColor = CollectionService.tagColorPalette[colorIndex]
 
                 do {
-                    try await environment.collectionService.updateTag(tag.id, color: newColor)
+                    _ = try await environment.collectionService.updateTag(tag.id, color: newColor)
                     logger.info("Assigned color \(newColor) to tag: \(tag.name)")
                 } catch {
                     logger.error("Failed to assign color to tag \(tag.name): \(error.localizedDescription)")
@@ -783,7 +579,8 @@ private struct RootView: View {
 
             // Refresh the sidebar to show new colors
             await MainActor.run {
-                refreshDocumentList()
+                let sync = makeViewStateSync()
+                sync.applyServiceSnapshotToViewModels()
             }
 
             logger.info("Manual tag color reassignment completed")
@@ -831,8 +628,9 @@ private struct RootView: View {
                     }
                 }
 
-                // Refresh the document list to show new thumbnails
-                refreshDocumentList()
+                // Full resync to pick up regenerated thumbnail URLs
+                let sync = makeViewStateSync()
+                sync.syncFullLibraryFromService()
             }
 
             print("Thumbnail regeneration complete: \(result.succeeded) succeeded, \(result.failed) failed")

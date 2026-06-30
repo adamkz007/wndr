@@ -1,10 +1,6 @@
+import AppKit
 import SwiftUI
 import WndrKit
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 
 public struct AnnotationToolbarView: View {
     @Binding var selectedTool: AnnotationTool
@@ -62,9 +58,7 @@ public struct AnnotationToolbarView: View {
             .cornerRadius(6)
         }
         .buttonStyle(.plain)
-        #if os(macOS)
         .help(label)
-        #endif
     }
 
     private var colorPicker: some View {
@@ -90,7 +84,6 @@ public enum AnnotationTool: String, CaseIterable {
     case highlight
     case underline
 
-    #if canImport(AppKit)
     public var cursor: NSCursor {
         switch self {
         case .select:
@@ -99,7 +92,6 @@ public enum AnnotationTool: String, CaseIterable {
             return .iBeam
         }
     }
-    #endif
 }
 
 public enum AnnotationColorOption: String, CaseIterable {

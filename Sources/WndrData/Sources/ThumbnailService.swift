@@ -1,10 +1,6 @@
+import AppKit
 import Foundation
 import PDFKit
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 
 public actor ThumbnailService {
     private let libraryStore: LibraryRootStore
@@ -63,7 +59,7 @@ public actor ThumbnailService {
     /// Generate a thumbnail from a PDF file.
     ///
     /// Uses `CGBitmapContext` so that rendering works correctly from any thread
-    /// (actors, background queues, etc.) and is cross-platform (macOS + iPadOS).
+    /// (actors, background queues, etc.).
     public func generateThumbnail(from pdfURL: URL, to destinationURL: URL) async throws {
         guard let document = PDFDocument(url: pdfURL),
               let page = document.page(at: 0) else {
@@ -111,14 +107,8 @@ public actor ThumbnailService {
             throw ThumbnailError.imageConversionFailed
         }
 
-        let pngData: Data?
-        #if canImport(AppKit)
         let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
-        pngData = bitmapRep.representation(using: .png, properties: [:])
-        #else
-        let uiImage = UIImage(cgImage: cgImage)
-        pngData = uiImage.pngData()
-        #endif
+        let pngData = bitmapRep.representation(using: .png, properties: [:])
 
         guard let imageData = pngData else {
             throw ThumbnailError.imageConversionFailed

@@ -672,6 +672,102 @@
       margin-bottom: 12px;
     }
 
+    /* ── Changelog ────────────────────────────────────── */
+    .changelog {
+      padding: 80px 24px;
+    }
+
+    .changelog-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    .changelog h2 {
+      text-align: center;
+      font-size: clamp(2.4rem, 4.2vw, 3.5rem);
+      margin-bottom: 12px;
+    }
+
+    .changelog-sub {
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 48px;
+    }
+
+    .release {
+      position: relative;
+      background: rgba(255,255,255,.74);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 28px 30px;
+      margin-bottom: 22px;
+    }
+
+    .release-head {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .release-version {
+      font-family: var(--font-display);
+      font-size: 1.7rem;
+      letter-spacing: -.03em;
+    }
+
+    .release-tag {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--accent);
+      background: rgba(110,86,207,.12);
+      border: 1px solid rgba(110,86,207,.22);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .release-date {
+      margin-left: auto;
+      font-size: .8125rem;
+      color: var(--text-secondary);
+    }
+
+    .release ul {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }
+
+    .release li {
+      position: relative;
+      padding-left: 22px;
+      font-size: .925rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .release li::before {
+      content: "";
+      position: absolute;
+      left: 2px;
+      top: .55em;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: .7;
+    }
+
+    .release li strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
     /* ── CTA Section ──────────────────────────────────── */
     .cta-section {
       padding: 112px 24px;
@@ -761,6 +857,7 @@
     <ul class="nav-links">
       <li><a href="#features">Features</a></li>
       <li><a href="#more-features">More</a></li>
+      <li><a href="#changelog">Changelog</a></li>
       <li><a href="privacy.html">Privacy</a></li>
       <li>
         <a href="https://github.com/adamkz007/wndr/releases/latest/download/Wndr.dmg" class="nav-gh">
@@ -1029,6 +1126,53 @@
         <p>Built with SwiftUI and PDFKit. Feels right at home alongside Finder, Spotlight, and your other Mac apps.</p>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ── Changelog ───────────────────────────────────── -->
+<section id="changelog" class="changelog">
+  <div class="changelog-inner">
+    <h2>Changelog</h2>
+    <p class="changelog-sub">What&rsquo;s new in each release of Wndr.</p>
+
+    <div class="release">
+      <div class="release-head">
+        <span class="release-version">v0.4.0</span>
+        <span class="release-tag">Latest</span>
+        <span class="release-date">July 2026</span>
+      </div>
+      <ul>
+        <li><strong>Faster everywhere.</strong> Library updates are now incremental &mdash; renaming, deleting, tagging, and importing no longer reload the entire library, so large collections stay responsive.</li>
+        <li><strong>Smoother lists.</strong> Removed file-system reads from row rendering and cache thumbnail and size metadata, eliminating scroll hitches.</li>
+        <li><strong>Quicker imports.</strong> Drag-and-drop import syncs only the new documents instead of refetching everything.</li>
+        <li><strong>Leaner and native.</strong> Streamlined to a focused macOS-only build with shared formatters and lower memory churn.</li>
+        <li><strong>Performance instrumentation.</strong> Added internal signposts and benchmarks to keep launch, search, and import times within budget.</li>
+      </ul>
+    </div>
+
+    <div class="release">
+      <div class="release-head">
+        <span class="release-version">v0.3.0</span>
+        <span class="release-date">May 2026</span>
+      </div>
+      <ul>
+        <li>Native macOS PDF toolbar with page navigation, zoom presets, and display modes.</li>
+        <li>Document thumbnails, info popover with editable metadata, and a library status bar.</li>
+        <li>Color-coded tags with an automatic macOS-style palette.</li>
+      </ul>
+    </div>
+
+    <div class="release">
+      <div class="release-head">
+        <span class="release-version">v0.2.0</span>
+        <span class="release-date">May 2026</span>
+      </div>
+      <ul>
+        <li>Markdown notes with live preview, formatting toolbar, and templates.</li>
+        <li>PDF highlighting with six colors plus collections and tags for organization.</li>
+        <li>Content search across filenames and notes.</li>
+      </ul>
     </div>
   </div>
 </section>

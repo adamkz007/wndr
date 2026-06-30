@@ -1,12 +1,7 @@
+import AppKit
 import PDFKit
 import SwiftUI
 import WndrKit
-
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 
 public struct PDFViewerView: View {
     @ObservedObject var viewModel: PDFViewerViewModel
@@ -63,9 +58,7 @@ public struct PDFViewerView: View {
                 Button(action: viewModel.previousPage) {
                     Image(systemName: "chevron.left")
                 }
-                #if os(macOS)
                 .help("Previous Page")
-                #endif
                 .disabled(!viewModel.canGoPrevious)
 
                 Text("\(viewModel.currentPage) / \(viewModel.pageCount)")
@@ -76,9 +69,7 @@ public struct PDFViewerView: View {
                 Button(action: viewModel.nextPage) {
                     Image(systemName: "chevron.right")
                 }
-                #if os(macOS)
                 .help("Next Page")
-                #endif
                 .disabled(!viewModel.canGoNext)
             }
 
@@ -132,9 +123,7 @@ public struct PDFViewerView: View {
                     Text("\(Int((viewModel.scaleFactor ?? 1.0) * 100))%")
                         .frame(minWidth: 45)
                 }
-                #if os(macOS)
                 .menuStyle(.borderlessButton)
-                #endif
             }
 
             // Display mode & View options
@@ -267,7 +256,6 @@ struct PDFThumbnailItemView: View {
 
 // MARK: - Custom PDFView for macOS with Context Menu Support
 
-#if canImport(AppKit)
 class CustomPDFView: PDFView {
     weak var coordinator: PDFViewCoordinator?
 
@@ -374,57 +362,7 @@ struct PDFViewRepresentable: NSViewRepresentable {
     }
 }
 
-#else // UIKit (iPadOS)
-struct PDFViewRepresentable: UIViewRepresentable {
-    @ObservedObject var viewModel: PDFViewerViewModel
-
-    func makeCoordinator() -> PDFViewCoordinator {
-        PDFViewCoordinator(viewModel: viewModel)
-    }
-
-    func makeUIView(context: Context) -> PDFView {
-        let pdfView = PDFView()
-        pdfView.autoScales = true
-        pdfView.displayMode = viewModel.displayMode
-        pdfView.displaysPageBreaks = true
-        pdfView.document = viewModel.pdfDocument
-        // iPadOS: optimize for touch
-        pdfView.usePageViewController(true, withViewOptions: nil)
-
-        context.coordinator.pdfView = pdfView
-        context.coordinator.registerNotifications(for: pdfView)
-
-        return pdfView
-    }
-
-    func updateUIView(_ pdfView: PDFView, context: Context) {
-        if pdfView.document !== viewModel.pdfDocument {
-            pdfView.document = viewModel.pdfDocument
-        }
-        if let document = pdfView.document,
-           viewModel.currentPage > 0,
-           viewModel.currentPage <= document.pageCount,
-           let targetPage = document.page(at: viewModel.currentPage - 1),
-           pdfView.currentPage != targetPage {
-            pdfView.go(to: targetPage)
-        }
-        if pdfView.displayMode != viewModel.displayMode {
-            pdfView.displayMode = viewModel.displayMode
-        }
-        if let scaleFactor = viewModel.scaleFactor {
-            pdfView.scaleFactor = scaleFactor
-        }
-        context.coordinator.currentTool = viewModel.selectedTool
-        context.coordinator.currentColor = viewModel.selectedColor
-    }
-
-    static func dismantleUIView(_ pdfView: PDFView, coordinator: PDFViewCoordinator) {
-        NotificationCenter.default.removeObserver(coordinator)
-    }
-}
-#endif
-
-// MARK: - Shared PDFView Coordinator
+// MARK: - PDFView Coordinator
 
 class PDFViewCoordinator: NSObject {
     var viewModel: PDFViewerViewModel

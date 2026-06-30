@@ -1,11 +1,7 @@
+import AppKit
 import Combine
 import SwiftUI
 import UniformTypeIdentifiers
-#if canImport(AppKit)
-import AppKit
-#elseif canImport(UIKit)
-import UIKit
-#endif
 
 // MARK: - Content Mode
 
@@ -17,14 +13,64 @@ public enum ContentMode: Equatable {
     case noteDetail(UUID)
 }
 
+// MARK: - Shared Formatters
+
+/// Shared formatter instances reused across row rendering so SwiftUI body
+/// evaluations don't pay the cost of constructing a new formatter each pass.
+enum SharedFormatters {
+    /// File-size formatter used in document rows (KB/MB/GB).
+    static let documentFileSize: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter
+    }()
+
+    /// File-size formatter used for aggregate storage totals (bytes through GB).
+    static let storageTotal: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
+        formatter.countStyle = .file
+        return formatter
+    }()
+}
+
+// MARK: - Thumbnail Memory Cache
+
+/// Lightweight in-memory cache for thumbnail images keyed by file URL.
+/// Avoids re-reading the same thumbnail from disk every time a row is
+/// recycled during scrolling.
+enum ThumbnailMemoryCache {
+    private static let cache: NSCache<NSURL, PlatformImage> = {
+        let cache = NSCache<NSURL, PlatformImage>()
+        cache.countLimit = 512
+        return cache
+    }()
+
+    static func image(for url: URL) -> PlatformImage? {
+        cache.object(forKey: url as NSURL)
+    }
+
+    static func store(_ image: PlatformImage, for url: URL) {
+        cache.setObject(image, forKey: url as NSURL)
+    }
+}
+
 // MARK: - Thumbnail Image View
 
 /// Loads a thumbnail image asynchronously from a local file URL and caches it
-/// in `@State` so that repeated SwiftUI body evaluations don't re-read from disk.
+/// in a shared in-memory cache plus local `@State`, so repeated SwiftUI body
+/// evaluations and row recycling don't re-read from disk.
 /// Falls back to a document icon when no URL is provided or loading fails.
-private struct ThumbnailImageView: View {
+struct ThumbnailImageView: View {
     let url: URL?
     var documentType: String = "pdf"
+    var width: CGFloat = 32
+    var height: CGFloat = 40
+    var fallbackIcon: String = "doc.fill"
+    var fallbackColor: Color = .blue
+    var fallbackIconSize: CGFloat = 16
+
     @State private var loadedImage: PlatformImage?
 
     var body: some View {
@@ -38,27 +84,29 @@ private struct ThumbnailImageView: View {
                     .fill(fallbackColor.opacity(0.1))
                     .overlay(
                         Image(systemName: fallbackIcon)
-                            .font(.system(size: 16))
+                            .font(.system(size: fallbackIconSize))
                             .foregroundColor(fallbackColor)
                     )
             }
         }
-        .frame(width: 32, height: 40)
+        .frame(width: width, height: height)
         .clipShape(RoundedRectangle(cornerRadius: 3))
         .task(id: url) {
             loadedImage = await loadImage()
         }
     }
 
-    private var fallbackIcon: String { "doc.fill" }
-
-    private var fallbackColor: Color { .blue }
-
     private func loadImage() async -> PlatformImage? {
         guard let url = url else { return nil }
+        if let cached = ThumbnailMemoryCache.image(for: url) {
+            return cached
+        }
         return await withCheckedContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 let image = PlatformImage.loadFromURL(url)
+                if let image {
+                    ThumbnailMemoryCache.store(image, for: url)
+                }
                 continuation.resume(returning: image)
             }
         }
@@ -126,6 +174,7 @@ struct DocumentListView: View {
             .tag(document.id)
         }
         .listStyle(.sidebar)
+        .scrollContentBackground(.hidden)
         .onAppear {
             internalSelection = selectedID
         }
@@ -345,13 +394,8 @@ struct DocumentRow: View {
     }
 
     private var formattedFileSize: String {
-        guard let url = document.fileURL else { return "—" }
-        let attributes = try? FileManager.default.attributesOfItem(atPath: url.path)
-        guard let bytes = attributes?[.size] as? Int64 else { return "—" }
-        let formatter = ByteCountFormatter()
-        formatter.allowedUnits = [.useKB, .useMB, .useGB]
-        formatter.countStyle = .file
-        return formatter.string(fromByteCount: bytes)
+        guard let bytes = document.fileSizeBytes else { return "—" }
+        return SharedFormatters.documentFileSize.string(fromByteCount: bytes)
     }
 
     private var collectionName: String? {
@@ -412,6 +456,7 @@ struct NoteListView: View {
                 .tag(note.id)
         }
         .listStyle(.sidebar)
+        .scrollContentBackground(.hidden)
         .onAppear {
             internalSelection = selectedID
         }
@@ -579,13 +624,16 @@ public struct DocumentItem: Identifiable, Equatable {
     public var updatedAt: Date?
     public var fileURL: URL?
     public var thumbnailURL: URL?
+    /// File size in bytes, resolved off the render path and cached here so row
+    /// rendering does not perform synchronous filesystem lookups.
+    public var fileSizeBytes: Int64?
     public var documentType: String
     public var tags: [DocumentTagItem]
     public var collectionID: UUID?
 
     public var isPDF: Bool { documentType == "pdf" }
 
-    public init(id: UUID, title: String, subtitle: String? = nil, authors: [String]? = nil, pageCount: Int = 0, createdAt: Date? = nil, updatedAt: Date? = nil, fileURL: URL? = nil, thumbnailURL: URL? = nil, documentType: String = "pdf", tags: [DocumentTagItem] = [], collectionID: UUID? = nil) {
+    public init(id: UUID, title: String, subtitle: String? = nil, authors: [String]? = nil, pageCount: Int = 0, createdAt: Date? = nil, updatedAt: Date? = nil, fileURL: URL? = nil, thumbnailURL: URL? = nil, fileSizeBytes: Int64? = nil, documentType: String = "pdf", tags: [DocumentTagItem] = [], collectionID: UUID? = nil) {
         self.id = id
         self.title = title
         self.subtitle = subtitle
@@ -595,6 +643,7 @@ public struct DocumentItem: Identifiable, Equatable {
         self.updatedAt = updatedAt
         self.fileURL = fileURL
         self.thumbnailURL = thumbnailURL
+        self.fileSizeBytes = fileSizeBytes
         self.documentType = documentType
         self.tags = tags
         self.collectionID = collectionID
@@ -832,9 +881,48 @@ public struct ContentSearchBar: View {
 
     public var body: some View {
         HStack(spacing: 6) {
-            Image(systemName: searchIcon)
-                .font(.system(size: 12))
+            Menu {
+                Menu("Search In") {
+                    Button {
+                        viewModel.setSearchMode(.fileName)
+                    } label: {
+                        HStack {
+                            Label("File Name", systemImage: "doc.text")
+                            if viewModel.searchMode == .fileName {
+                                Spacer()
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 10))
+                            }
+                        }
+                    }
+
+                    Button {
+                        viewModel.setSearchMode(.content)
+                    } label: {
+                        HStack {
+                            Label("Document Content", systemImage: "doc.text.magnifyingglass")
+                            if viewModel.searchMode == .content {
+                                Spacer()
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 10))
+                            }
+                        }
+                    }
+                }
+            } label: {
+                VStack(spacing: 1) {
+                    Image(systemName: searchIcon)
+                        .font(.system(size: 12))
+
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 7, weight: .semibold))
+                }
                 .foregroundColor(.secondary)
+                .frame(width: 14)
+            }
+            .menuStyle(.borderlessButton)
+            .help("Search in: \(searchModeLabel)")
+            .fixedSize()
 
             TextField(placeholder, text: $viewModel.searchText)
                 .textFieldStyle(.plain)
@@ -890,42 +978,8 @@ public struct ContentSearchBar: View {
                 }
                 .foregroundColor(.secondary)
             }
-            #if os(macOS)
             .menuStyle(.borderlessButton)
-            #endif
             .help("Sort: \(viewModel.sortOption.label)")
-            .fixedSize()
-
-            Divider()
-                .frame(height: 14)
-
-            // Advanced search dropdown
-            Menu {
-                Picker(selection: Binding(
-                    get: { viewModel.searchMode },
-                    set: { viewModel.setSearchMode($0) }
-                )) {
-                    Label("File Name", systemImage: "doc.text")
-                        .tag(SearchMode.fileName)
-                    Label("Document Content", systemImage: "doc.text.magnifyingglass")
-                        .tag(SearchMode.content)
-                } label: {
-                    Text("Search In")
-                }
-            } label: {
-                Text("Advanced")
-                    .font(.system(size: 11))
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 5)
-                .padding(.vertical, 2)
-                .background(
-                    RoundedRectangle(cornerRadius: 4)
-                        .fill(Color.platformControlBackground)
-                )
-            }
-            #if os(macOS)
-            .menuStyle(.borderlessButton)
-            #endif
             .fixedSize()
         }
         .padding(.horizontal, 8)
@@ -949,6 +1003,15 @@ public struct ContentSearchBar: View {
 
     private var placeholder: String {
         viewModel.searchMode == .content ? "Search document content…" : "Search by name…"
+    }
+
+    private var searchModeLabel: String {
+        switch viewModel.searchMode {
+        case .fileName:
+            return "File Name"
+        case .content:
+            return "Document Content"
+        }
     }
 
     private var sortIconForCurrentOption: String {
@@ -1031,6 +1094,7 @@ public struct SearchResultsListView: View {
                 }
             }
             .listStyle(.sidebar)
+            .scrollContentBackground(.hidden)
         }
     }
 }
@@ -1042,27 +1106,15 @@ struct SearchResultRow: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            // Type icon
-            Group {
-                if let thumbnailURL = result.thumbnailURL,
-                   let image = PlatformImage.loadFromURL(thumbnailURL) {
-                    image.swiftUIImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: 28, height: 36)
-                        .cornerRadius(3)
-                        .clipped()
-                } else {
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(iconBackgroundColor.opacity(0.1))
-                        .frame(width: 28, height: 36)
-                        .overlay(
-                            Image(systemName: iconName)
-                                .font(.system(size: 14))
-                                .foregroundColor(iconColor)
-                        )
-                }
-            }
+            // Type icon / thumbnail (loaded asynchronously, off the render path)
+            ThumbnailImageView(
+                url: result.thumbnailURL,
+                width: 28,
+                height: 36,
+                fallbackIcon: iconName,
+                fallbackColor: iconColor,
+                fallbackIconSize: 14
+            )
 
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
@@ -1099,10 +1151,6 @@ struct SearchResultRow: View {
     }
 
     private var iconColor: Color {
-        result.kind == .document ? .blue : .orange
-    }
-
-    private var iconBackgroundColor: Color {
         result.kind == .document ? .blue : .orange
     }
 

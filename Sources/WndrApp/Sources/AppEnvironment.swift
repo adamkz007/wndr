@@ -71,23 +71,25 @@ final class AppEnvironment: ObservableObject {
 
     func bootstrap() async {
         guard isBootstrapped == false else { return }
-        do {
-            if let bookmark = try await libraryRootStore.restorePersistedBookmark() {
-                libraryRootCoordinator.activate(url: bookmark)
-            } else {
-                telemetry.record(event: .librarySetupRequired)
+        await PerformanceMonitor.shared.measure(.libraryBootstrap) {
+            do {
+                if let bookmark = try await libraryRootStore.restorePersistedBookmark() {
+                    libraryRootCoordinator.activate(url: bookmark)
+                } else {
+                    telemetry.record(event: .librarySetupRequired)
+                }
+            } catch {
+                telemetry.record(error)
+                libraryRootCoordinator.presentRecovery(for: error)
             }
-        } catch {
-            telemetry.record(error)
-            libraryRootCoordinator.presentRecovery(for: error)
+            isBootstrapped = true
+
+            // One-time thumbnail regeneration for existing PDFs
+            await regenerateThumbnailsIfNeeded()
+
+            // One-time tag color assignment for existing tags
+            await assignColorsToExistingTags()
         }
-        isBootstrapped = true
-
-        // One-time thumbnail regeneration for existing PDFs
-        await regenerateThumbnailsIfNeeded()
-
-        // One-time tag color assignment for existing tags
-        await assignColorsToExistingTags()
     }
 
     // MARK: - One-Time Thumbnail Regeneration
@@ -193,7 +195,7 @@ final class AppEnvironment: ObservableObject {
             let newColor = CollectionService.tagColorPalette[colorIndex]
 
             do {
-                try await collectionService.updateTag(tag.id, color: newColor)
+                _ = try await collectionService.updateTag(tag.id, color: newColor)
                 logger.info("Assigned color \(newColor) to tag: \(tag.name)")
             } catch {
                 logger.error("Failed to assign color to tag \(tag.name): \(error.localizedDescription)")

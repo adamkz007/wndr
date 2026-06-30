@@ -1,14 +1,14 @@
 # Wndr Implementation Status
 
-**Last Updated:** February 7, 2026 (EPUB Support, iPadOS Port, Search, Formatting Toolbar, Status Bar, Drag-to-Collections)
+**Last Updated:** July 1, 2026 (macOS-only: iPadOS port removed)
 
 ## Overview
 
-Wndr is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, notes, and annotations with deep linking capabilities. This document tracks the implementation progress.
+Wndr is a native macOS research workspace for managing PDFs, EPUBs, notes, and annotations with deep linking capabilities. This document tracks the implementation progress.
 
 ## Current Phase: MVP Development
 
-**Target:** Shippable MVP with core research workflows on both macOS and iPadOS
+**Target:** Shippable MVP with core research workflows on macOS
 
 ---
 
@@ -36,7 +36,7 @@ Wndr is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, not
   - CSS injection for reader settings; dark mode support via `prefers-color-scheme`
   - Chapter list popover (Table of Contents)
   - Previous/Next chapter navigation with chapter counter
-  - Cross-platform: NSViewRepresentable (macOS) / UIViewRepresentable (iPadOS)
+  - WKWebView via NSViewRepresentable (macOS)
 - **EPUB Highlighting:**
   - JavaScript bridge for text selection handling (mouseup/touchend events)
   - 6 highlight color presets (same as PDF: yellow, green, blue, pink, orange, purple)
@@ -52,38 +52,11 @@ Wndr is a native macOS + iPadOS research workspace for managing PDFs, EPUBs, not
   - Empty state text updated: "Drop PDF or EPUB files here"
   - Search result labels distinguish between PDF and EPUB documents
 
-### iPadOS Port (Feb 7, 2026)
-- **Cross-Platform Architecture:**
-  - Created `PlatformCompat.swift` with type aliases (`PlatformImage`, `PlatformColor`) and cross-platform helpers
-  - All shared frameworks (`WndrKit`, `WndrData`, `WndrPDF`, `WndrNotes`, `WndrAutomation`) now compile for both macOS and iPadOS
-  - Platform-conditional compilation via `#if canImport(AppKit)` / `#if canImport(UIKit)` and `#if os(macOS)` / `#if os(iOS)`
-- **WndrData Adaptations:**
-  - `ThumbnailService`: Replaced `NSBitmapImageRep` with cross-platform `CGBitmapContext` → `UIImage.pngData()` on iPadOS
-  - `LibraryRootStore`: iPadOS uses standard bookmarks (no security scope needed in app sandbox); added `defaultiPadLibraryURL()` for Documents-based library
-- **WndrPDF Adaptations:**
-  - `PDFViewRepresentable`: Dual implementation — `NSViewRepresentable` on macOS, `UIViewRepresentable` on iPadOS
-  - Shared `PDFViewCoordinator` for page/selection notifications across both platforms
-  - iPadOS uses `usePageViewController(true)` for smooth touch scrolling
-  - `PDFViewerViewModel`: Replaced `NSImage.lockFocus()` thumbnailing with cross-platform `CGBitmapContext`
-  - `PDFAnnotationBridge`: `NSColor` → `PlatformColor` throughout
-  - `AnnotationToolbarView`: `NSCursor` gated behind `#if canImport(AppKit)`, `AnnotationColorOption.platformColor` replaces `.nsColor`
-- **WndrNotes Adaptations:**
-  - `MarkdownEditorView`: `HSplitView` → `GeometryReader` + `HStack` on iPadOS; all `NSColor` → `Color.platformXxx` helpers
-- **WndrKit Adaptations:**
-  - `ContentAreaView`: `NSImage` → `PlatformImage.loadFromURL()` / `.swiftUIImage`
-  - `WndrKit.swift`: `HSplitView` → `HStack` + `Divider` on iPadOS; `NSColor.controlBackgroundColor` → `Color.platformControlBackground`
-  - All sidebar, inspector, and search views: replaced `NSColor` references with cross-platform `Color` extensions
-- **iPadOS App Target (`WndrApp_iPad`):**
-  - `WndrApp_iPad.swift`: Full SwiftUI entry point with same `RootView` → `ContentWrapper` architecture
-  - `AppEnvironment_iPad`: Central dependency container with auto-library-creation for iPadOS sandbox
-  - `LibraryRootCoordinator_iPad`: Auto-creates library in Documents (no folder picker needed)
-  - `ImportCoordinator_iPad`: Uses `UIDocumentPickerViewController` for PDF import with security-scoped resource access
-  - `ContentWrapper_iPad`: Same document/note handler wiring as macOS with sheet-based import picker
-  - `iPadKeyboardShortcuts.swift`: External keyboard shortcut overlay (⌘I, ⌘N, ⌘S, etc.)
-  - Full feature parity: PDF viewing, annotations, Markdown editor, collections, tags, search, drag-and-drop
-- **Documentation:**
-  - Created `docs/ipados-setup.md` with complete Xcode target setup instructions
-  - Feature parity checklist: all macOS features ported except About panel and AppleScript (not applicable)
+### iPadOS Port Removed (Jul 1, 2026)
+- Removed the `WndrApp_iPad` Xcode target and all iPad-only sources.
+- Stripped UIKit / `#if canImport(UIKit)` / `#if os(iOS)` branches from the shared frameworks; they are now AppKit/macOS-only.
+- `PlatformCompat.swift` retains the `PlatformImage` / `PlatformColor` aliases (mapped to `NSImage` / `NSColor`) for source stability, but no longer carries UIKit code paths.
+- The project is now macOS-only.
 
 ### Content Search (Feb 7, 2026)
 - **Search Bar in Content Area:**
@@ -499,4 +472,4 @@ See `implementation-plan.md` for detailed phase breakdown:
 - Privacy-first design (no cloud dependencies)
 - Designed for 10k+ document libraries
 - SwiftUI-first with AppKit where necessary
-- Ready for future iPad support with minimal changes
+- macOS-only

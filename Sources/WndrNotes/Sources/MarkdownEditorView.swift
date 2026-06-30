@@ -1,8 +1,6 @@
+import AppKit
 import SwiftUI
 import WndrKit
-#if os(macOS)
-import AppKit
-#endif
 
 public struct MarkdownEditorView: View {
     @ObservedObject var viewModel: NoteEditorViewModel
@@ -127,23 +125,10 @@ public struct MarkdownEditorView: View {
     }
 
     private var splitView: some View {
-        #if os(macOS)
         HSplitView {
             editorPane
             previewPane
         }
-        #else
-        // iPadOS: Use HStack with equal split instead of HSplitView
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                editorPane
-                    .frame(width: geometry.size.width / 2)
-                Divider()
-                previewPane
-                    .frame(width: geometry.size.width / 2)
-            }
-        }
-        #endif
     }
 
     private var editorPane: some View {
@@ -173,7 +158,6 @@ public struct MarkdownEditorView: View {
 
     @ViewBuilder
     private var editorTextView: some View {
-        #if os(macOS)
         MarkdownTextView(
             text: $viewModel.body,
             pendingCursorLocation: $viewModel.pendingCursorLocation
@@ -181,15 +165,6 @@ public struct MarkdownEditorView: View {
             viewModel.updateLinkSuggestions(cursorLocation: cursorLocation)
         }
         .padding(12)
-        #else
-        ScrollView {
-            TextEditor(text: $viewModel.body)
-                .font(.system(.body, design: .monospaced))
-                .scrollContentBackground(.hidden)
-                .padding(16)
-                .focused($isEditorFocused)
-        }
-        #endif
     }
 
     private var linkSuggestionDropdown: some View {
@@ -280,7 +255,6 @@ public struct MarkdownEditorView: View {
     }
 }
 
-#if os(macOS)
 private struct MarkdownTextView: NSViewRepresentable {
     @Binding var text: String
     @Binding var pendingCursorLocation: Int?
@@ -376,7 +350,6 @@ private struct MarkdownTextView: NSViewRepresentable {
         }
     }
 }
-#endif
 
 // MARK: - Format Icon Button
 
@@ -408,14 +381,12 @@ private struct FormatIconButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        #if os(macOS)
         .help(helpText)
         .onHover { hovering in
             withAnimation(.easeInOut(duration: 0.15)) {
                 isHovering = hovering
             }
         }
-        #endif
     }
 }
 

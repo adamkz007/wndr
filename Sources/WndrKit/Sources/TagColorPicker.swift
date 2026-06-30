@@ -1,11 +1,11 @@
 import SwiftUI
 
-/// A color picker component for tags following macOS/iPadOS design patterns
+/// A color picker component for tags following macOS design patterns
 public struct TagColorPicker: View {
     @Binding var selectedColor: String
     @Environment(\.dismiss) private var dismiss
 
-    // macOS/iPadOS style tag colors (matches Finder tags)
+    // macOS style tag colors (matches Finder tags)
     private let colors = [
         "#FF6B6B", // Red
         "#FF9500", // Orange

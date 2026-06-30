@@ -169,7 +169,7 @@ jobs:
             - Markdown note-taking with live preview
             - Document organization with collections and tags
             - Full-text search across documents and notes
-            - Native macOS and iPadOS support
+            - Native macOS app
 
             ### Installation
             1. Download Wndr-${{ github.ref_name }}.dmg

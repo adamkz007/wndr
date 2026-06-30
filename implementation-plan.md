@@ -1,7 +1,7 @@
 # Wndr App - Implementation Plan
 
-**Last Updated:** February 8, 2026
-**Status:** MVP Feature Set Complete + Bonus Features (EPUB, iPadOS)
+**Last Updated:** July 1, 2026
+**Status:** MVP Feature Set Complete + Bonus Features (EPUB) — macOS-only
 
 ---
 
@@ -31,8 +31,6 @@
 | **Drag-to-Collections** | Drop documents onto sidebar collections with visual feedback |
 | **Note Pinning** | Toggle notes to pin to top of list |
 | **EPUB Support** | Complete e-book reader with parser, viewer, highlighting, TOC navigation |
-| **iPadOS Platform** | Full feature parity port with touch optimization, UIDocumentPicker |
-| **Cross-Platform Layer** | PlatformCompat with type aliases, conditional compilation |
 | **Keyboard Shortcuts** | ⌘I (import), ⌘N (new note), ⌘S (save), ⌥⌘I (inspector), arrow keys |
 | **Search Results UI** | Dedicated results view with snippets, page numbers, clear button |
 | **Collection Badges** | Document rows show assigned collection name |
@@ -51,18 +49,6 @@
 | | • JavaScript bridge for highlight selection and restoration |
 | | • 6-color highlighting system shared with PDF |
 | | • Cover image thumbnails with fallback book icon |
-| **iPadOS Full Platform Port** | Complete feature parity with macOS version |
-| | • Dedicated WndrApp_iPad target with separate entry point |
-| | • UIDocumentPickerViewController for import |
-| | • Auto-creates library in Documents folder |
-| | • Touch-optimized gestures and larger tap targets |
-| | • External keyboard support with shortcuts overlay |
-| | • Platform-adaptive colors and UI components |
-| **Cross-Platform Architecture** | Clean abstraction layer for dual-platform support |
-| | • PlatformCompat.swift with type aliases (PlatformImage, PlatformColor) |
-| | • Conditional compilation for NSView/UIView components |
-| | • Platform-specific PDF annotation bridge |
-| | • Shared business logic across platforms |
 
 ### Partially Implemented 🚧
 
@@ -160,9 +146,7 @@
 | **Toolbar Style** | Native macOS toolbar, no in-view toolbars |
 | **EPUB Parser** | Pure Swift with Apple Compression framework (no third-party deps) |
 | **EPUB Reader** | WKWebView with JavaScript bridge for highlighting |
-| **Cross-Platform Strategy** | Conditional compilation with PlatformCompat abstraction |
-| **iPad Document Picker** | UIDocumentPickerViewController with UTType filters |
-| **Thumbnail Generation** | Platform-specific: NSBitmapImageRep (macOS), CGBitmapContext (iPad) |
+| **Thumbnail Generation** | CGBitmapContext render → NSBitmapImageRep PNG (macOS) |
 | **Search Implementation** | Basic content search with Task.detached parallelization |
 | **Import Deduplication** | SHA-256 checksums stored in Core Data |
 | **Background Operations** | newBackgroundContext() for all service operations |
@@ -199,16 +183,12 @@
 
 ### Bonus Features Delivered Beyond MVP
 - [x] EPUB e-book support with full reader
-- [x] iPadOS platform with feature parity
 - [x] Batch import with progress tracking
 - [x] Document metadata editing
 - [x] Content search with results UI
 - [x] Keyboard shortcuts with overlay
 - [x] Note templates system
 - [x] Wikilink syntax support
-- [x] Cross-platform architecture
-
-**Extended Feature Set: 21/24 total features (87.5%)**
 
 ---
 
@@ -227,9 +207,9 @@
 ## Implementation Statistics
 
 ### Codebase Metrics
-- **Total Swift Files:** ~50+ (including platform-specific)
+- **Total Swift Files:** ~50+
 - **Lines of Code:** ~15,000+
-- **Platforms:** 2 (macOS, iPadOS)
+- **Platforms:** 1 (macOS)
 - **Core Data Entities:** 7
 - **Services Implemented:** 7
 - **View Models:** 7
@@ -245,7 +225,6 @@
 - **Collections & Tags:** 100% complete
 - **Search:** 70% complete (basic search works, FTS5 pending)
 - **Note-PDF Linking:** 20% complete (Link entity exists, UI pending)
-- **iPadOS Platform:** 100% complete (bonus feature)
 - **Automation:** 10% complete (placeholder structure only)
 - **Testing:** 0% complete
 
@@ -272,12 +251,6 @@
 | `AppEnvironment.swift` | WndrApp | Service container, dependency injection |
 | `ContentWrapper.swift` | WndrApp | Handler wiring for PDF/Note/EPUB views |
 | `LibraryRootCoordinator.swift` | WndrApp | Library location selection flow |
-| **iPadOS Entry Point** | | |
-| `WndrApp_iPad.swift` | WndrApp_iPad | iPadOS entry point, scene management |
-| `AppEnvironment_iPad.swift` | WndrApp_iPad | iPad service container |
-| `ContentWrapper_iPad.swift` | WndrApp_iPad | iPad sheet-based import |
-| `LibraryRootCoordinator_iPad.swift` | WndrApp_iPad | Auto-creates library in Documents |
-| `iPadKeyboardShortcuts.swift` | WndrApp_iPad | External keyboard support |
 | **Shared UI Components** | | |
 | `WndrKit.swift` | WndrKit | LookPrimaryView, ContentListView, DetailAreaView |
 | `ContentAreaView.swift` | WndrKit | DocumentListView, NoteListView, models |
@@ -288,12 +261,12 @@
 | `SearchResultsListView.swift` | WndrKit | Search results display |
 | `DocumentInfoPopover.swift` | WndrKit | Metadata editor popover |
 | `InspectorPanelView.swift` | WndrKit | Right sidebar inspector |
-| `PlatformCompat.swift` | WndrKit | Cross-platform type aliases |
+| `PlatformCompat.swift` | WndrKit | AppKit type aliases and helpers |
 | **PDF Components** | | |
 | `PDFViewerView.swift` | WndrPDF | PDF rendering, toolbar, annotations |
 | `PDFViewerViewModel.swift` | WndrPDF | PDF state management |
 | `AnnotationToolbarView.swift` | WndrPDF | Color picker, tool enums |
-| `PDFViewRepresentable.swift` | WndrPDF | Platform-specific PDFView wrapper |
+| `PDFViewRepresentable.swift` | WndrPDF | NSViewRepresentable PDFView wrapper |
 | `PDFAnnotationBridge.swift` | WndrPDF | Coordinate normalization |
 | `PDFThumbnailListView.swift` | WndrPDF | Thumbnail sidebar |
 | **EPUB Components** | | |

@@ -1,15 +1,8 @@
+import AppKit
 import Foundation
 import PDFKit
 
-#if os(macOS)
-import AppKit
 public typealias PlatformColor = NSColor
-#elseif os(iOS)
-import UIKit
-public typealias PlatformColor = UIColor
-#else
-#error("Unsupported platform: PDFAnnotationBridge requires macOS or iOS")
-#endif
 
 public struct PDFAnnotationBridge {
 

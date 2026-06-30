@@ -33,6 +33,11 @@
 		A10E2510284F300000000079 /* ShortcutActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10E1020284F300000000029 /* ShortcutActions.swift */; };
 		B10E4001284F300000000001 /* ContentWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3001284F300000000001 /* ContentWrapper.swift */; };
 		B10E4002284F300000000002 /* ImportCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3002284F300000000002 /* ImportCoordinator.swift */; };
+		B10E4014284F300000000014 /* LibraryViewStateSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3014284F300000000014 /* LibraryViewStateSync.swift */; };
+		C10E5008284F300000000008 /* PerformanceMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10E5001284F300000000001 /* PerformanceMonitor.swift */; };
+		C10E5005284F300000000005 /* PerformanceBudget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10E5002284F300000000002 /* PerformanceBudget.swift */; };
+		C10E5006284F300000000006 /* BenchmarkLibraryProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10E5003284F300000000003 /* BenchmarkLibraryProfile.swift */; };
+		C10E5007284F300000000007 /* PerformanceMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = C10E5004284F300000000004 /* PerformanceMetric.swift */; };
 		B10E4003284F300000000003 /* ContentAreaEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3003284F300000000003 /* ContentAreaEnvironment.swift */; };
 		B10E4004284F300000000004 /* ContentAreaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3004284F300000000004 /* ContentAreaView.swift */; };
 		B10E4005284F300000000005 /* ContentAreaViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3005284F300000000005 /* ContentAreaViewModel.swift */; };
@@ -50,13 +55,8 @@
 		B10E4011284F300000000011 /* MarkdownEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3011284F300000000011 /* MarkdownEditorView.swift */; };
 		B10E4012284F300000000012 /* NoteEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3012284F300000000012 /* NoteEditorViewModel.swift */; };
 		B10E4013284F300000000013 /* ThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3013284F300000000013 /* ThumbnailService.swift */; };
-		C10E5001284F300000000001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C10E4001284F300000000001 /* Assets.xcassets */; };
+		C10E5009284F300000000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C10E4001284F300000000001 /* Assets.xcassets */; };
 		E10E5001284F300000000001 /* PlatformCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E4001284F300000000001 /* PlatformCompat.swift */; };
-		F469CF602F37102800802D33 /* WndrKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; };
-		F469CF612F37102800802D33 /* WndrData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1104284F30000000002E /* WndrData.framework */; };
-		F469CF622F37102800802D33 /* WndrPDF.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1106284F30000000002F /* WndrPDF.framework */; };
-		F469CF632F37102800802D33 /* WndrNotes.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1108284F300000000030 /* WndrNotes.framework */; };
-		F469CF642F37102800802D33 /* WndrAutomation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A10E110A284F300000000031 /* WndrAutomation.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -95,41 +95,6 @@
 			remoteGlobalIDString = A10E2105284F30000000004A;
 			remoteInfo = WndrAutomation;
 		};
-		F469CF652F37102800802D33 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A10E00A2284F300000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A10E2101284F300000000046;
-			remoteInfo = WndrKit;
-		};
-		F469CF662F37102800802D33 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A10E00A2284F300000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A10E2102284F300000000047;
-			remoteInfo = WndrData;
-		};
-		F469CF672F37102800802D33 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A10E00A2284F300000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A10E2103284F300000000048;
-			remoteInfo = WndrPDF;
-		};
-		F469CF682F37102800802D33 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A10E00A2284F300000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A10E2104284F300000000049;
-			remoteInfo = WndrNotes;
-		};
-		F469CF692F37102800802D33 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A10E00A2284F300000000001 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = A10E2105284F30000000004A;
-			remoteInfo = WndrAutomation;
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -159,6 +124,11 @@
 		A10E110A284F300000000031 /* WndrAutomation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WndrAutomation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		B10E3001284F300000000001 /* ContentWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentWrapper.swift; sourceTree = "<group>"; };
 		B10E3002284F300000000002 /* ImportCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportCoordinator.swift; sourceTree = "<group>"; };
+		B10E3014284F300000000014 /* LibraryViewStateSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibraryViewStateSync.swift; sourceTree = "<group>"; };
+		C10E5001284F300000000001 /* PerformanceMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceMonitor.swift; sourceTree = "<group>"; };
+		C10E5002284F300000000002 /* PerformanceBudget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceBudget.swift; sourceTree = "<group>"; };
+		C10E5003284F300000000003 /* BenchmarkLibraryProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BenchmarkLibraryProfile.swift; sourceTree = "<group>"; };
+		C10E5004284F300000000004 /* PerformanceMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceMetric.swift; sourceTree = "<group>"; };
 		B10E3003284F300000000003 /* ContentAreaEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentAreaEnvironment.swift; sourceTree = "<group>"; };
 		B10E3004284F300000000004 /* ContentAreaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentAreaView.swift; sourceTree = "<group>"; };
 		B10E3005284F300000000005 /* ContentAreaViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentAreaViewModel.swift; sourceTree = "<group>"; };
@@ -178,12 +148,7 @@
 		B10E3013284F300000000013 /* ThumbnailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThumbnailService.swift; sourceTree = "<group>"; };
 		C10E4001284F300000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E10E4001284F300000000001 /* PlatformCompat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformCompat.swift; sourceTree = "<group>"; };
-		F469CF502F37102800802D32 /* WndrApp_iPad.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WndrApp_iPad.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		F469CF512F37102800802D32 /* WndrApp_iPad */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WndrApp_iPad; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A10E2001284F300000000034 /* Frameworks */ = {
@@ -235,18 +200,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F469CF4D2F37102800802D32 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				F469CF602F37102800802D33 /* WndrKit.framework in Frameworks */,
-				F469CF612F37102800802D33 /* WndrData.framework in Frameworks */,
-				F469CF622F37102800802D33 /* WndrPDF.framework in Frameworks */,
-				F469CF632F37102800802D33 /* WndrNotes.framework in Frameworks */,
-				F469CF642F37102800802D33 /* WndrAutomation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -254,7 +207,6 @@
 			isa = PBXGroup;
 			children = (
 				A10E00A8284F300000000007 /* Sources */,
-				F469CF512F37102800802D32 /* WndrApp_iPad */,
 				A10E00A7284F300000000006 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -268,7 +220,6 @@
 				A10E1106284F30000000002F /* WndrPDF.framework */,
 				A10E1108284F300000000030 /* WndrNotes.framework */,
 				A10E110A284F300000000031 /* WndrAutomation.framework */,
-				F469CF502F37102800802D32 /* WndrApp_iPad.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -304,6 +255,7 @@
 				A10E1004284F30000000001B /* LibraryRootCoordinator.swift */,
 				B10E3001284F300000000001 /* ContentWrapper.swift */,
 				B10E3002284F300000000002 /* ImportCoordinator.swift */,
+				B10E3014284F300000000014 /* LibraryViewStateSync.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -363,6 +315,10 @@
 				B10E300C284F30000000000C /* DocumentService.swift */,
 				B10E300D284F30000000000D /* ImportService.swift */,
 				B10E3013284F300000000013 /* ThumbnailService.swift */,
+				C10E5001284F300000000001 /* PerformanceMonitor.swift */,
+				C10E5002284F300000000002 /* PerformanceBudget.swift */,
+				C10E5003284F300000000003 /* BenchmarkLibraryProfile.swift */,
+				C10E5004284F300000000004 /* PerformanceMetric.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -559,33 +515,6 @@
 			productReference = A10E110A284F300000000031 /* WndrAutomation.framework */;
 			productType = "com.apple.product-type.framework";
 		};
-		F469CF4F2F37102800802D32 /* WndrApp_iPad */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = F469CF5A2F37102A00802D32 /* Build configuration list for PBXNativeTarget "WndrApp_iPad" */;
-			buildPhases = (
-				F469CF4C2F37102800802D32 /* Sources */,
-				F469CF4D2F37102800802D32 /* Frameworks */,
-				F469CF4E2F37102800802D32 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				F469CF6A2F37102800802D33 /* PBXTargetDependency */,
-				F469CF6B2F37102800802D33 /* PBXTargetDependency */,
-				F469CF6C2F37102800802D33 /* PBXTargetDependency */,
-				F469CF6D2F37102800802D33 /* PBXTargetDependency */,
-				F469CF6E2F37102800802D33 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				F469CF512F37102800802D32 /* WndrApp_iPad */,
-			);
-			name = WndrApp_iPad;
-			packageProductDependencies = (
-			);
-			productName = WndrApp_iPad;
-			productReference = F469CF502F37102800802D32 /* WndrApp_iPad.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -614,10 +543,6 @@
 					A10E2105284F30000000004A = {
 						CreatedOnToolsVersion = 15.0;
 					};
-					F469CF4F2F37102800802D32 = {
-						CreatedOnToolsVersion = 26.2;
-						LastSwiftMigration = 2620;
-					};
 				};
 			};
 			buildConfigurationList = A10E00A3284F300000000002 /* Build configuration list for PBXProject "Wndr" */;
@@ -639,7 +564,6 @@
 				A10E2103284F300000000048 /* WndrPDF */,
 				A10E2104284F300000000049 /* WndrNotes */,
 				A10E2105284F30000000004A /* WndrAutomation */,
-				F469CF4F2F37102800802D32 /* WndrApp_iPad */,
 			);
 		};
 /* End PBXProject section */
@@ -649,7 +573,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C10E5001284F300000000001 /* Assets.xcassets in Resources */,
+				C10E5009284F300000000009 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -688,13 +612,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F469CF4E2F37102800802D32 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -707,6 +624,7 @@
 				A10E2502284F30000000006B /* LibraryRootCoordinator.swift in Sources */,
 				B10E4001284F300000000001 /* ContentWrapper.swift in Sources */,
 				B10E4002284F300000000002 /* ImportCoordinator.swift in Sources */,
+				B10E4014284F300000000014 /* LibraryViewStateSync.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -741,6 +659,10 @@
 				B10E400C284F30000000000C /* DocumentService.swift in Sources */,
 				B10E400D284F30000000000D /* ImportService.swift in Sources */,
 				B10E4013284F300000000013 /* ThumbnailService.swift in Sources */,
+				C10E5008284F300000000008 /* PerformanceMonitor.swift in Sources */,
+				C10E5005284F300000000005 /* PerformanceBudget.swift in Sources */,
+				C10E5006284F300000000006 /* BenchmarkLibraryProfile.swift in Sources */,
+				C10E5007284F300000000007 /* PerformanceMetric.swift in Sources */,
 				A10E250A284F300000000073 /* WndrModel.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -774,13 +696,6 @@
 			files = (
 				A10E250F284F300000000078 /* WndrAutomation.swift in Sources */,
 				A10E2510284F300000000079 /* ShortcutActions.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		F469CF4C2F37102800802D32 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -821,31 +736,6 @@
 			isa = PBXTargetDependency;
 			target = A10E2105284F30000000004A /* WndrAutomation */;
 			targetProxy = A10E2309284F300000000066 /* PBXContainerItemProxy */;
-		};
-		F469CF6A2F37102800802D33 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A10E2101284F300000000046 /* WndrKit */;
-			targetProxy = F469CF652F37102800802D33 /* PBXContainerItemProxy */;
-		};
-		F469CF6B2F37102800802D33 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A10E2102284F300000000047 /* WndrData */;
-			targetProxy = F469CF662F37102800802D33 /* PBXContainerItemProxy */;
-		};
-		F469CF6C2F37102800802D33 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A10E2103284F300000000048 /* WndrPDF */;
-			targetProxy = F469CF672F37102800802D33 /* PBXContainerItemProxy */;
-		};
-		F469CF6D2F37102800802D33 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A10E2104284F300000000049 /* WndrNotes */;
-			targetProxy = F469CF682F37102800802D33 /* PBXContainerItemProxy */;
-		};
-		F469CF6E2F37102800802D33 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = A10E2105284F30000000004A /* WndrAutomation */;
-			targetProxy = F469CF692F37102800802D33 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -974,7 +864,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -984,7 +874,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.app;
 				PRODUCT_NAME = Wndr;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -998,7 +888,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = NO;
@@ -1008,7 +898,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.app;
 				PRODUCT_NAME = Wndr;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -1021,7 +911,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1036,7 +926,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1054,7 +944,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1069,7 +959,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrKit;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1087,7 +977,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1102,7 +992,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrData;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1118,7 +1008,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1133,7 +1023,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrData;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1149,7 +1039,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1163,7 +1053,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrPDF;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1179,7 +1069,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1193,7 +1083,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrPDF;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1209,7 +1099,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1223,7 +1113,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrNotes;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1239,7 +1129,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1253,7 +1143,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrNotes;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1269,7 +1159,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1283,7 +1173,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrAutomation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1299,7 +1189,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEAD_CODE_STRIPPING = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
@@ -1313,7 +1203,7 @@
 					"@loader_path/Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 0.3.0;
+				MARKETING_VERSION = 0.4.0;
 				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu11 gnu++20";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wndr.WndrAutomation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -1322,87 +1212,6 @@
 				SWIFT_VERSION = 5.9;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
-			};
-			name = Release;
-		};
-		F469CF582F37102A00802D32 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4693GK932J;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wndr.WndrApp-iPad";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		F469CF592F37102A00802D32 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 4693GK932J;
-				ENABLE_PREVIEWS = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-				);
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.wndr.WndrApp-iPad";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = YES;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -1468,15 +1277,6 @@
 			buildConfigurations = (
 				A10E2210284F30000000005B /* Debug */,
 				A10E2211284F30000000005C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		F469CF5A2F37102A00802D32 /* Build configuration list for PBXNativeTarget "WndrApp_iPad" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				F469CF582F37102A00802D32 /* Debug */,
-				F469CF592F37102A00802D32 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

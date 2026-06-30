@@ -40,12 +40,7 @@ public actor LibraryRootStore {
 
     @discardableResult
     public func persistBookmark(for url: URL) throws -> Data {
-        #if os(macOS)
         let bookmark = try url.bookmarkData(options: [.withSecurityScope], includingResourceValuesForKeys: nil, relativeTo: nil)
-        #else
-        // iPadOS: use standard bookmarks (app sandbox handles security)
-        let bookmark = try url.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
-        #endif
         defaults.set(bookmark, forKey: Keys.libraryBookmark)
         logger.info("Stored bookmark for \(url.path)")
 
@@ -367,21 +362,12 @@ public actor LibraryRootStore {
         }
 
         var isStale = false
-        #if os(macOS)
         let url = try URL(
             resolvingBookmarkData: data,
             options: [.withSecurityScope],
             relativeTo: nil,
             bookmarkDataIsStale: &isStale
         )
-        #else
-        let url = try URL(
-            resolvingBookmarkData: data,
-            options: [],
-            relativeTo: nil,
-            bookmarkDataIsStale: &isStale
-        )
-        #endif
 
         if isStale {
             logger.info("Bookmark was stale, refreshing")
@@ -389,12 +375,6 @@ public actor LibraryRootStore {
         }
 
         return url
-    }
-
-    /// Returns the default library URL for iPadOS (inside the app's Documents directory).
-    public func defaultiPadLibraryURL() -> URL {
-        let documents = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documents.appendingPathComponent("Library", isDirectory: true)
     }
 
     public func clearBookmark() {

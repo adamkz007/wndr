@@ -129,6 +129,7 @@ public final class DocumentService: ObservableObject {
         try fileManager.removeItem(at: noteURL)
     }
 
+    /// Full reload for initial startup and recovery only.
     public func fetchAllDocuments() {
         let context = persistenceController.viewContext
         let fetchRequest = Document.fetchRequest()
@@ -143,6 +144,7 @@ public final class DocumentService: ObservableObject {
         }
     }
 
+    /// Full reload for initial startup and recovery only.
     public func fetchAllNotes() {
         let context = persistenceController.viewContext
         let fetchRequest = Note.fetchRequest()
@@ -154,6 +156,83 @@ public final class DocumentService: ObservableObject {
             logger.info("Fetched \(notes.count) notes")
         } catch {
             logger.error("Failed to fetch notes: \(error.localizedDescription)")
+        }
+    }
+
+    // MARK: - Incremental In-Memory Updates
+
+    /// Inserts or replaces a single document in the published array.
+    @discardableResult
+    public func upsertDocument(_ documentID: UUID) -> DocumentDTO? {
+        guard let dto = getDocument(byID: documentID) else { return nil }
+        if let index = documents.firstIndex(where: { $0.id == documentID }) {
+            documents[index] = dto
+        } else {
+            documents.insert(dto, at: 0)
+        }
+        return dto
+    }
+
+    /// Removes a single document from the published array.
+    public func removeDocumentFromMemory(_ documentID: UUID) {
+        documents.removeAll { $0.id == documentID }
+    }
+
+    /// Inserts or replaces a single note in the published array.
+    @discardableResult
+    public func upsertNote(_ noteID: UUID) -> NoteDTO? {
+        guard let dto = getNote(byID: noteID) else { return nil }
+        if let index = notes.firstIndex(where: { $0.id == noteID }) {
+            notes[index] = dto
+        } else {
+            notes.insert(dto, at: 0)
+        }
+        return dto
+    }
+
+    /// Removes a single note from the published array.
+    public func removeNoteFromMemory(_ noteID: UUID) {
+        notes.removeAll { $0.id == noteID }
+    }
+
+    /// Updates collection assignment for a document already in memory.
+    public func patchDocumentCollection(documentID: UUID, collectionID: UUID?) {
+        guard let index = documents.firstIndex(where: { $0.id == documentID }) else { return }
+        documents[index].collectionID = collectionID
+    }
+
+    /// Adds or removes a tag on a document already in memory.
+    public func patchDocumentTags(documentID: UUID, tag: DocumentTagDTO, adding: Bool) {
+        guard let index = documents.firstIndex(where: { $0.id == documentID }) else { return }
+        if adding {
+            if !documents[index].tags.contains(where: { $0.id == tag.id }) {
+                documents[index].tags.append(tag)
+            }
+        } else {
+            documents[index].tags.removeAll { $0.id == tag.id }
+        }
+    }
+
+    /// Removes a tag from every document in memory.
+    public func removeTagFromAllDocuments(_ tagID: UUID) {
+        for index in documents.indices {
+            documents[index].tags.removeAll { $0.id == tagID }
+        }
+    }
+
+    /// Renames a tag on every document in memory.
+    public func renameTagInAllDocuments(_ tagID: UUID, newName: String) {
+        for index in documents.indices {
+            if let tagIndex = documents[index].tags.firstIndex(where: { $0.id == tagID }) {
+                documents[index].tags[tagIndex].name = newName
+            }
+        }
+    }
+
+    /// Clears collection assignment for documents in a deleted collection.
+    public func clearCollectionFromDocuments(_ collectionID: UUID) {
+        for index in documents.indices where documents[index].collectionID == collectionID {
+            documents[index].collectionID = nil
         }
     }
 
@@ -263,7 +342,7 @@ public final class DocumentService: ObservableObject {
         logger.info("Renamed document: \(documentID.uuidString) to \(title)")
 
         await MainActor.run {
-            fetchAllDocuments()
+            _ = upsertDocument(documentID)
         }
     }
 
@@ -302,7 +381,7 @@ public final class DocumentService: ObservableObject {
         logger.info("Updated metadata for document: \(documentID.uuidString)")
 
         await MainActor.run {
-            fetchAllDocuments()
+            _ = upsertDocument(documentID)
         }
     }
 
@@ -333,7 +412,7 @@ public final class DocumentService: ObservableObject {
         logger.info("Deleted document: \(documentID.uuidString)")
 
         await MainActor.run {
-            fetchAllDocuments()
+            removeDocumentFromMemory(documentID)
         }
     }
 
@@ -375,7 +454,7 @@ public final class DocumentService: ObservableObject {
         logger.info("Deleted note: \(noteID.uuidString)")
 
         await MainActor.run {
-            fetchAllNotes()
+            removeNoteFromMemory(noteID)
         }
     }
 
@@ -447,7 +526,7 @@ public final class DocumentService: ObservableObject {
         logger.info("Updated note: \(noteID.uuidString)")
 
         await MainActor.run {
-            fetchAllNotes()
+            _ = upsertNote(noteID)
         }
     }
 
@@ -466,7 +545,7 @@ public final class DocumentService: ObservableObject {
         logger.info("Toggled pinned for note: \(noteID.uuidString)")
 
         await MainActor.run {
-            fetchAllNotes()
+            _ = upsertNote(noteID)
         }
     }
 
@@ -591,7 +670,10 @@ public final class DocumentService: ObservableObject {
             if repairedCount > 0 {
                 try context.save()
                 await MainActor.run {
-                    fetchAllDocuments()
+                    for doc in documents {
+                        guard let docID = doc.id else { continue }
+                        upsertDocument(docID)
+                    }
                 }
             }
 

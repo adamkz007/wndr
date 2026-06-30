@@ -10,6 +10,7 @@ final class ImportCoordinator: ObservableObject {
     @Published var importProgress: ImportProgress?
     @Published var activeAlert: ImportAlert?
     @Published var statusMessage: String?
+    @Published private(set) var lastImportedDocumentIDs: [UUID] = []
 
     private let importService: ImportService
     private let documentService: DocumentService
@@ -38,6 +39,10 @@ final class ImportCoordinator: ObservableObject {
         self.documentService = documentService
         self.libraryRootCoordinator = libraryRootCoordinator
         self.thumbnailService = thumbnailService
+    }
+
+    func clearImportedDocumentIDs() {
+        lastImportedDocumentIDs = []
     }
 
     func presentImportPanel() {
@@ -73,39 +78,44 @@ final class ImportCoordinator: ObservableObject {
         var successCount = 0
         var failureCount = 0
         var duplicateCount = 0
+        var importedIDs: [UUID] = []
 
-        for (index, url) in urls.enumerated() {
-            importProgress = ImportProgress(
-                current: index + 1,
-                total: urls.count,
-                currentFile: url.lastPathComponent
-            )
+        await PerformanceMonitor.shared.measure(.importBatch, metadata: ["file_count": String(urls.count)]) {
+            for (index, url) in urls.enumerated() {
+                importProgress = ImportProgress(
+                    current: index + 1,
+                    total: urls.count,
+                    currentFile: url.lastPathComponent
+                )
 
-            do {
-                let importedID = try await importService.importDocument(
-                    from: url,
-                    in: libraryURL,
-                    copyFile: true
-                ).documentID
-                successCount += 1
+                do {
+                    let importedID = try await importService.importDocument(
+                        from: url,
+                        in: libraryURL,
+                        copyFile: true
+                    ).documentID
+                    successCount += 1
+                    importedIDs.append(importedID)
+                    documentService.upsertDocument(importedID)
 
-                // Generate thumbnail for the imported document
-                if let document = documentService.getDocument(byID: importedID),
-                   let fileURL = document.fileURL {
-                    _ = await thumbnailService.thumbnailURL(for: importedID, pdfURL: fileURL, in: libraryURL)
+                    // Generate thumbnail for the imported document
+                    if let document = documentService.getDocument(byID: importedID),
+                       let fileURL = document.fileURL {
+                        await PerformanceMonitor.shared.measure(.thumbnailGeneration) {
+                            _ = await thumbnailService.thumbnailURL(for: importedID, pdfURL: fileURL, in: libraryURL)
+                        }
+                    }
+                } catch ImportService.ImportError.duplicateDocument {
+                    duplicateCount += 1
+                } catch {
+                    failureCount += 1
                 }
-            } catch ImportService.ImportError.duplicateDocument {
-                duplicateCount += 1
-            } catch {
-                failureCount += 1
             }
         }
 
         isImporting = false
         importProgress = nil
-
-        // Refresh document list
-        documentService.fetchAllDocuments()
+        lastImportedDocumentIDs = importedIDs
 
         // Show quiet status message instead of alert
         if successCount > 0 {
