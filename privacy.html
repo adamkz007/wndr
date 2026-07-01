@@ -19,7 +19,7 @@
       --accent: #6e56cf;
       --border: rgba(32,26,22,.1);
       --shadow: 0 24px 80px rgba(32,26,22,.12);
-      --max-w: 980px;
+      --max-w: 1080px;
       --font-body: "Instrument Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       --font-display: "Instrument Serif", Georgia, serif;
     }
@@ -52,68 +52,121 @@
       margin: 0 auto;
     }
 
-    .site-header {
+    /* ── Navigation ───────────────────────────────────── */
+    nav {
       position: sticky;
       top: 0;
-      z-index: 40;
-      background: rgba(247,243,236,.78);
+      z-index: 100;
+      background: rgba(247,243,236,.76);
       backdrop-filter: saturate(180%) blur(24px);
       -webkit-backdrop-filter: saturate(180%) blur(24px);
       border-bottom: 1px solid var(--border);
     }
 
-    .site-header .wrap,
-    .site-footer .wrap {
-      min-height: 76px;
+    nav .nav-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
     }
 
-    .brand {
-      display: inline-flex;
+    .nav-brand {
+      display: flex;
       align-items: center;
-      gap: 14px;
-      font-family: var(--font-display);
+      gap: 10px;
       font-size: 1.45rem;
+      font-weight: 400;
       letter-spacing: -.03em;
+      font-family: var(--font-display);
     }
 
-    .brand img {
-      width: 40px;
-      height: 40px;
+    .nav-brand img {
+      width: 38px;
+      height: 38px;
       border-radius: 10px;
       box-shadow: 0 10px 24px rgba(0,0,0,.16);
     }
 
     .nav-links {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
     }
 
-    .nav-links a,
-    .button {
+    .nav-links a {
+      font-size: .92rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      transition: color .2s, background .2s;
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255,255,255,.6);
+    }
+
+    .nav-gh {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      padding: 10px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.64);
-      border: 1px solid var(--border);
-      font-size: .92rem;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 980px;
+      background: linear-gradient(135deg, #201a16 0%, #5a473e 100%);
+      color: #fff !important;
+      font-size: .8125rem;
       font-weight: 600;
-      color: var(--text-secondary);
-      transition: transform .2s, background .2s, color .2s;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 14px 28px rgba(32,26,22,.18);
     }
 
-    .nav-links a:hover,
-    .button:hover {
+    .nav-gh:hover {
       transform: translateY(-1px);
-      background: rgba(255,255,255,.9);
+      box-shadow: 0 18px 34px rgba(32,26,22,.22);
+    }
+
+    .nav-gh svg { width: 16px; height: 16px; fill: #fff; }
+
+    /* ── Footer ───────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+      font-size: .8125rem;
+      color: var(--text-secondary);
+      background: rgba(255,255,255,.44);
+    }
+
+    footer .footer-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    footer .footer-links {
+      display: flex;
+      gap: 12px;
+      list-style: none;
+    }
+
+    footer .footer-links a {
+      transition: color .2s, background .2s;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.62);
+      border: 1px solid var(--border);
+    }
+
+    footer .footer-links a:hover {
       color: var(--text);
+      background: rgba(255,255,255,.92);
     }
 
     main {
@@ -220,34 +273,39 @@
       font-size: .92rem;
     }
 
-    .site-footer {
-      padding-bottom: 40px;
-      color: var(--text-secondary);
-      font-size: .92rem;
-    }
-
     @media (max-width: 840px) {
       .summary-grid { grid-template-columns: 1fr; }
       .hero-card,
       .summary-card,
       .policy-card { padding: 24px; }
+      footer .footer-inner { flex-direction: column; gap: 16px; }
+      .nav-links { gap: 8px; flex-wrap: wrap; justify-content: center; }
     }
   </style>
 </head>
 <body>
-  <header class="site-header">
-    <div class="wrap">
-      <a href="index.html" class="brand">
+  <nav>
+    <div class="nav-inner">
+      <a href="index.html" class="nav-brand">
         <img src="docs/wndr.png" alt="Wndr icon">
-        <span>Wndr</span>
+        Wndr
       </a>
-      <nav class="nav-links" aria-label="Privacy navigation">
-        <a href="index.html">Home</a>
-        <a href="https://github.com/adamkz007/wndr">GitHub</a>
-        <a href="https://github.com/adamkz007/wndr/blob/main/docs/storage-and-security.md">Storage Docs</a>
-      </nav>
+      <ul class="nav-links">
+        <li><a href="index.html#features">Features</a></li>
+        <li><a href="index.html#changelog">Changelog</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li>
+          <a href="https://github.com/adamkz007/wndr/releases/latest/download/Wndr.dmg" class="nav-gh">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M8 2L8 10M8 10L11 7M8 10L5 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2 14H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            Download
+          </a>
+        </li>
+      </ul>
     </div>
-  </header>
+  </nav>
 
   <main>
     <div class="wrap">
@@ -318,10 +376,14 @@
     </div>
   </main>
 
-  <footer class="site-footer">
-    <div class="wrap">
-      <p>&copy; 2026 Wndr. Local-first research tools.</p>
-      <a href="index.html" class="button">Back to Home</a>
+  <footer>
+    <div class="footer-inner">
+      <span>&copy; 2026 Wndr. All rights reserved.</span>
+      <ul class="footer-links">
+        <li><a href="https://github.com/adamkz007/wndr">GitHub</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="https://github.com/adamkz007/wndr/tree/main/docs">Docs</a></li>
+      </ul>
     </div>
   </footer>
 </body>
