@@ -46,37 +46,37 @@ public final class AnnotationService: ObservableObject {
         textSnippet: String?,
         colorCategory: String = "yellow"
     ) async throws -> UUID {
-        let context = persistenceController.newBackgroundContext()
-
-        // Fetch document
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else {
-            throw AnnotationError.documentNotFound
-        }
-
-        let annotation = Annotation(context: context)
-        annotation.id = UUID()
-        annotation.kind = "highlight"
-        annotation.pageIndex = Int32(pageIndex)
-        annotation.colorCategory = colorCategory
-        annotation.textSnippet = textSnippet
-        annotation.createdAt = Date()
-        annotation.updatedAt = Date()
-        annotation.document = document
+        let annotationID = UUID()
 
         // Store rects as JSON data
         let rectsData = try JSONSerialization.data(withJSONObject: rects)
-        annotation.rects = rectsData
 
-        try context.save()
-        logger.info("Created highlight annotation: \(annotation.id!.uuidString)")
+        try await persistenceController.performBackgroundTask { context in
+            guard let document = try context.first(Document.self, withID: documentID) else {
+                throw AnnotationError.documentNotFound
+            }
+
+            let now = Date()
+            let annotation = Annotation(context: context)
+            annotation.id = annotationID
+            annotation.kind = "highlight"
+            annotation.pageIndex = Int32(pageIndex)
+            annotation.colorCategory = colorCategory
+            annotation.textSnippet = textSnippet
+            annotation.createdAt = now
+            annotation.updatedAt = now
+            annotation.document = document
+            annotation.rects = rectsData
+
+            try context.save()
+        }
+        logger.info("Created highlight annotation: \(annotationID.uuidString)")
 
         await MainActor.run {
             fetchAnnotations(for: documentID)
         }
 
-        return annotation.id!
+        return annotationID
     }
 
     public func createNote(
@@ -85,36 +85,37 @@ public final class AnnotationService: ObservableObject {
         position: CGPoint,
         content: String
     ) async throws -> UUID {
-        let context = persistenceController.newBackgroundContext()
-
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else {
-            throw AnnotationError.documentNotFound
-        }
-
-        let annotation = Annotation(context: context)
-        annotation.id = UUID()
-        annotation.kind = "note"
-        annotation.pageIndex = Int32(pageIndex)
-        annotation.textSnippet = content
-        annotation.createdAt = Date()
-        annotation.updatedAt = Date()
-        annotation.document = document
+        let annotationID = UUID()
 
         // Store position as single rect
         let rect: [String: Double] = ["x": Double(position.x), "y": Double(position.y), "width": 20, "height": 20]
         let rectsData = try JSONSerialization.data(withJSONObject: [rect])
-        annotation.rects = rectsData
 
-        try context.save()
-        logger.info("Created note annotation: \(annotation.id!.uuidString)")
+        try await persistenceController.performBackgroundTask { context in
+            guard let document = try context.first(Document.self, withID: documentID) else {
+                throw AnnotationError.documentNotFound
+            }
+
+            let now = Date()
+            let annotation = Annotation(context: context)
+            annotation.id = annotationID
+            annotation.kind = "note"
+            annotation.pageIndex = Int32(pageIndex)
+            annotation.textSnippet = content
+            annotation.createdAt = now
+            annotation.updatedAt = now
+            annotation.document = document
+            annotation.rects = rectsData
+
+            try context.save()
+        }
+        logger.info("Created note annotation: \(annotationID.uuidString)")
 
         await MainActor.run {
             fetchAnnotations(for: documentID)
         }
 
-        return annotation.id!
+        return annotationID
     }
 
     // MARK: - Update
@@ -124,26 +125,25 @@ public final class AnnotationService: ObservableObject {
         colorCategory: String? = nil,
         textSnippet: String? = nil
     ) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Annotation.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        let documentID = try await persistenceController.performBackgroundTask { context in
+            guard let annotation = try context.first(Annotation.self, withID: id) else {
+                throw AnnotationError.annotationNotFound
+            }
 
-        guard let annotation = try context.fetch(fetchRequest).first else {
-            throw AnnotationError.annotationNotFound
-        }
+            if let color = colorCategory {
+                annotation.colorCategory = color
+            }
+            if let text = textSnippet {
+                annotation.textSnippet = text
+            }
+            annotation.updatedAt = Date()
 
-        if let color = colorCategory {
-            annotation.colorCategory = color
+            try context.save()
+            return annotation.document?.id
         }
-        if let text = textSnippet {
-            annotation.textSnippet = text
-        }
-        annotation.updatedAt = Date()
-
-        try context.save()
         logger.info("Updated annotation: \(id.uuidString)")
 
-        if let docID = annotation.document?.id {
+        if let docID = documentID {
             await MainActor.run {
                 fetchAnnotations(for: docID)
             }
@@ -153,18 +153,16 @@ public final class AnnotationService: ObservableObject {
     // MARK: - Delete
 
     public func deleteAnnotation(_ id: UUID) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Annotation.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        let documentID = try await persistenceController.performBackgroundTask { context in
+            guard let annotation = try context.first(Annotation.self, withID: id) else {
+                throw AnnotationError.annotationNotFound
+            }
 
-        guard let annotation = try context.fetch(fetchRequest).first else {
-            throw AnnotationError.annotationNotFound
+            let documentID = annotation.document?.id
+            context.delete(annotation)
+            try context.save()
+            return documentID
         }
-
-        let documentID = annotation.document?.id
-
-        context.delete(annotation)
-        try context.save()
         logger.info("Deleted annotation: \(id.uuidString)")
 
         if let docID = documentID {
@@ -177,16 +175,16 @@ public final class AnnotationService: ObservableObject {
     // MARK: - Bulk Operations
 
     public func deleteAllAnnotations(for documentID: UUID) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Annotation.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "document.id == %@", documentID as CVarArg)
+        try await persistenceController.performBackgroundTask { context in
+            let fetchRequest = Annotation.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "document.id == %@", documentID as CVarArg)
 
-        let results = try context.fetch(fetchRequest)
-        for annotation in results {
-            context.delete(annotation)
+            for annotation in try context.fetch(fetchRequest) {
+                context.delete(annotation)
+            }
+
+            try context.save()
         }
-
-        try context.save()
         logger.info("Deleted all annotations for document: \(documentID.uuidString)")
 
         await MainActor.run {

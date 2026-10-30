@@ -53,6 +53,42 @@ public final class DocumentService: ObservableObject {
         }
     }
 
+    /// Value copies of managed object state, safe to carry across context queues.
+    private struct DocumentSnapshot: Sendable {
+        let title: String?
+        let fileURL: URL?
+    }
+
+    private struct NoteSnapshot: Sendable {
+        let title: String
+        let body: String
+        let pinned: Bool
+        let createdAt: Date
+        let updatedAt: Date?
+    }
+
+    private func documentSnapshot(_ documentID: UUID) async throws -> DocumentSnapshot? {
+        try await persistenceController.performBackgroundTask { context in
+            try context.first(Document.self, withID: documentID).map {
+                DocumentSnapshot(title: $0.title, fileURL: $0.fileURL)
+            }
+        }
+    }
+
+    private func noteSnapshot(_ noteID: UUID) async throws -> NoteSnapshot? {
+        try await persistenceController.performBackgroundTask { context in
+            try context.first(Note.self, withID: noteID).map {
+                NoteSnapshot(
+                    title: $0.title ?? "Untitled Note",
+                    body: $0.body ?? "",
+                    pinned: $0.pinned,
+                    createdAt: $0.createdAt ?? Date(),
+                    updatedAt: $0.updatedAt
+                )
+            }
+        }
+    }
+
     private static let documentLinkPattern = #"\[\[([^\[\]\n]+)\]\]"#
 
     private func renderMarkdownNote(
@@ -272,8 +308,6 @@ public final class DocumentService: ObservableObject {
         libraryURL: URL,
         libraryStore: LibraryRootStore
     ) async throws -> UUID {
-        let context = persistenceController.newBackgroundContext()
-
         let noteID = UUID()
         let now = Date()
         try await writeNoteFile(
@@ -287,16 +321,17 @@ public final class DocumentService: ObservableObject {
             libraryStore: libraryStore
         )
 
-        let note = Note(context: context)
-        note.id = noteID
-        note.title = title
-        note.body = body
-        note.createdAt = now
-        note.updatedAt = now
-        note.pinned = false
-
         do {
-            try context.save()
+            try await persistenceController.performBackgroundTask { context in
+                let note = Note(context: context)
+                note.id = noteID
+                note.title = title
+                note.body = body
+                note.createdAt = now
+                note.updatedAt = now
+                note.pinned = false
+                try context.save()
+            }
         } catch {
             try? await deleteNoteFile(noteID: noteID, libraryURL: libraryURL, libraryStore: libraryStore)
             throw error
@@ -313,32 +348,26 @@ public final class DocumentService: ObservableObject {
     }
 
     public func renameDocument(_ documentID: UUID, title: String, libraryURL: URL? = nil, libraryStore: LibraryRootStore? = nil) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Document.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let document = results.first else { return }
-
-        let oldTitle = document.title
-        document.title = title
-        document.updatedAt = Date()
+        guard let snapshot = try await documentSnapshot(documentID) else { return }
 
         // Also rename the file on disk if we have the necessary parameters
-        if let libraryURL = libraryURL,
-           let libraryStore = libraryStore,
-           let currentFileURL = document.fileURL,
-           oldTitle != title {
+        let renamedFileURL = await renameDocumentFileIfNeeded(
+            documentID,
+            snapshot: snapshot,
+            to: title,
+            libraryURL: libraryURL,
+            libraryStore: libraryStore
+        )
 
-            let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
-
-            if let newURL = newURL {
-                document.fileURL = newURL
-                logger.info("Renamed file from \(currentFileURL.lastPathComponent) to \(newURL.lastPathComponent)")
+        try await persistenceController.performBackgroundTask { context in
+            guard let document = try context.first(Document.self, withID: documentID) else { return }
+            document.title = title
+            document.updatedAt = Date()
+            if let renamedFileURL {
+                document.fileURL = renamedFileURL
             }
+            try context.save()
         }
-
-        try context.save()
         logger.info("Renamed document: \(documentID.uuidString) to \(title)")
 
         await MainActor.run {
@@ -347,37 +376,33 @@ public final class DocumentService: ObservableObject {
     }
 
     public func updateDocumentMetadata(_ documentID: UUID, title: String? = nil, subtitle: String? = nil, authors: [String]? = nil, libraryURL: URL? = nil, libraryStore: LibraryRootStore? = nil) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Document.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
+        guard let snapshot = try await documentSnapshot(documentID) else { return }
 
-        let results = try context.fetch(fetchRequest)
-        guard let document = results.first else { return }
-
-        let oldTitle = document.title
-
-        if let title = title {
-            document.title = title
-
-            // Also rename the file on disk if title changed
-            if let libraryURL = libraryURL,
-               let libraryStore = libraryStore,
-               let currentFileURL = document.fileURL,
-               oldTitle != title {
-
-                let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
-
-                if let newURL = newURL {
-                    document.fileURL = newURL
-                    logger.info("Renamed file from \(currentFileURL.lastPathComponent) to \(newURL.lastPathComponent)")
-                }
-            }
+        // Also rename the file on disk if title changed
+        var renamedFileURL: URL?
+        if let title {
+            renamedFileURL = await renameDocumentFileIfNeeded(
+                documentID,
+                snapshot: snapshot,
+                to: title,
+                libraryURL: libraryURL,
+                libraryStore: libraryStore
+            )
         }
-        document.subtitle = subtitle
-        document.authors = authors
-        document.updatedAt = Date()
 
-        try context.save()
+        try await persistenceController.performBackgroundTask { [renamedFileURL] context in
+            guard let document = try context.first(Document.self, withID: documentID) else { return }
+            if let title {
+                document.title = title
+            }
+            if let renamedFileURL {
+                document.fileURL = renamedFileURL
+            }
+            document.subtitle = subtitle
+            document.authors = authors
+            document.updatedAt = Date()
+            try context.save()
+        }
         logger.info("Updated metadata for document: \(documentID.uuidString)")
 
         await MainActor.run {
@@ -385,30 +410,46 @@ public final class DocumentService: ObservableObject {
         }
     }
 
+    /// Renames the stored PDF to match `title` and returns its new URL, or nil if nothing was renamed.
+    private func renameDocumentFileIfNeeded(
+        _ documentID: UUID,
+        snapshot: DocumentSnapshot,
+        to title: String,
+        libraryURL: URL?,
+        libraryStore: LibraryRootStore?
+    ) async -> URL? {
+        guard let libraryURL,
+              let libraryStore,
+              let currentFileURL = snapshot.fileURL,
+              snapshot.title != title,
+              let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL) else {
+            return nil
+        }
+
+        logger.info("Renamed file from \(currentFileURL.lastPathComponent) to \(newURL.lastPathComponent)")
+        return newURL
+    }
+
     public func deleteDocument(
         _ documentID: UUID,
         libraryURL: URL? = nil,
         libraryStore: LibraryRootStore? = nil
     ) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Document.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let document = results.first else { return }
-
-        let storedFileURL = document.fileURL
+        guard let snapshot = try await documentSnapshot(documentID) else { return }
 
         if let libraryURL, let libraryStore {
             try await libraryStore.deleteStoredDocumentAssets(
                 for: documentID,
-                preferredFileURL: storedFileURL,
+                preferredFileURL: snapshot.fileURL,
                 in: libraryURL
             )
         }
 
-        context.delete(document)
-        try context.save()
+        try await persistenceController.performBackgroundTask { context in
+            guard let document = try context.first(Document.self, withID: documentID) else { return }
+            context.delete(document)
+            try context.save()
+        }
         logger.info("Deleted document: \(documentID.uuidString)")
 
         await MainActor.run {
@@ -421,31 +462,25 @@ public final class DocumentService: ObservableObject {
         libraryURL: URL,
         libraryStore: LibraryRootStore
     ) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Note.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let note = results.first else {
+        guard let snapshot = try await noteSnapshot(noteID) else {
             throw NotePersistenceError.noteNotFound(noteID)
         }
 
         try await deleteNoteFile(noteID: noteID, libraryURL: libraryURL, libraryStore: libraryStore)
-        context.delete(note)
         do {
-            try context.save()
+            try await persistenceController.performBackgroundTask { context in
+                guard let note = try context.first(Note.self, withID: noteID) else { return }
+                context.delete(note)
+                try context.save()
+            }
         } catch {
-            let restoredTitle = note.title ?? "Untitled Note"
-            let restoredBody = note.body ?? ""
-            let restoredCreatedAt = note.createdAt ?? Date()
-            let restoredUpdatedAt = note.updatedAt ?? restoredCreatedAt
             try? await writeNoteFile(
                 noteID: noteID,
-                title: restoredTitle,
-                body: restoredBody,
-                pinned: note.pinned,
-                createdAt: restoredCreatedAt,
-                updatedAt: restoredUpdatedAt,
+                title: snapshot.title,
+                body: snapshot.body,
+                pinned: snapshot.pinned,
+                createdAt: snapshot.createdAt,
+                updatedAt: snapshot.updatedAt ?? snapshot.createdAt,
                 libraryURL: libraryURL,
                 libraryStore: libraryStore
             )
@@ -465,19 +500,14 @@ public final class DocumentService: ObservableObject {
         libraryURL: URL,
         libraryStore: LibraryRootStore
     ) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Note.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let note = results.first else {
+        guard let snapshot = try await noteSnapshot(noteID) else {
             logger.error("Note not found: \(noteID.uuidString)")
             throw NotePersistenceError.noteNotFound(noteID)
         }
 
-        let previousTitle = note.title ?? "Untitled Note"
-        let previousBody = note.body ?? ""
-        let createdAt = note.createdAt ?? Date()
+        let previousTitle = snapshot.title
+        let previousBody = snapshot.body
+        let createdAt = snapshot.createdAt
         let updatedAt = Date()
         let titleChanged = previousTitle != title
         var renamedFile = false
@@ -494,19 +524,23 @@ public final class DocumentService: ObservableObject {
             noteID: noteID,
             title: title,
             body: body,
-            pinned: note.pinned,
+            pinned: snapshot.pinned,
             createdAt: createdAt,
             updatedAt: updatedAt,
             libraryURL: libraryURL,
             libraryStore: libraryStore
         )
 
-        note.title = title
-        note.body = body
-        note.updatedAt = updatedAt
-
         do {
-            try context.save()
+            try await persistenceController.performBackgroundTask { context in
+                guard let note = try context.first(Note.self, withID: noteID) else {
+                    throw NotePersistenceError.noteNotFound(noteID)
+                }
+                note.title = title
+                note.body = body
+                note.updatedAt = updatedAt
+                try context.save()
+            }
         } catch {
             if renamedFile {
                 _ = await libraryStore.renameNoteFile(noteID: noteID, to: previousTitle, in: libraryURL)
@@ -515,9 +549,9 @@ public final class DocumentService: ObservableObject {
                 noteID: noteID,
                 title: previousTitle,
                 body: previousBody,
-                pinned: note.pinned,
+                pinned: snapshot.pinned,
                 createdAt: createdAt,
-                updatedAt: note.updatedAt ?? createdAt,
+                updatedAt: snapshot.updatedAt ?? createdAt,
                 libraryURL: libraryURL,
                 libraryStore: libraryStore
             )
@@ -531,17 +565,12 @@ public final class DocumentService: ObservableObject {
     }
 
     public func toggleNotePinned(_ noteID: UUID) async throws {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Note.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let note = results.first else { return }
-
-        note.pinned.toggle()
-        note.updatedAt = Date()
-
-        try context.save()
+        try await persistenceController.performBackgroundTask { context in
+            guard let note = try context.first(Note.self, withID: noteID) else { return }
+            note.pinned.toggle()
+            note.updatedAt = Date()
+            try context.save()
+        }
         logger.info("Toggled pinned for note: \(noteID.uuidString)")
 
         await MainActor.run {
@@ -635,49 +664,51 @@ public final class DocumentService: ObservableObject {
     /// Repairs stale or missing file URLs by resolving each document back to the current library layout.
     @discardableResult
     public func repairStoredDocumentURLs(libraryURL: URL, libraryStore: LibraryRootStore) async -> Int {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Document.fetchRequest()
-
         do {
-            let documents = try context.fetch(fetchRequest)
-            var repairedCount = 0
+            let storedDocuments = try await persistenceController.performBackgroundTask { context in
+                try context.fetch(Document.fetchRequest()).compactMap { document -> (id: UUID, fileURL: URL?, documentType: String?)? in
+                    guard let documentID = document.id else { return nil }
+                    return (documentID, document.fileURL, document.documentType)
+                }
+            }
 
-            for document in documents {
-                guard let documentID = document.id else { continue }
-
-                let currentURL = document.fileURL
-                if let currentURL, FileManager.default.fileExists(atPath: currentURL.path) {
+            var repairedURLs: [UUID: URL] = [:]
+            for stored in storedDocuments {
+                if let currentURL = stored.fileURL, FileManager.default.fileExists(atPath: currentURL.path) {
                     continue
                 }
 
                 guard let resolvedURL = await libraryStore.resolveDocumentFile(
-                    for: documentID,
-                    preferredURL: currentURL,
-                    documentType: document.documentType,
+                    for: stored.id,
+                    preferredURL: stored.fileURL,
+                    documentType: stored.documentType,
                     in: libraryURL
-                ) else {
+                ), resolvedURL != stored.fileURL else {
                     continue
                 }
 
-                if document.fileURL != resolvedURL {
+                repairedURLs[stored.id] = resolvedURL
+                logger.info("Repaired file URL for document \(stored.id.uuidString)")
+            }
+
+            guard !repairedURLs.isEmpty else { return 0 }
+
+            try await persistenceController.performBackgroundTask { [repairedURLs] context in
+                let fetchRequest = Document.fetchRequest()
+                fetchRequest.predicate = NSPredicate(format: "id IN %@", Array(repairedURLs.keys))
+                for document in try context.fetch(fetchRequest) {
+                    guard let documentID = document.id, let resolvedURL = repairedURLs[documentID] else { continue }
                     document.fileURL = resolvedURL
                     document.updatedAt = Date()
-                    repairedCount += 1
-                    logger.info("Repaired file URL for document \(documentID.uuidString)")
                 }
-            }
-
-            if repairedCount > 0 {
                 try context.save()
-                await MainActor.run {
-                    for doc in documents {
-                        guard let docID = doc.id else { continue }
-                        upsertDocument(docID)
-                    }
-                }
             }
 
-            return repairedCount
+            for documentID in repairedURLs.keys {
+                upsertDocument(documentID)
+            }
+
+            return repairedURLs.count
         } catch {
             logger.error("Failed to repair stored document URLs: \(error.localizedDescription)")
             return 0
@@ -756,42 +787,51 @@ public final class DocumentService: ObservableObject {
     /// Migrates existing documents to use meaningful filenames instead of "document.pdf"
     /// This is optional and can be called to update legacy documents
     public func migrateDocumentFilenames(libraryURL: URL, libraryStore: LibraryRootStore) async -> (migrated: Int, failed: Int) {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Document.fetchRequest()
-
         var migratedCount = 0
         var failedCount = 0
 
         do {
-            let documents = try context.fetch(fetchRequest)
-            logger.info("Starting filename migration for \(documents.count) documents")
-
-            for document in documents {
-                guard let documentID = document.id,
-                      let title = document.title,
-                      let fileURL = document.fileURL else {
-                    continue
-                }
-
-                // Skip if not using generic name
-                if fileURL.lastPathComponent != "document.pdf" {
-                    continue
-                }
-
-                let newURL = await libraryStore.renameDocumentFile(documentID: documentID, to: title, in: libraryURL)
-
-                if let newURL = newURL, newURL != fileURL {
-                    document.fileURL = newURL
-                    migratedCount += 1
-                    logger.info("Migrated: \(title) -> \(newURL.lastPathComponent)")
-                } else if newURL == nil {
-                    failedCount += 1
-                    logger.error("Failed to migrate: \(title)")
+            let documents = try await persistenceController.performBackgroundTask { context in
+                try context.fetch(Document.fetchRequest()).compactMap { document -> (id: UUID, title: String, fileURL: URL)? in
+                    guard let documentID = document.id,
+                          let title = document.title,
+                          let fileURL = document.fileURL else {
+                        return nil
+                    }
+                    return (documentID, title, fileURL)
                 }
             }
+            logger.info("Starting filename migration for \(documents.count) documents")
+
+            var migratedURLs: [UUID: URL] = [:]
+            for document in documents {
+                // Skip if not using generic name
+                if document.fileURL.lastPathComponent != "document.pdf" {
+                    continue
+                }
+
+                let newURL = await libraryStore.renameDocumentFile(documentID: document.id, to: document.title, in: libraryURL)
+
+                if let newURL = newURL, newURL != document.fileURL {
+                    migratedURLs[document.id] = newURL
+                    logger.info("Migrated: \(document.title) -> \(newURL.lastPathComponent)")
+                } else if newURL == nil {
+                    failedCount += 1
+                    logger.error("Failed to migrate: \(document.title)")
+                }
+            }
+            migratedCount = migratedURLs.count
 
             if migratedCount > 0 {
-                try context.save()
+                try await persistenceController.performBackgroundTask { [migratedURLs] context in
+                    let fetchRequest = Document.fetchRequest()
+                    fetchRequest.predicate = NSPredicate(format: "id IN %@", Array(migratedURLs.keys))
+                    for document in try context.fetch(fetchRequest) {
+                        guard let documentID = document.id, let newURL = migratedURLs[documentID] else { continue }
+                        document.fileURL = newURL
+                    }
+                    try context.save()
+                }
                 logger.info("Migration complete: \(migratedCount) migrated, \(failedCount) failed")
             }
         } catch {

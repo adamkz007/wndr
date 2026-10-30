@@ -10,6 +10,9 @@ final class LibraryRootCoordinator: ObservableObject, LibraryRootHandling {
     @Published private(set) var libraryURL: URL?
     @Published var activeAlert: AlertDescriptor?
 
+    /// Opens a library's resources (e.g. its database) before it becomes active.
+    var prepareLibrary: ((URL) throws -> Void)?
+
     private let store: LibraryRootStore
     private let telemetry: TelemetryClient
 
@@ -31,7 +34,8 @@ final class LibraryRootCoordinator: ObservableObject, LibraryRootHandling {
             return
         }
 
-        activate(url: url)
+        // Only remember a library once it has opened, so a broken one is not restored on next launch.
+        guard activate(url: url) else { return }
         Task {
             do {
                 try await store.persistBookmark(for: url)
@@ -43,8 +47,19 @@ final class LibraryRootCoordinator: ObservableObject, LibraryRootHandling {
         }
     }
 
-    func activate(url: URL) {
+    /// Opens the library and makes it active. On failure, shows a recovery alert and
+    /// leaves the current library (if any) in place.
+    @discardableResult
+    func activate(url: URL) -> Bool {
+        do {
+            try prepareLibrary?(url)
+        } catch {
+            telemetry.record(error)
+            presentRecovery(for: error)
+            return false
+        }
         libraryURL = url
+        return true
     }
 
     func presentRecovery(for error: Error) {

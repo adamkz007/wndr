@@ -56,6 +56,10 @@ final class AppEnvironment: ObservableObject {
 
         automationCoordinator.registerDefaults()
 
+        libraryRootCoordinator.prepareLibrary = { [persistenceController] url in
+            try persistenceController.loadStore(forLibrary: url)
+        }
+
         // Sync libraryURL from coordinator to trigger SwiftUI updates
         libraryRootCoordinator.$libraryURL
             .receive(on: DispatchQueue.main)
@@ -157,6 +161,8 @@ final class AppEnvironment: ObservableObject {
     /// Gated by a UserDefaults flag so it only executes once per library.
     private func assignColorsToExistingTags() async {
         guard !UserDefaults.standard.bool(forKey: Self.tagColorAssignmentKey) else { return }
+        // Without an open library there are no tags to inspect; don't mark the pass as done.
+        guard libraryRootCoordinator.libraryURL != nil else { return }
 
         let logger = WndrLogger(category: "tags")
         logger.info("Starting one-time tag color assignment for existing tags")

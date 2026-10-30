@@ -85,19 +85,19 @@ public final class CollectionService: ObservableObject {
     }
 
     public func createCollection(name: String, kind: CollectionKind = .manual, icon: String? = nil) async throws -> UUID {
-        let context = persistenceController.newBackgroundContext()
+        let collectionID = UUID()
         let sortOrder = Int32(collections.count)
 
-        let collection = DocumentCollection(context: context)
-        collection.id = UUID()
-        collection.name = name
-        collection.kind = kind.rawValue
-        collection.icon = icon
-        collection.sortOrder = sortOrder
-        collection.createdAt = Date()
-
-        try context.save()
-        let collectionID = collection.id!
+        try await persistenceController.performBackgroundTask { context in
+            let collection = DocumentCollection(context: context)
+            collection.id = collectionID
+            collection.name = name
+            collection.kind = kind.rawValue
+            collection.icon = icon
+            collection.sortOrder = sortOrder
+            collection.createdAt = Date()
+            try context.save()
+        }
         logger.info("Created collection: \(collectionID.uuidString)")
 
         await MainActor.run {
@@ -110,21 +110,18 @@ public final class CollectionService: ObservableObject {
     }
 
     public func updateCollection(_ id: UUID, name: String? = nil, icon: String? = nil) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = DocumentCollection.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let collection = results.first else { return CollectionMutationResult() }
-
-        if let name = name {
-            collection.name = name
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let collection = try context.first(DocumentCollection.self, withID: id) else { return false }
+            if let name = name {
+                collection.name = name
+            }
+            if let icon = icon {
+                collection.icon = icon
+            }
+            try context.save()
+            return true
         }
-        if let icon = icon {
-            collection.icon = icon
-        }
-
-        try context.save()
+        guard found else { return CollectionMutationResult() }
         logger.info("Updated collection: \(id.uuidString)")
 
         let dto = await MainActor.run { self.collectionDTO(for: id) }
@@ -137,15 +134,13 @@ public final class CollectionService: ObservableObject {
     }
 
     public func deleteCollection(_ id: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = DocumentCollection.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let collection = results.first else { return CollectionMutationResult() }
-
-        context.delete(collection)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let collection = try context.first(DocumentCollection.self, withID: id) else { return false }
+            context.delete(collection)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Deleted collection: \(id.uuidString)")
 
         await MainActor.run {
@@ -155,18 +150,14 @@ public final class CollectionService: ObservableObject {
     }
 
     public func addDocument(_ documentID: UUID, to collectionID: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-
-        let collectionRequest = DocumentCollection.fetchRequest()
-        collectionRequest.predicate = NSPredicate(format: "id == %@", collectionID as CVarArg)
-        guard let collection = try context.fetch(collectionRequest).first else { return CollectionMutationResult() }
-
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else { return CollectionMutationResult() }
-
-        collection.addToDocuments(document)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let collection = try context.first(DocumentCollection.self, withID: collectionID),
+                  let document = try context.first(Document.self, withID: documentID) else { return false }
+            collection.addToDocuments(document)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Added document \(documentID) to collection \(collectionID)")
 
         await MainActor.run {
@@ -181,37 +172,37 @@ public final class CollectionService: ObservableObject {
     /// Sets a document to belong to exactly one collection (exclusive assignment)
     /// Pass nil for collectionID to remove from all collections
     public func setDocumentCollection(_ documentID: UUID, collectionID: UUID?) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
+        let affected = try await persistenceController.performBackgroundTask { context -> Set<UUID>? in
+            guard let document = try context.first(Document.self, withID: documentID) else { return nil }
 
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else { return CollectionMutationResult() }
-
-        // Remove from all existing collections
-        var affectedCollectionIDs = Set<UUID>()
-        if let existingCollections = document.collections as? Set<DocumentCollection> {
-            for collection in existingCollections {
-                if let collectionID = collection.id {
-                    affectedCollectionIDs.insert(collectionID)
+            // Remove from all existing collections
+            var affectedCollectionIDs = Set<UUID>()
+            if let existingCollections = document.collections as? Set<DocumentCollection> {
+                for collection in existingCollections {
+                    if let collectionID = collection.id {
+                        affectedCollectionIDs.insert(collectionID)
+                    }
+                    collection.removeFromDocuments(document)
                 }
-                collection.removeFromDocuments(document)
             }
-        }
 
-        // Add to new collection if specified
-        if let collectionID = collectionID {
-            let collectionRequest = DocumentCollection.fetchRequest()
-            collectionRequest.predicate = NSPredicate(format: "id == %@", collectionID as CVarArg)
-            if let collection = try context.fetch(collectionRequest).first {
+            // Add to new collection if specified
+            if let collectionID,
+               let collection = try context.first(DocumentCollection.self, withID: collectionID) {
                 collection.addToDocuments(document)
                 affectedCollectionIDs.insert(collectionID)
-                logger.info("Set document \(documentID) to collection \(collectionID)")
             }
+
+            try context.save()
+            return affectedCollectionIDs
+        }
+        guard let affectedCollectionIDs = affected else { return CollectionMutationResult() }
+
+        if let collectionID {
+            logger.info("Set document \(documentID) to collection \(collectionID)")
         } else {
             logger.info("Removed document \(documentID) from all collections")
         }
-
-        try context.save()
 
         await MainActor.run {
             refreshCollectionCounts(Array(affectedCollectionIDs))
@@ -223,18 +214,14 @@ public final class CollectionService: ObservableObject {
     }
 
     public func removeDocument(_ documentID: UUID, from collectionID: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-
-        let collectionRequest = DocumentCollection.fetchRequest()
-        collectionRequest.predicate = NSPredicate(format: "id == %@", collectionID as CVarArg)
-        guard let collection = try context.fetch(collectionRequest).first else { return CollectionMutationResult() }
-
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else { return CollectionMutationResult() }
-
-        collection.removeFromDocuments(document)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let collection = try context.first(DocumentCollection.self, withID: collectionID),
+                  let document = try context.first(Document.self, withID: documentID) else { return false }
+            collection.removeFromDocuments(document)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Removed document \(documentID) from collection \(collectionID)")
 
         await MainActor.run {
@@ -264,8 +251,6 @@ public final class CollectionService: ObservableObject {
     }
 
     public func createTag(name: String, color: String? = nil) async throws -> UUID {
-        let context = persistenceController.newBackgroundContext()
-
         // Auto-assign color from palette if not provided
         let assignedColor: String
         if let color = color {
@@ -276,14 +261,15 @@ public final class CollectionService: ObservableObject {
             assignedColor = Self.tagColorPalette[colorIndex]
         }
 
-        let tag = Tag(context: context)
-        tag.id = UUID()
-        tag.name = name
-        tag.color = assignedColor
-        tag.createdAt = Date()
-
-        try context.save()
-        let tagID = tag.id!
+        let tagID = UUID()
+        try await persistenceController.performBackgroundTask { context in
+            let tag = Tag(context: context)
+            tag.id = tagID
+            tag.name = name
+            tag.color = assignedColor
+            tag.createdAt = Date()
+            try context.save()
+        }
         logger.info("Created tag: \(tagID.uuidString) with color: \(assignedColor)")
 
         await MainActor.run {
@@ -297,21 +283,18 @@ public final class CollectionService: ObservableObject {
     }
 
     public func updateTag(_ id: UUID, name: String? = nil, color: String? = nil) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Tag.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let tag = results.first else { return CollectionMutationResult() }
-
-        if let name = name {
-            tag.name = name
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let tag = try context.first(Tag.self, withID: id) else { return false }
+            if let name = name {
+                tag.name = name
+            }
+            if let color = color {
+                tag.color = color
+            }
+            try context.save()
+            return true
         }
-        if let color = color {
-            tag.color = color
-        }
-
-        try context.save()
+        guard found else { return CollectionMutationResult() }
         logger.info("Updated tag: \(id.uuidString)")
 
         let dto = await MainActor.run { self.tagDTO(for: id) }
@@ -329,15 +312,13 @@ public final class CollectionService: ObservableObject {
     }
 
     public func deleteTag(_ id: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-        let fetchRequest = Tag.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id as CVarArg)
-
-        let results = try context.fetch(fetchRequest)
-        guard let tag = results.first else { return CollectionMutationResult() }
-
-        context.delete(tag)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let tag = try context.first(Tag.self, withID: id) else { return false }
+            context.delete(tag)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Deleted tag: \(id.uuidString)")
 
         await MainActor.run {
@@ -347,18 +328,14 @@ public final class CollectionService: ObservableObject {
     }
 
     public func addTag(_ tagID: UUID, to documentID: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-
-        let tagRequest = Tag.fetchRequest()
-        tagRequest.predicate = NSPredicate(format: "id == %@", tagID as CVarArg)
-        guard let tag = try context.fetch(tagRequest).first else { return CollectionMutationResult() }
-
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else { return CollectionMutationResult() }
-
-        tag.addToDocuments(document)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let tag = try context.first(Tag.self, withID: tagID),
+                  let document = try context.first(Document.self, withID: documentID) else { return false }
+            tag.addToDocuments(document)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Added tag \(tagID) to document \(documentID)")
 
         let dto = await MainActor.run { self.tagDTO(for: tagID) }
@@ -373,18 +350,14 @@ public final class CollectionService: ObservableObject {
     }
 
     public func removeTag(_ tagID: UUID, from documentID: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-
-        let tagRequest = Tag.fetchRequest()
-        tagRequest.predicate = NSPredicate(format: "id == %@", tagID as CVarArg)
-        guard let tag = try context.fetch(tagRequest).first else { return CollectionMutationResult() }
-
-        let documentRequest = Document.fetchRequest()
-        documentRequest.predicate = NSPredicate(format: "id == %@", documentID as CVarArg)
-        guard let document = try context.fetch(documentRequest).first else { return CollectionMutationResult() }
-
-        tag.removeFromDocuments(document)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let tag = try context.first(Tag.self, withID: tagID),
+                  let document = try context.first(Document.self, withID: documentID) else { return false }
+            tag.removeFromDocuments(document)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Removed tag \(tagID) from document \(documentID)")
 
         await MainActor.run {
@@ -397,18 +370,14 @@ public final class CollectionService: ObservableObject {
     }
 
     public func addTagToNote(_ tagID: UUID, noteID: UUID) async throws -> CollectionMutationResult {
-        let context = persistenceController.newBackgroundContext()
-
-        let tagRequest = Tag.fetchRequest()
-        tagRequest.predicate = NSPredicate(format: "id == %@", tagID as CVarArg)
-        guard let tag = try context.fetch(tagRequest).first else { return CollectionMutationResult() }
-
-        let noteRequest = Note.fetchRequest()
-        noteRequest.predicate = NSPredicate(format: "id == %@", noteID as CVarArg)
-        guard let note = try context.fetch(noteRequest).first else { return CollectionMutationResult() }
-
-        tag.addToNotes(note)
-        try context.save()
+        let found = try await persistenceController.performBackgroundTask { context in
+            guard let tag = try context.first(Tag.self, withID: tagID),
+                  let note = try context.first(Note.self, withID: noteID) else { return false }
+            tag.addToNotes(note)
+            try context.save()
+            return true
+        }
+        guard found else { return CollectionMutationResult() }
         logger.info("Added tag \(tagID) to note \(noteID)")
 
         await MainActor.run {

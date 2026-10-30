@@ -113,6 +113,13 @@ private struct RootView: View {
                 environment.shouldReassignTagColors = false
             }
         }
+        .onChange(of: environment.libraryURL) { oldURL, newURL in
+            // Switching between two libraries keeps ContentWrapper alive, so reload from the new store.
+            guard oldURL != nil, newURL != nil else { return }
+            sidebarViewModel.selectedItem = .allDocuments
+            makeViewStateSync().syncFullLibraryFromService()
+            updateStorageInfo()
+        }
         .onChange(of: environment.importCoordinator.lastImportedDocumentIDs) { _, importedIDs in
             guard !importedIDs.isEmpty else { return }
             let sync = makeViewStateSync()

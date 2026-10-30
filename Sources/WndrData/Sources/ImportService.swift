@@ -98,9 +98,8 @@ public actor ImportService {
         logger.info("Calculated checksum: \(checksum)")
 
         // Check for duplicates
-        let context = persistenceController.newBackgroundContext()
-        if let existing = try await findExistingDocument(withChecksum: checksum, in: context) {
-            logger.info("Document already exists with ID: \(existing.id?.uuidString ?? "unknown")")
+        if try await documentExists(withChecksum: checksum) {
+            logger.info("Document already exists with checksum: \(checksum)")
             throw ImportError.duplicateDocument
         }
 
@@ -108,39 +107,52 @@ public actor ImportService {
         let metadata: DocumentMetadata
         metadata = try await extractPDFMetadata(from: sourceURL)
 
-        // Create document entity
         let documentID = UUID()
-        let document = Document(context: context)
-        document.id = documentID
 
         // Determine document title (will be used for filename too)
         let documentTitle = metadata.title ?? sourceURL.deletingPathExtension().lastPathComponent
-        document.title = documentTitle
-        document.subtitle = metadata.subtitle
-        document.authors = metadata.authors
-        document.source = metadata.source
-        document.publicationDate = metadata.publicationDate
-        document.keywords = metadata.keywords
-        document.checksum = checksum
-        document.pageCount = Int32(metadata.pageCount)
-        document.ocrStatus = metadata.needsOCR ? "pending" : "complete"
-        document.documentType = docType.rawValue
-        document.createdAt = Date()
-        document.updatedAt = Date()
+        let documentType = docType.rawValue
 
         // Copy file to library
+        let storedFileURL: URL
         if copyFile {
             let destinationURL = await libraryStore.documentURL(for: documentID, in: libraryURL, filename: documentTitle)
             try await copyDocument(from: sourceURL, to: destinationURL)
-            document.fileURL = destinationURL
-            logger.info("Copied \(docType.rawValue) to: \(destinationURL.path)")
+            storedFileURL = destinationURL
+            logger.info("Copied \(documentType) to: \(destinationURL.path)")
         } else {
-            document.fileURL = sourceURL
+            storedFileURL = sourceURL
         }
 
-        // Save context
-        try context.save()
-        logger.info("Document saved with ID: \(documentID.uuidString) (type: \(docType.rawValue))")
+        // Create and save document entity
+        do {
+            try await persistenceController.performBackgroundTask { context in
+                let now = Date()
+                let document = Document(context: context)
+                document.id = documentID
+                document.title = documentTitle
+                document.subtitle = metadata.subtitle
+                document.authors = metadata.authors
+                document.source = metadata.source
+                document.publicationDate = metadata.publicationDate
+                document.keywords = metadata.keywords
+                document.checksum = checksum
+                document.pageCount = Int32(metadata.pageCount)
+                document.ocrStatus = metadata.needsOCR ? "pending" : "complete"
+                document.documentType = documentType
+                document.fileURL = storedFileURL
+                document.createdAt = now
+                document.updatedAt = now
+                try context.save()
+            }
+        } catch {
+            if copyFile {
+                // The per-document directory is new, so removing it only discards this import's copy.
+                try? fileManager.removeItem(at: storedFileURL.deletingLastPathComponent())
+            }
+            throw error
+        }
+        logger.info("Document saved with ID: \(documentID.uuidString) (type: \(documentType))")
 
         return ImportResult(
             documentID: documentID,
@@ -176,15 +188,13 @@ public actor ImportService {
         return hash.compactMap { String(format: "%02x", $0) }.joined()
     }
 
-    private func findExistingDocument(
-        withChecksum checksum: String,
-        in context: NSManagedObjectContext
-    ) async throws -> Document? {
-        let fetchRequest = Document.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "checksum == %@", checksum)
-        fetchRequest.fetchLimit = 1
-
-        return try context.fetch(fetchRequest).first
+    private func documentExists(withChecksum checksum: String) async throws -> Bool {
+        try await persistenceController.performBackgroundTask { context in
+            let fetchRequest = Document.fetchRequest()
+            fetchRequest.predicate = NSPredicate(format: "checksum == %@", checksum)
+            fetchRequest.fetchLimit = 1
+            return try context.count(for: fetchRequest) > 0
+        }
     }
 
     private struct DocumentMetadata {
