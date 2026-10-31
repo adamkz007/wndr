@@ -27,6 +27,8 @@ public final class NoteEditorViewModel: ObservableObject {
     @Published public var isDirty: Bool = false
     @Published public var isSaving: Bool = false
     @Published public var lastSaved: Date?
+    /// Description of the most recent failed save; cleared when a save succeeds.
+    @Published public private(set) var saveError: String?
     @Published public var showPreview: Bool = false
     @Published public var wordCount: Int = 0
     @Published public var characterCount: Int = 0
@@ -41,20 +43,70 @@ public final class NoteEditorViewModel: ObservableObject {
     public var onSearchDocumentLinks: ((String) -> [NoteDocumentLinkSuggestion])?
 
     private var saveTask: Task<Void, Never>?
+    private var inFlightSave: Task<Void, Never>?
+    /// Incremented on every edit so a save can tell whether newer edits arrived while it ran.
+    private var revision = 0
+    private var isLoading = false
     private var autoSaveEnabled: Bool = true
     private let autoSaveDelay: TimeInterval = 2.0
     private var activeLinkRange: Range<String.Index>?
     private var pendingLinkSuggestionUpdate: DispatchWorkItem?
+
+    /// Every live editor, so unsaved changes can be flushed before the app quits.
+    private static let openEditors = NSHashTable<NoteEditorViewModel>.weakObjects()
 
     public init(noteID: UUID, title: String = "", body: String = "") {
         self.noteID = noteID
         self.title = title
         self.body = body
         updateStats()
+        Self.openEditors.add(self)
+    }
+
+    // MARK: - Open Editors
+
+    public static var hasUnsavedChanges: Bool {
+        openEditors.allObjects.contains { $0.isDirty }
+    }
+
+    /// Saves every editor with unsaved changes. Returns false if any of them still has unsaved changes.
+    public static func saveAllPending() async -> Bool {
+        for editor in openEditors.allObjects where editor.isDirty {
+            await editor.save()
+        }
+        return !hasUnsavedChanges
+    }
+
+    /// Drops unsaved changes for a note that no longer exists, so they are not saved later.
+    public static func discardChanges(forNoteID noteID: UUID) {
+        for editor in openEditors.allObjects where editor.noteID == noteID {
+            editor.discardChanges()
+        }
+    }
+
+    // MARK: - Editing
+
+    /// Replaces the contents with stored values without marking the note dirty.
+    public func load(title: String, body: String, lastSaved: Date?) {
+        isLoading = true
+        self.title = title
+        self.body = body
+        isLoading = false
+        updateStats()
+        self.lastSaved = lastSaved
+        isDirty = false
+        saveError = nil
+    }
+
+    private func discardChanges() {
+        saveTask?.cancel()
+        isDirty = false
+        saveError = nil
     }
 
     private func markDirty() {
-        guard !isSaving else { return }
+        guard !isLoading else { return }
+        revision += 1
         isDirty = true
         updateStats()
         scheduleAutoSave()
@@ -78,27 +130,50 @@ public final class NoteEditorViewModel: ObservableObject {
         }
     }
 
+    /// Saves the current contents. Saves never overlap: a call made while one is running
+    /// waits for it, then saves anything typed in the meantime.
     public func save() async {
-        guard isDirty, let onSave = onSave else { return }
-        isSaving = true
-
-        do {
-            try await onSave(noteID, title, body)
-            isDirty = false
-            lastSaved = Date()
-        } catch {
-            // Error handled by caller
+        while let inFlightSave {
+            await inFlightSave.value
         }
+        guard isDirty, let onSave = onSave else { return }
 
-        isSaving = false
+        let savedRevision = revision
+        let title = title
+        let body = body
+        let task = Task {
+            isSaving = true
+            defer {
+                isSaving = false
+                inFlightSave = nil
+            }
+
+            do {
+                try await onSave(noteID, title, body)
+                saveError = nil
+                lastSaved = Date()
+                if revision == savedRevision {
+                    isDirty = false
+                } else {
+                    // Edits arrived while saving; they are still dirty and need their own save.
+                    scheduleAutoSave()
+                }
+            } catch {
+                // Stay dirty so the next edit, Cmd-S or quit retries the save.
+                saveError = error.localizedDescription
+            }
+        }
+        inFlightSave = task
+        await task.value
     }
 
     public func delete() async {
         guard let onDelete = onDelete else { return }
         do {
             try await onDelete(noteID)
+            discardChanges()
         } catch {
-            // Error handled by caller
+            saveError = error.localizedDescription
         }
     }
 

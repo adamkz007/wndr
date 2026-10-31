@@ -1,11 +1,38 @@
+import AppKit
 import PDFKit
 import SwiftUI
 import WndrKit
 import WndrData
+import WndrNotes
 import WndrPDF
+
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    /// Holds quit until open notes are saved; asks before quitting if any save fails.
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        guard NoteEditorViewModel.hasUnsavedChanges else { return .terminateNow }
+
+        Task { @MainActor in
+            if await NoteEditorViewModel.saveAllPending() {
+                sender.reply(toApplicationShouldTerminate: true)
+                return
+            }
+
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = "Some notes couldn't be saved"
+            alert.informativeText = "If you quit now, your latest changes to those notes will be lost."
+            alert.addButton(withTitle: "Cancel")
+            alert.addButton(withTitle: "Quit Anyway")
+            let quitAnyway = alert.runModal() == .alertSecondButtonReturn
+            sender.reply(toApplicationShouldTerminate: quitAnyway)
+        }
+        return .terminateLater
+    }
+}
 
 @main
 struct WndrApp: App {
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
     @StateObject private var environment = AppEnvironment()
 
     init() {
@@ -472,11 +499,21 @@ private struct RootView: View {
 
     private func handleDeleteDocument(documentID: UUID) {
         Task {
-            try? await environment.documentService.deleteDocument(
-                documentID,
-                libraryURL: environment.libraryURL,
-                libraryStore: environment.libraryRootStore
-            )
+            do {
+                try await environment.documentService.deleteDocument(
+                    documentID,
+                    libraryURL: environment.libraryURL,
+                    libraryStore: environment.libraryRootStore
+                )
+            } catch {
+                // The document is still in the library, so keep it in the list.
+                environment.libraryRootCoordinator.activeAlert = AlertDescriptor(
+                    title: "Couldn't Delete Document",
+                    message: error.localizedDescription,
+                    primaryButton: .init(title: "OK")
+                )
+                return
+            }
             await MainActor.run {
                 let sync = makeViewStateSync()
                 sync.applyDocumentDeletion(documentID)
@@ -506,6 +543,7 @@ private struct RootView: View {
     }
 
     private func handleDeleteNote(noteID: UUID) {
+        NoteEditorViewModel.discardChanges(forNoteID: noteID)
         Task {
             guard let libraryURL = environment.libraryURL else { return }
             try? await environment.documentService.deleteNote(

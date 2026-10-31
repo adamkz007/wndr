@@ -437,14 +437,7 @@ public final class DocumentService: ObservableObject {
     ) async throws {
         guard let snapshot = try await documentSnapshot(documentID) else { return }
 
-        if let libraryURL, let libraryStore {
-            try await libraryStore.deleteStoredDocumentAssets(
-                for: documentID,
-                preferredFileURL: snapshot.fileURL,
-                in: libraryURL
-            )
-        }
-
+        // Remove the record first: if this fails, the files are untouched and nothing is lost.
         try await persistenceController.performBackgroundTask { context in
             guard let document = try context.first(Document.self, withID: documentID) else { return }
             context.delete(document)
@@ -454,6 +447,19 @@ public final class DocumentService: ObservableObject {
 
         await MainActor.run {
             removeDocumentFromMemory(documentID)
+        }
+
+        // The record is gone, so a file cleanup failure only leaves an orphaned file in the library.
+        if let libraryURL, let libraryStore {
+            do {
+                try await libraryStore.deleteStoredDocumentAssets(
+                    for: documentID,
+                    preferredFileURL: snapshot.fileURL,
+                    in: libraryURL
+                )
+            } catch {
+                logger.error("Deleted document \(documentID.uuidString) but could not trash its files: \(error.localizedDescription)")
+            }
         }
     }
 

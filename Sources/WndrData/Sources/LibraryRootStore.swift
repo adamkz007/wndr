@@ -320,7 +320,8 @@ public actor LibraryRootStore {
         return renameStoredFile(currentURL: currentURL, to: newName, withExtension: "pdf", kind: "document")
     }
 
-    /// Deletes all library-managed assets for a document, including its stored file and thumbnail.
+    /// Moves a document's stored files to the Trash, then removes its library folder and thumbnail.
+    /// Files that can't be trashed are left in place rather than deleted permanently.
     public func deleteStoredDocumentAssets(
         for documentID: UUID,
         preferredFileURL: URL?,
@@ -330,23 +331,33 @@ public actor LibraryRootStore {
             .appendingPathComponent(documentID.uuidString, isDirectory: true)
         let thumbnailFileURL = thumbnailURL(for: documentID, in: libraryURL)
 
-        var urlsToDelete: [URL] = [pdfDirectoryURL, thumbnailFileURL]
+        var filesToTrash = (try? fileManager.contentsOfDirectory(
+            at: pdfDirectoryURL,
+            includingPropertiesForKeys: nil,
+            options: [.skipsHiddenFiles]
+        )) ?? []
 
+        let libraryPath = libraryURL.standardizedFileURL.path + "/"
         if let preferredFileURL,
-           preferredFileURL.path.hasPrefix(libraryURL.path),
-           !urlsToDelete.contains(preferredFileURL) {
-            urlsToDelete.append(preferredFileURL)
+           preferredFileURL.standardizedFileURL.path.hasPrefix(libraryPath),
+           preferredFileURL.deletingLastPathComponent().standardizedFileURL != pdfDirectoryURL.standardizedFileURL,
+           fileManager.fileExists(atPath: preferredFileURL.path) {
+            filesToTrash.append(preferredFileURL)
         }
 
-        for url in urlsToDelete {
-            guard fileManager.fileExists(atPath: url.path) else { continue }
+        for fileURL in filesToTrash {
             do {
-                try fileManager.removeItem(at: url)
-                logger.info("Deleted stored asset at \(url.path)")
+                try fileManager.trashItem(at: fileURL, resultingItemURL: nil)
+                logger.info("Moved stored asset to Trash: \(fileURL.lastPathComponent)")
             } catch {
-                logger.error("Failed to delete stored asset at \(url.path): \(error.localizedDescription)")
+                logger.error("Failed to move \(fileURL.path) to Trash: \(error.localizedDescription)")
                 throw error
             }
+        }
+
+        // Only now-empty folders (apart from hidden files) and the regenerable thumbnail are removed outright.
+        for url in [pdfDirectoryURL, thumbnailFileURL] where fileManager.fileExists(atPath: url.path) {
+            try fileManager.removeItem(at: url)
         }
     }
 

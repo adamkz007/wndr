@@ -370,7 +370,7 @@ struct DocumentRow: View {
                 onDelete?()
             }
         } message: {
-            Text("Are you sure you want to delete \"\(document.title)\"? This action cannot be undone.")
+            Text("\"\(document.title)\" will be removed from your library and its PDF moved to the Trash. Its highlights will be deleted.")
         }
     }
 

@@ -342,14 +342,11 @@ private struct NoteEditorContainerView: View {
         guard let noteDTO = environment.documentService.getNote(byID: noteID) else { return }
         guard !viewModel.isDirty else { return }
 
-        if viewModel.title != noteDTO.title {
-            viewModel.title = noteDTO.title
-        }
-        if viewModel.body != noteDTO.body {
-            viewModel.body = noteDTO.body
-        }
-        viewModel.lastSaved = noteDTO.updatedAt ?? noteDTO.createdAt
-        viewModel.isDirty = false
+        viewModel.load(
+            title: noteDTO.title,
+            body: noteDTO.body,
+            lastSaved: noteDTO.updatedAt ?? noteDTO.createdAt
+        )
     }
 }
 

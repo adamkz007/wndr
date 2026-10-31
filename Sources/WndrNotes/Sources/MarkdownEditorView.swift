@@ -37,6 +37,8 @@ public struct MarkdownEditorView: View {
         .background(Color.platformTextBackground)
         .onDisappear {
             viewModel.clearLinkSuggestions()
+            // Save immediately when switching away rather than waiting for the autosave delay.
+            Task { await viewModel.save() }
         }
     }
 
@@ -239,6 +241,11 @@ public struct MarkdownEditorView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
+            } else if let saveError = viewModel.saveError {
+                Label("Couldn't save", systemImage: "exclamationmark.triangle.fill")
+                    .font(.caption)
+                    .foregroundColor(.red)
+                    .help(saveError)
             } else if let lastSaved = viewModel.lastSaved {
                 Text("Saved \(lastSaved, style: .relative)")
                     .font(.caption)
