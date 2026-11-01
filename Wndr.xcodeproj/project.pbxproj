@@ -57,6 +57,11 @@
 		B10E4013284F300000000013 /* ThumbnailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B10E3013284F300000000013 /* ThumbnailService.swift */; };
 		C10E5009284F300000000009 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C10E4001284F300000000001 /* Assets.xcassets */; };
 		E10E5001284F300000000001 /* PlatformCompat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E10E4001284F300000000001 /* PlatformCompat.swift */; };
+		A10E2601284F3000000000A1 /* WndrKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1102284F30000000002D /* WndrKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A10E2602284F3000000000A2 /* WndrData.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1104284F30000000002E /* WndrData.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A10E2603284F3000000000A3 /* WndrPDF.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1106284F30000000002F /* WndrPDF.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A10E2604284F3000000000A4 /* WndrNotes.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A10E1108284F300000000030 /* WndrNotes.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A10E2605284F3000000000A5 /* WndrAutomation.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A10E110A284F300000000031 /* WndrAutomation.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -149,6 +154,24 @@
 		C10E4001284F300000000001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E10E4001284F300000000001 /* PlatformCompat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformCompat.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A10E2600284F3000000000A0 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A10E2601284F3000000000A1 /* WndrKit.framework in Embed Frameworks */,
+				A10E2602284F3000000000A2 /* WndrData.framework in Embed Frameworks */,
+				A10E2603284F3000000000A3 /* WndrPDF.framework in Embed Frameworks */,
+				A10E2604284F3000000000A4 /* WndrNotes.framework in Embed Frameworks */,
+				A10E2605284F3000000000A5 /* WndrAutomation.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		A10E2001284F300000000034 /* Frameworks */ = {
@@ -413,6 +436,7 @@
 				A10E2000284F300000000033 /* Sources */,
 				A10E2001284F300000000034 /* Frameworks */,
 				A10E2002284F300000000035 /* Resources */,
+				A10E2600284F3000000000A0 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
